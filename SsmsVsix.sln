@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36705.20
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2) Libraries", "2) Libraries", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsVsix.SqlSuggest", "SsmsVsix.SqlSuggest\SsmsVsix.SqlSuggest.csproj", "{FB06A298-394C-4243-8E00-ADF2732B9178}"
 EndProject
@@ -13,9 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsVsix.AutoUnitTests", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsVsix.SqlAutoComplete", "SsmsVsix.SqlAutoComplete\SsmsVsix.SqlAutoComplete.csproj", "{5C879D9E-2B80-4633-9777-04F10B405A78}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VSIX", "VSIX", "{E8113F90-E3DA-401F-A5E0-38BD7BA46979}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1) VSIX", "1) VSIX", "{E8113F90-E3DA-401F-A5E0-38BD7BA46979}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsAiToolbar", "SsmsAiToolbar\SsmsAiToolbar.csproj", "{975C546D-CA07-4FD1-A63E-AB51A98A4483}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3) Unit Tests", "3) Unit Tests", "{CD7674AF-7D19-44A4-A09C-724435842A65}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsVsix.UnitTests", "SsmsVsix.UnitTests\SsmsVsix.UnitTests.csproj", "{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +91,18 @@ Global
 		{975C546D-CA07-4FD1-A63E-AB51A98A4483}.Release|arm64.Build.0 = Release|arm64
 		{975C546D-CA07-4FD1-A63E-AB51A98A4483}.Release|x86.ActiveCfg = Release|x86
 		{975C546D-CA07-4FD1-A63E-AB51A98A4483}.Release|x86.Build.0 = Release|x86
+		{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC}.Debug|arm64.Build.0 = Debug|Any CPU
+		{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC}.Debug|x86.Build.0 = Debug|Any CPU
+		{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC}.Release|arm64.ActiveCfg = Release|Any CPU
+		{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC}.Release|arm64.Build.0 = Release|Any CPU
+		{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC}.Release|x86.ActiveCfg = Release|Any CPU
+		{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +113,7 @@ Global
 		{B968D943-9F48-4BFC-8FF9-DCE8A8F5E80C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5C879D9E-2B80-4633-9777-04F10B405A78} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{975C546D-CA07-4FD1-A63E-AB51A98A4483} = {E8113F90-E3DA-401F-A5E0-38BD7BA46979}
+		{B58EF67F-AF0E-49B1-A3F2-7319081EDAAC} = {CD7674AF-7D19-44A4-A09C-724435842A65}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5C7FC6EF-D485-4C25-97DD-3E2D84E0BD02}
