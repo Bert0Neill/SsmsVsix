@@ -25,8 +25,12 @@
 			<!-- =============================== -->
 			<!-- NEW: SSMS Object Explorer TABLE -->
 			<!-- =============================== -->
-			<Group guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroup" priority="0x0200">
+			<!--<Group guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroup" priority="0x0200">
 				<Parent guid="guidSqlObjectExplorer" id="TableContextMenu" />
+			</Group>-->
+			<Group guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroup" priority="0x0200">
+				<Parent guid="guidSqlObjectExplorer" id="TableContextMenu"/>
+				<!-- Table node menu -->
 			</Group>
 
 		</Groups>
@@ -58,9 +62,18 @@
 			<!-- =============================== -->
 			<!-- NEW: TABLE RIGHT-CLICK COMMAND -->
 			<!-- =============================== -->
-			<Button guid="guidSsmsAiToolbarPackageCmdSet" id="cmdidShowTableName" priority="0x0100" type="Button">
+			<!--<Button guid="guidSsmsAiToolbarPackageCmdSet" id="cmdidShowTableName" priority="0x0100" type="Button">
 				<Parent guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroup" />
 				<CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings>
+					<ButtonText>Show Table Name</ButtonText>
+				</Strings>
+			</Button>-->
+			<Button guid="guidSsmsAiToolbarPackageCmdSet"
+        id="cmdidShowTableName"
+        priority="0x0100"
+        type="Button">
+				<Parent guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroup"/>
 				<Strings>
 					<ButtonText>Show Table Name</ButtonText>
 				</Strings>
