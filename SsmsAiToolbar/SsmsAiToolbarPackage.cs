@@ -48,6 +48,7 @@ namespace SsmsAiToolbar
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             await SsmsAiToolbar.Commands.EditorContextMenu.InitializeAsync(this);
+            await SsmsAiToolbar.Commands.ShowTableNameCommand.InitializeAsync(this);
         }
 
         #endregion
