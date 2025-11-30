@@ -43,7 +43,7 @@ namespace SsmsAiToolbar.Commands
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new MenuCommand(this.Execute, menuCommandID);
+            var menuItem = new OleMenuCommand(this.Execute, menuCommandID);
             commandService.AddCommand(menuItem);
         }
 
@@ -77,8 +77,37 @@ namespace SsmsAiToolbar.Commands
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
-            OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new EditorContextMenu(package, commandService);
+            try
+            {
+                OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
+                
+                if (commandService == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("EditorContextMenu: ERROR - commandService is null! Trying sync call...");
+                    // Try to get it synchronously as fallback using IServiceProvider
+                    // We're already on UI thread after SwitchToMainThreadAsync above
+                    var sp = package as IServiceProvider;
+                    if (sp != null)
+                    {
+                        commandService = sp.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+                    }
+                    
+                    if (commandService == null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("EditorContextMenu: ERROR - commandService is still null!");
+                        return;
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine($"EditorContextMenu: Creating instance. CommandId={CommandId}, CommandSet={CommandSet}");
+                Instance = new EditorContextMenu(package, commandService);
+                System.Diagnostics.Debug.WriteLine("EditorContextMenu: Command registered successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"EditorContextMenu: Initialization error: {ex.Message}\n{ex.StackTrace}");
+                throw;
+            }
         }
 
         /// <summary>

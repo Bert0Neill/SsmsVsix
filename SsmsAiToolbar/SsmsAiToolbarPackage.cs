@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.Shell;
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Task = System.Threading.Tasks.Task;
@@ -47,8 +48,51 @@ namespace SsmsAiToolbar
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-            await SsmsAiToolbar.Commands.EditorContextMenu.InitializeAsync(this);
-            await SsmsAiToolbar.Commands.ShowTableNameCommand.InitializeAsync(this);
+            
+            // Diagnostic: Log package initialization
+            Debug.WriteLine("SsmsAiToolbarPackage: Initializing...");
+            
+            try
+            {
+                await SsmsAiToolbar.Commands.EditorContextMenu.InitializeAsync(this);
+                Debug.WriteLine("SsmsAiToolbarPackage: EditorContextMenu initialized");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"SsmsAiToolbarPackage: EditorContextMenu initialization failed: {ex.Message}");
+            }
+            
+            try
+            {
+                await SsmsAiToolbar.Commands.ShowTableNameCommand.InitializeAsync(this);
+                
+                // Verify the command instance was created
+                if (SsmsAiToolbar.Commands.ShowTableNameCommand.Instance != null)
+                {
+                    Debug.WriteLine("SsmsAiToolbarPackage: ShowTableNameCommand initialized and Instance is set");
+                }
+                else
+                {
+                    Debug.WriteLine("SsmsAiToolbarPackage: WARNING - ShowTableNameCommand.Instance is null after initialization!");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"SsmsAiToolbarPackage: ShowTableNameCommand initialization failed: {ex.Message}\n{ex.StackTrace}");
+            }
+            
+            // Initialize Object Explorer menu handler
+            try
+            {
+                SsmsAiToolbar.Commands.ObjectExplorerMenuHandler.Initialize(this);
+                Debug.WriteLine("SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialized");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialization failed: {ex.Message}\n{ex.StackTrace}");
+            }
+            
+            Debug.WriteLine("SsmsAiToolbarPackage: Initialization complete");
         }
 
         #endregion

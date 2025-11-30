@@ -17,14 +17,35 @@
 				<Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />
 			</Group>
 
-			<!-- Existing: SQL Editor context menu -->
-			<Group guid="guidEditorContextMenuPackageCmdSet" id="MyEditorGroup" priority="0x0100">
-				<Parent guid="guidVSStd97" id="IDM_VS_CTXT_CODEWIN" />
+			<!-- SQL Editor context menu - using SSMS-specific query window context menu -->
+			<Group guid="guidEditorContextMenuPackageCmdSet" id="MyEditorGroup" priority="0x0201">
+				<Parent guid="queryWindowContextCommandSet" id="queryWindowContextMenus" />
 			</Group>
 
-			<!-- SSMS Object Explorer Table node context menu group -->
+			<!-- SSMS Object Explorer Table node context menu group - try multiple IDs -->
 			<Group guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroup" priority="0x0200">
 				<Parent guid="guidSqlObjectExplorer" id="TableContextMenu" />
+			</Group>
+			
+			<!-- Alternative Object Explorer context menu groups with different IDs -->
+			<Group guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroupAlt1" priority="0x0201">
+				<Parent guid="guidSqlObjectExplorer" id="TableContextMenuAlt1" />
+			</Group>
+			
+			<Group guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroupAlt2" priority="0x0202">
+				<Parent guid="guidSqlObjectExplorer" id="TableContextMenuAlt2" />
+			</Group>
+			
+			<Group guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroupAlt3" priority="0x0203">
+				<Parent guid="guidSqlObjectExplorer" id="TableContextMenuAlt3" />
+			</Group>
+			
+			<Group guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroupAlt4" priority="0x0204">
+				<Parent guid="guidSqlObjectExplorerAlt" id="ObjectExplorerContextMenu" />
+			</Group>
+			
+			<Group guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroupAlt5" priority="0x0205">
+				<Parent guid="guidSqlObjectExplorerAlt2" id="TableContextMenuAlt4" />
 			</Group>
 
 		</Groups>
@@ -47,7 +68,6 @@
 			<Button guid="guidEditorContextMenuPackageCmdSet" id="cmdidEditorContextMenuCommand" priority="0x0001" type="Button">
 				<Parent guid="guidEditorContextMenuPackageCmdSet" id="MyEditorGroup" />
 				<Icon guid="guidImages" id="bmpPic1" />
-				<CommandFlag>DynamicVisibility</CommandFlag>
 				<Strings>
 					<ButtonText>My SSMS Editor Command</ButtonText>
 				</Strings>
@@ -57,9 +77,35 @@
 			<Button guid="guidSsmsAiToolbarPackageCmdSet" id="cmdidShowTableName" priority="0x0100" type="Button">
 				<Parent guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroup" />
 				<Icon guid="guidImages" id="bmpPic1" />
-				<CommandFlag>DynamicVisibility</CommandFlag>
 				<Strings>
-					<ButtonText>Show Table Name</ButtonText>
+					<ButtonText>Show Table Information</ButtonText>
+					<CommandName>ShowTableInfo</CommandName>
+					<CanonicalName>ShowTableInfo</CanonicalName>
+				</Strings>
+			</Button>
+			
+			<!-- Alternative table context menu commands (for testing different menu IDs) -->
+			<Button guid="guidSsmsAiToolbarPackageCmdSet" id="cmdidShowTableNameAlt1" priority="0x0101" type="Button">
+				<Parent guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroupAlt1" />
+				<Icon guid="guidImages" id="bmpPic1" />
+				<Strings>
+					<ButtonText>Table Info (Alt1)</ButtonText>
+				</Strings>
+			</Button>
+			
+			<Button guid="guidSsmsAiToolbarPackageCmdSet" id="cmdidShowTableNameAlt2" priority="0x0102" type="Button">
+				<Parent guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroupAlt2" />
+				<Icon guid="guidImages" id="bmpPic1" />
+				<Strings>
+					<ButtonText>Table Info (Alt2)</ButtonText>
+				</Strings>
+			</Button>
+			
+			<Button guid="guidSsmsAiToolbarPackageCmdSet" id="cmdidShowTableNameAlt3" priority="0x0103" type="Button">
+				<Parent guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroupAlt3" />
+				<Icon guid="guidImages" id="bmpPic1" />
+				<Strings>
+					<ButtonText>Table Info (Alt3)</ButtonText>
 				</Strings>
 			</Button>
     </Buttons>
@@ -79,9 +125,27 @@
 	<Symbols>
 
 		<!-- ========== SSMS Object Explorer GUIDS (REQUIRED) ========== -->
+		<!-- SSMS Object Explorer Menu GUID - try multiple possible values -->
+		<!-- Primary: Standard SSMS Object Explorer GUID -->
 		<GuidSymbol name="guidSqlObjectExplorer" value="{C4D6794E-1903-4B61-9E9E-C1C98ED4A068}">
+			<!-- Table context menu ID - common IDs to try: 10031, 0x2727, 0x2728, 0x2729 -->
 			<IDSymbol name="TableContextMenu" value="10031" />
+			<IDSymbol name="TableContextMenuAlt1" value="0x2727" />
+			<IDSymbol name="TableContextMenuAlt2" value="0x2728" />
+			<IDSymbol name="TableContextMenuAlt3" value="0x2729" />
 		</GuidSymbol>
+		
+		<!-- Alternative Object Explorer GUIDs -->
+		<GuidSymbol name="guidSqlObjectExplorerAlt" value="{250E6F05-5C7E-11D0-8994-00AA00B90E90}">
+			<IDSymbol name="ObjectExplorerContextMenu" value="0x0001" />
+		</GuidSymbol>
+		
+		<!-- Another potential Object Explorer GUID -->
+		<GuidSymbol name="guidSqlObjectExplorerAlt2" value="{79F7EEA7-DBBA-4C11-90DD-63F6F04565F5}">
+			<IDSymbol name="TableContextMenuAlt4" value="0x0001" />
+		</GuidSymbol>
+		
+		<!-- Note: guidSHLMainMenu and IDM_VS_MENU_TOOLS are defined in vsshlids.h -->
 
 		<!-- Package GUID -->
 		<GuidSymbol name="guidSsmsAiToolbarPackage" value="{faba82a2-c872-4238-9d9b-80b03daee65e}" />
@@ -93,13 +157,26 @@
 
 			<!-- NEW: TABLE CONTEXT -->
 			<IDSymbol name="TableContextGroup" value="0x5000" />
+			<IDSymbol name="TableContextGroupAlt1" value="0x5002" />
+			<IDSymbol name="TableContextGroupAlt2" value="0x5004" />
+			<IDSymbol name="TableContextGroupAlt3" value="0x5006" />
+			<IDSymbol name="TableContextGroupAlt4" value="0x5008" />
+			<IDSymbol name="TableContextGroupAlt5" value="0x500A" />
 			<IDSymbol name="cmdidShowTableName" value="0x5001" />
+			<IDSymbol name="cmdidShowTableNameAlt1" value="0x5003" />
+			<IDSymbol name="cmdidShowTableNameAlt2" value="0x5005" />
+			<IDSymbol name="cmdidShowTableNameAlt3" value="0x5007" />
     </GuidSymbol>
 
 		<!-- Editor context command set -->
 		<GuidSymbol name="guidEditorContextMenuPackageCmdSet" value="{A1F2D5CC-1223-4BE1-9F66-5A1A9B55D002}">
 			<IDSymbol name="MyEditorGroup" value="0x2000" />
 			<IDSymbol name="cmdidEditorContextMenuCommand" value="0x2001" />
+		</GuidSymbol>
+		
+		<!-- SSMS Query Window Context Menu GUID (for SQL Editor) -->
+		<GuidSymbol name="queryWindowContextCommandSet" value="{33F13AC3-80BB-4ECB-85BC-225435603A5E}">
+			<IDSymbol name="queryWindowContextMenus" value="0x0050" />
 		</GuidSymbol>
 
 		<!-- Icons -->
