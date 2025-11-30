@@ -22,15 +22,9 @@
 				<Parent guid="guidVSStd97" id="IDM_VS_CTXT_CODEWIN" />
 			</Group>
 
-			<!-- =============================== -->
-			<!-- NEW: SSMS Object Explorer TABLE -->
-			<!-- =============================== -->
-			<!--<Group guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroup" priority="0x0200">
-				<Parent guid="guidSqlObjectExplorer" id="TableContextMenu" />
-			</Group>-->
+			<!-- SSMS Object Explorer Table node context menu group -->
 			<Group guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroup" priority="0x0200">
-				<Parent guid="guidSqlObjectExplorer" id="TableContextMenu"/>
-				<!-- Table node menu -->
+				<Parent guid="guidSqlObjectExplorer" id="TableContextMenu" />
 			</Group>
 
 		</Groups>
@@ -59,33 +53,15 @@
 				</Strings>
 			</Button>
 
-			<!-- =============================== -->
-			<!-- NEW: TABLE RIGHT-CLICK COMMAND -->
-			<!-- =============================== -->
-			<!--<Button guid="guidSsmsAiToolbarPackageCmdSet" id="cmdidShowTableName" priority="0x0100" type="Button">
+			<!-- Table node context menu command -->
+			<Button guid="guidSsmsAiToolbarPackageCmdSet" id="cmdidShowTableName" priority="0x0100" type="Button">
 				<Parent guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroup" />
+				<Icon guid="guidImages" id="bmpPic1" />
 				<CommandFlag>DynamicVisibility</CommandFlag>
 				<Strings>
 					<ButtonText>Show Table Name</ButtonText>
 				</Strings>
-			</Button>-->
-			<Button guid="guidSsmsAiToolbarPackageCmdSet"
-        id="cmdidShowTableName"
-        priority="0x0100"
-        type="Button">
-				<Parent guid="guidSsmsAiToolbarPackageCmdSet" id="TableContextGroup"/>
-				<Strings>
-					<ButtonText>Show Table Name</ButtonText>
-				</Strings>
 			</Button>
-
-		  <Button guid="guidSsmsAiToolbarPackageCmdSet" id="cmdidShowTableNameCommand" priority="0x0100" type="Button">
-        <Parent guid="guidSsmsAiToolbarPackageCmdSet" id="MyMenuGroup" />
-        <Icon guid="guidImages1" id="bmpPic1" />
-        <Strings>
-          <ButtonText>Invoke ShowTableNameCommand</ButtonText>
-        </Strings>
-      </Button>
     </Buttons>
 
 		<!-- ======================== -->
@@ -93,7 +69,6 @@
 		<!-- ======================== -->
 		<Bitmaps>
 			<Bitmap guid="guidImages" href="Resources\EditorContextMenu.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
-		  <Bitmap guid="guidImages1" href="Resources\ShowTableNameCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
     </Bitmaps>
 
 	</Commands>
@@ -119,7 +94,6 @@
 			<!-- NEW: TABLE CONTEXT -->
 			<IDSymbol name="TableContextGroup" value="0x5000" />
 			<IDSymbol name="cmdidShowTableName" value="0x5001" />
-		  <IDSymbol value="20482" name="cmdidShowTableNameCommand" />
     </GuidSymbol>
 
 		<!-- Editor context command set -->
@@ -137,110 +111,5 @@
 			<IDSymbol name="bmpPicArrows" value="5" />
 			<IDSymbol name="bmpPicStrikethrough" value="6" />
 		</GuidSymbol>
-
-	
-    <GuidSymbol value="{584b3a73-3a0e-4844-acf2-419f09dc74ef}" name="guidImages1">
-      <IDSymbol name="bmpPic1" value="1" />
-      <IDSymbol name="bmpPic2" value="2" />
-      <IDSymbol name="bmpPicSearch" value="3" />
-      <IDSymbol name="bmpPicX" value="4" />
-      <IDSymbol name="bmpPicArrows" value="5" />
-      <IDSymbol name="bmpPicStrikethrough" value="6" />
-    </GuidSymbol>
-  </Symbols>
-</CommandTable>
-
-<!--<?xml version="1.0" encoding="utf-8"?>
-<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable">
-
-	--><!-- Required Visual Studio / SSMS headers --><!--
-	<Extern href="stdidcmd.h"/>
-	<Extern href="vsshlids.h"/>
-
-	<Commands package="guidSsmsAiToolbarPackage">
-
-		--><!-- ======================== --><!--
-		--><!-- GROUPS --><!--
-		--><!-- ======================== --><!--
-		<Groups>
-
-			--><!-- Existing group (Tools menu) — leave as is --><!--
-			<Group guid="guidSsmsAiToolbarPackageCmdSet" id="MyMenuGroup" priority="0x0600">
-				<Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
-			</Group>
-
-			--><!-- NEW: Group inside SSMS SQL Editor context menu --><!--
-			<Group guid="guidEditorContextMenuPackageCmdSet" id="MyEditorGroup" priority="0x0100">
-				<Parent guid="guidVSStd97" id="IDM_VS_CTXT_CODEWIN" />
-			</Group>
-
-		</Groups>
-
-		--><!-- ======================== --><!--
-		--><!-- BUTTONS --><!--
-		--><!-- ======================== --><!--
-		<Buttons>
-
-			--><!-- Tools menu button (yours originally) --><!--
-			<Button guid="guidSsmsAiToolbarPackageCmdSet" id="EditorContextMenuId" priority="0x0100" type="Button">
-				<Parent guid="guidSsmsAiToolbarPackageCmdSet" id="MyMenuGroup" />
-				<Icon guid="guidImages" id="bmpPic1" />
-				<Strings>
-					<ButtonText>AI EditorContextMenu</ButtonText>
-				</Strings>
-			</Button>
-
-			--><!-- NEW: The SSMS right-click editor command --><!--
-			<Button guid="guidEditorContextMenuPackageCmdSet" id="cmdidEditorContextMenuCommand" priority="0x0001" type="Button">
-				<Parent guid="guidEditorContextMenuPackageCmdSet" id="MyEditorGroup" />
-				<Icon guid="guidImages" id="bmpPic1" />
-				<CommandFlag>DynamicVisibility</CommandFlag>
-				<Strings>
-					<ButtonText>My SSMS Editor Command</ButtonText>
-				</Strings>
-			</Button>
-
-		</Buttons>
-
-		--><!-- ======================== --><!--
-		--><!-- IMAGES --><!--
-		--><!-- ======================== --><!--
-		<Bitmaps>
-			<Bitmap guid="guidImages" href="Resources\EditorContextMenu.png"
-					usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough"/>
-		</Bitmaps>
-
-	</Commands>
-
-	--><!-- ======================== --><!--
-	--><!-- SYMBOL DEFINITIONS --><!--
-	--><!-- ======================== --><!--
-	<Symbols>
-
-		--><!-- Package GUID --><!--
-		<GuidSymbol name="guidSsmsAiToolbarPackage" value="{faba82a2-c872-4238-9d9b-80b03daee65e}" />
-
-		--><!-- Existing command set --><!--
-		<GuidSymbol name="guidSsmsAiToolbarPackageCmdSet" value="{0d082b0f-1fe3-40d2-a95d-a06cad922055}">
-			<IDSymbol name="MyMenuGroup" value="0x1020" />
-			<IDSymbol name="EditorContextMenuId" value="0x0100" />
-		</GuidSymbol>
-
-		--><!-- NEW: Command set for editor context menu --><!--
-		<GuidSymbol name="guidEditorContextMenuPackageCmdSet" value="{A1F2D5CC-1223-4BE1-9F66-5A1A9B55D002}">
-			<IDSymbol name="MyEditorGroup" value="0x2000" />
-			<IDSymbol name="cmdidEditorContextMenuCommand" value="0x2001" />
-		</GuidSymbol>
-
-		--><!-- Icons --><!--
-		<GuidSymbol name="guidImages" value="{b4ad2ec9-74b1-4f45-94e9-6381f694d634}">
-			<IDSymbol name="bmpPic1" value="1" />
-			<IDSymbol name="bmpPic2" value="2" />
-			<IDSymbol name="bmpPicSearch" value="3" />
-			<IDSymbol name="bmpPicX" value="4" />
-			<IDSymbol name="bmpPicArrows" value="5" />
-			<IDSymbol name="bmpPicStrikethrough" value="6" />
-		</GuidSymbol>
-
 	</Symbols>
-</CommandTable>-->
+</CommandTable>
