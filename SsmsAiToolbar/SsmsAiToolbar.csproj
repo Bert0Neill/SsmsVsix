@@ -51,7 +51,20 @@
     <Compile Include="Commands\EditorContextMenu.cs" />
     <Compile Include="Commands\ObjectExplorerMenuHandler.cs" />
     <Compile Include="Commands\ShowTableNameCommand.cs" />
+    <Compile Include="Misc\Extensions.cs" />
+    <Compile Include="Misc\OptionsDialogPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Misc\SSMSObjectExplorerMenu.cs" />
+    <Compile Include="objects\MenuItem.cs" />
+    <Compile Include="objects\MenuItemInstance.cs" />
+    <Compile Include="objects\NodeInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SsmsAiToolbarPackage.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -65,9 +78,8 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="SqlWorkbench.Interfaces, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Misc\20\SqlWorkbench.Interfaces.dll</HintPath>
+    <Reference Include="SqlPackageBase">
+      <HintPath>..\..\ssms-object-explorer-menu\lib\SqlPackageBase.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -77,7 +89,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.0.32112.339" ExcludeAssets="runtime" NoWarn="NU1604" />
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.14.40265" ExcludeAssets="runtime" NoWarn="NU1604">
+      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VSSDK.BuildTools">
+      <Version>17.14.2120</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
@@ -85,6 +104,12 @@
     <Content Include="Misc\19\SqlWorkbench.Interfaces.dll" />
     <Content Include="Misc\20\SqlWorkbench.Interfaces.dll" />
     <Content Include="Misc\21\SqlWorkbench.Interfaces.dll" />
+    <Content Include="Misc\Play.png" />
+    <Content Include="Misc\QuestionMark.png" />
+    <None Include="Resources\Image1.png" />
+    <Content Include="Resources\Play.png" />
+    <None Include="Resources\plus.jpg" />
+    <Content Include="Resources\QuestionMark.png" />
     <VSCTCompile Include="Commands\SsmsAiToolbarPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
@@ -109,6 +134,12 @@
       <Project>{fb06a298-394c-4243-8e00-adf2732b9178}</Project>
       <Name>SsmsVsix.SqlSuggest</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == ''">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>

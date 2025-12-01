@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.SqlServer.Management.Smo;
+using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
 using System.Reflection;
 
 namespace SsmsAiToolbar.Commands
@@ -107,13 +108,22 @@ namespace SsmsAiToolbar.Commands
 
             try
             {
-                // Get current Object Explorer selection using SqlWorkbench.Interfaces
-                var selectedNodes = GetSelectedNodes();
+                // Get Object Explorer service
+                var objectExplorerService = GetObjectExplorerService();
+                if (objectExplorerService == null)
+                {
+                    cmd.Visible = false;
+                    cmd.Enabled = false;
+                    return;
+                }
+
+                // Get selected nodes
+                objectExplorerService.GetSelectedNodes(out int arraySize, out INodeInformation[] nodes);
                 
                 // Visible only if exactly 1 node selected and it's a TABLE
-                if (selectedNodes != null && selectedNodes.Length == 1)
+                if (arraySize == 1 && nodes != null && nodes.Length == 1)
                 {
-                    var node = selectedNodes[0];
+                    var node = nodes[0];
                     var nodeContext = GetNodeContext(node);
                     
                     // Make visible if it's a table, otherwise hide
@@ -122,18 +132,15 @@ namespace SsmsAiToolbar.Commands
                 }
                 else
                 {
-                    // Show the command even if we can't determine selection (for testing)
-                    // In production, you might want to set this to false
-                    cmd.Visible = true;
-                    cmd.Enabled = true;
+                    cmd.Visible = false;
+                    cmd.Enabled = false;
                 }
             }
             catch
             {
-                // If we can't determine the selection, show the command anyway (for testing)
-                // This helps debug if the menu appears at all
-                cmd.Visible = true;
-                cmd.Enabled = true;
+                // If we can't determine the selection, hide the command
+                cmd.Visible = false;
+                cmd.Enabled = false;
             }
         }
 
@@ -143,42 +150,144 @@ namespace SsmsAiToolbar.Commands
 
             try
             {
-                var selectedNodes = GetSelectedNodes();
-
-                if (selectedNodes != null && selectedNodes.Length == 1)
+                // Get Object Explorer service
+                var objectExplorerService = GetObjectExplorerService();
+                if (objectExplorerService == null)
                 {
-                    var node = selectedNodes[0];
-                    var nodeContext = GetNodeContext(node);
-
-                    if (nodeContext == "Table")
-                    {
-                        // Get table information using SMO
-                        var tableInfo = GetTableInfo(node);
-                        
-                        if (!string.IsNullOrEmpty(tableInfo))
-                        {
-                            MessageBox.Show(tableInfo, "SSMS Table Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        else
-                        {
-                            var nodeName = GetNodeName(node);
-                            MessageBox.Show($"Selected Table: {nodeName}", "SSMS Table", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show($"Selected node is not a table. Context: {nodeContext}", "SSMS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
+                    MessageBox.Show("Object Explorer Service not available.", "SSMS Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
-                else
+
+                // Get selected nodes
+                objectExplorerService.GetSelectedNodes(out int arraySize, out INodeInformation[] nodes);
+                
+                if (arraySize == 0 || nodes == null || nodes.Length == 0)
                 {
-                    MessageBox.Show("No table selected or multiple items selected.", "SSMS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("No table selected.", "SSMS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var node = nodes[0];
+                
+                // Check if it's a table node
+                var nodeContext = GetNodeContext(node);
+                if (nodeContext != "Table")
+                {
+                    MessageBox.Show($"Selected node is not a table. Context: {nodeContext}", "SSMS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Get node information
+                var nodeInfo = GetNodeInfo(node);
+                
+                // Build information message
+                string info = $"Server: {nodeInfo.Server}\r\n" +
+                             $"Database: {nodeInfo.Database}\r\n" +
+                             $"Schema: {nodeInfo.Schema}\r\n" +
+                             $"Table: {nodeInfo.Table}\r\n" +
+                             $"URN Path: {nodeInfo.UrnPath}";
+
+                // Try to get additional SMO table information
+                var smoTableInfo = GetSmoTableInfo(node);
+                if (!string.IsNullOrEmpty(smoTableInfo))
+                {
+                    info += "\r\n\r\n" + smoTableInfo;
+                }
+
+                MessageBox.Show(info, "SSMS Table Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ShowTableNameCommand.Execute error: {ex.Message}\n{ex.StackTrace}");
+                MessageBox.Show($"Error executing command: {ex.Message}", "SSMS Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private IObjectExplorerService GetObjectExplorerService()
+        {
+            try
+            {
+                // Use IServiceProvider to get the service
+                var sp = _package as IServiceProvider;
+                if (sp != null)
+                {
+                    return sp.GetService(typeof(IObjectExplorerService)) as IObjectExplorerService;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error executing command: {ex.Message}", "SSMS Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Debug.WriteLine($"GetObjectExplorerService error: {ex.Message}");
             }
+            return null;
+        }
+
+        private NodeInfo GetNodeInfo(object node)
+        {
+            var nodeInfo = new NodeInfo();
+            
+            try
+            {
+                if (node is INodeInformation nodeInfoInterface)
+                {
+                    // Get URN path
+                    nodeInfo.UrnPath = nodeInfoInterface.UrnPath ?? string.Empty;
+                    
+                    // Parse URN to extract server, database, schema, table
+                    if (!string.IsNullOrEmpty(nodeInfo.UrnPath))
+                    {
+                        var parts = nodeInfo.UrnPath.Split('/');
+                        foreach (var part in parts)
+                        {
+                            if (part.StartsWith("Server[@Name='", StringComparison.OrdinalIgnoreCase))
+                            {
+                                nodeInfo.Server = ExtractValue(part);
+                            }
+                            else if (part.StartsWith("Database[@Name='", StringComparison.OrdinalIgnoreCase))
+                            {
+                                nodeInfo.Database = ExtractValue(part);
+                            }
+                            else if (part.StartsWith("Schema[@Name='", StringComparison.OrdinalIgnoreCase))
+                            {
+                                nodeInfo.Schema = ExtractValue(part);
+                            }
+                            else if (part.StartsWith("Table[@Name='", StringComparison.OrdinalIgnoreCase))
+                            {
+                                nodeInfo.Table = ExtractValue(part);
+                            }
+                        }
+                    }
+                    
+                    // Try to get name directly
+                    if (string.IsNullOrEmpty(nodeInfo.Table))
+                    {
+                        nodeInfo.Table = nodeInfoInterface.InvariantName ?? nodeInfoInterface.Name ?? string.Empty;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"GetNodeInfo error: {ex.Message}");
+            }
+            
+            return nodeInfo;
+        }
+
+        private string ExtractValue(string urnPart)
+        {
+            try
+            {
+                int start = urnPart.IndexOf("'", StringComparison.Ordinal) + 1;
+                int end = urnPart.LastIndexOf("'", StringComparison.Ordinal);
+                if (start > 0 && end > start)
+                {
+                    return urnPart.Substring(start, end - start);
+                }
+            }
+            catch
+            {
+                // Ignore parsing errors
+            }
+            return string.Empty;
         }
 
         private object[] GetSelectedNodes()
@@ -210,6 +319,24 @@ namespace SsmsAiToolbar.Commands
         {
             try
             {
+                if (node is INodeInformation nodeInfo)
+                {
+                    // Try to get context from UrnPath
+                    var urnPath = nodeInfo.UrnPath ?? string.Empty;
+                    if (urnPath.Contains("/Table[@Name='"))
+                    {
+                        return "Table";
+                    }
+                    
+                    // Try NavigationContext
+                    var navContext = nodeInfo.NavigationContext ?? string.Empty;
+                    if (navContext.Contains("Table"))
+                    {
+                        return "Table";
+                    }
+                }
+                
+                // Fallback: use reflection
                 if (node != null)
                 {
                     var nodeType = node.GetType();
@@ -250,7 +377,7 @@ namespace SsmsAiToolbar.Commands
             return "Unknown";
         }
 
-        private string GetTableInfo(object node)
+        private string GetSmoTableInfo(object node)
         {
             try
             {
@@ -263,35 +390,30 @@ namespace SsmsAiToolbar.Commands
                     var smoObject = smoObjectProperty.GetValue(node);
                     if (smoObject is Table table)
                     {
-                        return $"Table: {table.Schema}.{table.Name}\n" +
-                               $"Database: {table.Parent.Name}\n" +
-                               $"Server: {table.Parent.Parent.Name}\n" +
-                               $"Columns: {table.Columns.Count}\n" +
-                               $"Indexes: {table.Indexes.Count}";
-                    }
-                }
-
-                // Alternative: Try to get Urn and parse it
-                var urnProperty = nodeType.GetProperty("Urn");
-                if (urnProperty != null)
-                {
-                    var urn = urnProperty.GetValue(node)?.ToString();
-                    if (!string.IsNullOrEmpty(urn) && urn.Contains("Table"))
-                    {
-                        // Extract table name from Urn
-                        var parts = urn.Split('/');
-                        var tableName = parts[parts.Length - 1];
-                        return $"Table: {tableName}\nUrn: {urn}";
+                        return $"SMO Information:\r\n" +
+                               $"  Columns: {table.Columns.Count}\r\n" +
+                               $"  Indexes: {table.Indexes.Count}\r\n" +
+                               $"  Triggers: {table.Triggers.Count}\r\n";// +
+                               //$"  Check Constraints: {table.CheckConstraints.Count}";
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Return error info for debugging
-                return $"Error getting table info: {ex.Message}";
+                Debug.WriteLine($"GetSmoTableInfo error: {ex.Message}");
             }
 
             return string.Empty;
+        }
+
+        // Helper class to hold node information
+        private class NodeInfo
+        {
+            public string Server { get; set; } = string.Empty;
+            public string Database { get; set; } = string.Empty;
+            public string Schema { get; set; } = string.Empty;
+            public string Table { get; set; } = string.Empty;
+            public string UrnPath { get; set; } = string.Empty;
         }
 
         private string GetSqlWorkbenchInterfacesPath()
