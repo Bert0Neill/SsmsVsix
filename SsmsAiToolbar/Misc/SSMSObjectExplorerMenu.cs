@@ -1,18 +1,12 @@
 ﻿using EnvDTE;
 using EnvDTE80;
-using Microsoft.SqlServer.Management.UI.VSIntegration;
-using Microsoft.SqlServer.Management.UI.VSIntegration.Editors;
-using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
-using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
-using Microsoft.VisualStudio.VCProjectEngine;
 using SsmsAiToolbar.objects;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +14,7 @@ using System.Windows.Forms;
 
 namespace SsmsAiToolbar
 {
-	[PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
+    [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 	[ProvideAutoLoad("d114938f-591c-46cf-a785-500a82d97410", PackageAutoLoadFlags.BackgroundLoad)] //CommandGuids.ObjectExplorerToolWindowIDString
 	[ProvideOptionPage(typeof(OptionsDialogPage), "SQL Server Object Explorer", "SSMS Object Explorer Menu", 0, 0, true)]
 	public sealed class SSMSObjectExplorerMenu : AsyncPackage
@@ -33,7 +27,7 @@ namespace SsmsAiToolbar
 		{
 		}
 
-		protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+		protected override async System.Threading.Tasks.Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
 		{
 			await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
@@ -291,7 +285,7 @@ namespace SsmsAiToolbar
 			}
 		}
 
-		private async Task Menu_ClickAsync(object sender, EventArgs e)
+		private async System.Threading.Tasks.Task Menu_ClickAsync(object sender, EventArgs e)
 		{		
 			await JoinableTaskFactory.SwitchToMainThreadAsync(DisposalToken);
 
