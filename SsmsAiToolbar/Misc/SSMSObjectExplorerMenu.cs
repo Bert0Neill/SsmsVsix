@@ -1,5 +1,8 @@
 ﻿using EnvDTE;
 using EnvDTE80;
+using Microsoft.SqlServer.Management.UI.VSIntegration;
+using Microsoft.SqlServer.Management.UI.VSIntegration.Editors;
+using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -352,45 +355,47 @@ namespace SsmsAiToolbar
 				return;
 			}
 
-			IScriptFactory scriptFactory = ServiceCache.ScriptFactory;
-			if (scriptFactory == null)
+            //IScriptFactory scriptFactory = ServiceCache.ScriptFactory;
+
+            IScriptFactory scriptFactory = (IScriptFactory)Package.GetGlobalService(typeof(IScriptFactory));
+            if (scriptFactory == null)
 			{
 				return;
 			}
 
-			//var s = scriptFactory.CreateNewBlankScript(ScriptType.Sql);
+			var s = scriptFactory.CreateNewBlankScript(ScriptType.Sql);
 
 
-			//if (dte.ActiveDocument != null)
-			//{
-			//	TextSelection ts = (TextSelection)dte.ActiveDocument.Selection;
-			//	ts.Insert(script, (int)vsInsertFlags.vsInsertFlagsInsertAtStart);
+			if (dte.ActiveDocument != null)
+			{
+				TextSelection ts = (TextSelection)dte.ActiveDocument.Selection;
+				ts.Insert(script, (int)vsInsertFlags.vsInsertFlagsInsertAtStart);
 
-			//	dte.ActiveDocument.Activate();
+				dte.ActiveDocument.Activate();
 
-			//	if (itemInstance.MenuItem.Execute || itemInstance.MenuItem.Confirm)
-			//	{
-			//		if (itemInstance.MenuItem.Confirm)
-			//		{
-			//			if (MessageBox.Show($"Execute \"{itemInstance.MenuItem.Name}\"?{Environment.NewLine}{Environment.NewLine}{itemInstance.NodeInfo}", "SSMS Object Explorer Menu", MessageBoxButtons.OKCancel) == DialogResult.OK)
-			//			{
-			//				dte.ActiveDocument.DTE.ExecuteCommand("Query.Execute");
-			//			}
-			//			else
-			//			{
-			//				ts.Cancel();
-			//			}
-			//		}
-			//		else
-			//		{
-			//			dte.ActiveDocument.DTE.ExecuteCommand("Query.Execute");
-			//		}
-			//	}
-			//	else
-			//	{
-			//		ts.Cancel();
-			//	}
-			//}
+				if (itemInstance.MenuItem.Execute || itemInstance.MenuItem.Confirm)
+				{
+					if (itemInstance.MenuItem.Confirm)
+					{
+						if (MessageBox.Show($"Execute \"{itemInstance.MenuItem.Name}\"?{Environment.NewLine}{Environment.NewLine}{itemInstance.NodeInfo}", "SSMS Object Explorer Menu", MessageBoxButtons.OKCancel) == DialogResult.OK)
+						{
+							dte.ActiveDocument.DTE.ExecuteCommand("Query.Execute");
+						}
+						else
+						{
+							ts.Cancel();
+						}
+					}
+					else
+					{
+						dte.ActiveDocument.DTE.ExecuteCommand("Query.Execute");
+					}
+				}
+				else
+				{
+					ts.Cancel();
+				}
+			}
 		}
 
 		private void Error(string message)
