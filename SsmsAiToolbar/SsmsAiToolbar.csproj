@@ -55,7 +55,6 @@
     <Compile Include="Misc\OptionsDialogPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Misc\SSMSObjectExplorerMenu.cs" />
     <Compile Include="objects\MenuItem.cs" />
     <Compile Include="objects\MenuItemInstance.cs" />
     <Compile Include="objects\NodeInfo.cs" />

@@ -81,16 +81,16 @@ namespace SsmsAiToolbar
                 Debug.WriteLine($"SsmsAiToolbarPackage: ShowTableNameCommand initialization failed: {ex.Message}\n{ex.StackTrace}");
             }
             
-            // Initialize Object Explorer menu handler
-            try
-            {
-                SsmsAiToolbar.Commands.ObjectExplorerMenuHandler.Initialize(this);
-                Debug.WriteLine("SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialized");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialization failed: {ex.Message}\n{ex.StackTrace}");
-            }
+            //// Initialize Object Explorer menu handler
+            //try
+            //{
+            //    SsmsAiToolbar.Commands.ObjectExplorerMenuHandler.Initialize(this);
+            //    Debug.WriteLine("SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialized");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine($"SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialization failed: {ex.Message}\n{ex.StackTrace}");
+            //}
             
             Debug.WriteLine("SsmsAiToolbarPackage: Initialization complete");
         }
