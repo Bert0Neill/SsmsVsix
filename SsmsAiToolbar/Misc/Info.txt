@@ -4,5 +4,7 @@ Use SSMS 20
 C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Ssms.exe
 C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions
 OR
-C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Ssms.exe
-C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions
+C:\Program Files (x86)\Microsoft SQL Server Management Studio 19\Common7\IDE\Ssms.exe
+C:\Program Files (x86)\Microsoft SQL Server Management Studio 19\Common7\IDE\Extensions
+
+Currently 19
