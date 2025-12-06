@@ -106,7 +106,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Misc\18\SqlWorkbench.Interfaces.dll" />
+    <Content Include="Misc\19\SqlPackageBase.dll" />
     <Content Include="Misc\19\SqlWorkbench.Interfaces.dll" />
+    <Content Include="Misc\20\SqlPackageBase.dll" />
     <Content Include="Misc\20\SqlWorkbench.Interfaces.dll" />
     <Content Include="Misc\21\SqlWorkbench.Interfaces.dll" />
     <Content Include="Misc\Play.png" />
