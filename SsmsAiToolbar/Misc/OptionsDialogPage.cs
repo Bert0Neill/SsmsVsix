@@ -23,7 +23,7 @@ namespace SsmsAiToolbar
 		[Category("General options")]
 		[DisplayName("Name")]
 		[Description("Text to display in the main menu item")]
-		public string Text { get; set; } = "My Scripts";
+		public string Text { get; set; } = "My AI Scripts";
 
 		[DefaultValue(true)]
 		[Category("General options")]

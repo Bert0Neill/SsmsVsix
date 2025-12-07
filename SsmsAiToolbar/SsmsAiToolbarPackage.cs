@@ -24,6 +24,7 @@ namespace SsmsAiToolbar
     /// To get loaded into VS, the package must be referred by &lt;Asset Type="Microsoft.VisualStudio.VsPackage" ...&gt; in .vsixmanifest file.
     /// </para>
     /// </remarks>
+
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [Guid(SsmsAiToolbarPackage.PackageGuidString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
@@ -61,38 +62,49 @@ namespace SsmsAiToolbar
             {
                 Debug.WriteLine($"SsmsAiToolbarPackage: EditorContextMenu initialization failed: {ex.Message}");
             }
-            
+
             try
             {
-                await SsmsAiToolbar.Commands.ShowTableNameCommand.InitializeAsync(this);
-                
-                // Verify the command instance was created
-                if (SsmsAiToolbar.Commands.ShowTableNameCommand.Instance != null)
-                {
-                    Debug.WriteLine("SsmsAiToolbarPackage: ShowTableNameCommand initialized and Instance is set");
-                }
-                else
-                {
-                    Debug.WriteLine("SsmsAiToolbarPackage: WARNING - ShowTableNameCommand.Instance is null after initialization!");
-                }
+                await SsmsAiToolbar.Commands.ToolsMenuCmd.InitializeAsync(this);
+                Debug.WriteLine("SsmsAiToolbarPackage: ToolsMenuCmd initialized");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"SsmsAiToolbarPackage: ShowTableNameCommand initialization failed: {ex.Message}\n{ex.StackTrace}");
+                Debug.WriteLine($"SsmsAiToolbarPackage: EditorContextMenu initialization failed: {ex.Message}");
             }
-            
-            //// Initialize Object Explorer menu handler
+
             //try
             //{
-            //    SsmsAiToolbar.Commands.ObjectExplorerMenuHandler.Initialize(this);
-            //    Debug.WriteLine("SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialized");
+            //    await SsmsAiToolbar.Commands.ShowTableNameCommand.InitializeAsync(this);
+
+            //    // Verify the command instance was created
+            //    if (SsmsAiToolbar.Commands.ShowTableNameCommand.Instance != null)
+            //    {
+            //        Debug.WriteLine("SsmsAiToolbarPackage: ShowTableNameCommand initialized and Instance is set");
+            //    }
+            //    else
+            //    {
+            //        Debug.WriteLine("SsmsAiToolbarPackage: WARNING - ShowTableNameCommand.Instance is null after initialization!");
+            //    }
             //}
             //catch (Exception ex)
             //{
-            //    Debug.WriteLine($"SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialization failed: {ex.Message}\n{ex.StackTrace}");
+            //    Debug.WriteLine($"SsmsAiToolbarPackage: ShowTableNameCommand initialization failed: {ex.Message}\n{ex.StackTrace}");
             //}
-            
+
+            // Initialize Object Explorer menu handler
+            try
+            {
+                SsmsAiToolbar.Commands.ObjectExplorerMenuHandler.Initialize(this);
+                Debug.WriteLine("SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialized");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialization failed: {ex.Message}\n{ex.StackTrace}");
+            }
+
             Debug.WriteLine("SsmsAiToolbarPackage: Initialization complete");
+            await SsmsAiToolbar.Commands.ToolsMenuCmd.InitializeAsync(this);
         }
 
         #endregion

@@ -117,43 +117,43 @@ namespace SsmsAiToolbar.Commands
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event args.</param>
-        //private void Execute(object sender, EventArgs e)
-        //{
-        //    ThreadHelper.ThrowIfNotOnUIThread();
-        //    string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-        //    string title = "EditorContextMenu";
-
-        //    // Show a message box to prove we were here
-        //    VsShellUtilities.ShowMessageBox(
-        //        this.package,
-        //        message,
-        //        title,
-        //        OLEMSGICON.OLEMSGICON_INFO,
-        //        OLEMSGBUTTON.OLEMSGBUTTON_OK,
-        //        OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-        //}
-
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+            string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
+            string title = "EditorContextMenu";
 
-            var dte = Package.GetGlobalService(typeof(DTE)) as DTE2;
-
-            if (dte == null)
-            {
-                System.Windows.Forms.MessageBox.Show("DTE2 is null - not running inside SSMS editor.");
-                return;
-            }
-
-            var activeDoc = dte.ActiveDocument;
-            var textDoc = activeDoc?.Object("TextDocument") as TextDocument;
-
-            string selectedText = textDoc?.Selection?.Text;
-            string fullText = textDoc?.CreateEditPoint()?.GetText(textDoc.EndPoint);
-
-            System.Windows.Forms.MessageBox.Show($"Selected: {selectedText}");
-
+            // Show a message box to prove we were here
+            VsShellUtilities.ShowMessageBox(
+                this.package,
+                message,
+                title,
+                OLEMSGICON.OLEMSGICON_INFO,
+                OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
         }
+
+        //private void Execute(object sender, EventArgs e)
+        //{
+        //    ThreadHelper.ThrowIfNotOnUIThread();
+
+        //    var dte = Package.GetGlobalService(typeof(DTE)) as DTE2;
+
+        //    if (dte == null)
+        //    {
+        //        System.Windows.Forms.MessageBox.Show("DTE2 is null - not running inside SSMS editor.");
+        //        return;
+        //    }
+
+        //    var activeDoc = dte.ActiveDocument;
+        //    var textDoc = activeDoc?.Object("TextDocument") as TextDocument;
+
+        //    string selectedText = textDoc?.Selection?.Text;
+        //    string fullText = textDoc?.CreateEditPoint()?.GetText(textDoc.EndPoint);
+
+        //    System.Windows.Forms.MessageBox.Show($"Selected: {selectedText}");
+
+        //}
 
     }
 }
