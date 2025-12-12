@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <!--This is the file that defines the IDs for all the commands exposed by VisualStudio. -->
+  <Extern href="stdidcmd.h"/>
+
+  <!--This header contains the command ids for the menus provided by the shell. -->
+  <Extern href="vsshlids.h"/>
+
+  <!--The Commands section is where commands, menus, and menu groups are defined.
+      This section uses a Guid to identify the package that provides the command defined inside it. -->
+  <Commands package="guidVSIX_DemoPackage">
+   
+    <Groups>
+      <Group guid="guidVSIX_DemoPackageCmdSet" id="MyMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
+      </Group>
+    </Groups>
+
+    <!--Buttons section. -->
+      <Buttons>
+     
+      <Button guid="guidVSIX_DemoPackageCmdSet" id="cmdShortcutsId" priority="0x0900" type="Button">
+        <Parent guid="guidVSIX_DemoPackageCmdSet" id="MyMenuGroup" />
+		<Icon guid="guidImagesSettings" id="bmpPicSettings" />
+        <Strings>
+          <ButtonText>Configure Sql Shortcuts</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+
+    <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
+    <Bitmaps>
+        <Bitmap guid="guidImages" href="Resources\cmdShortcuts.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough"/>
+		<Bitmap guid="guidImagesComment" href="Resources\Double-J-Design-Origami-Colored-Pencil-Blue-document.16.png" usedList="bmpPicComment" />
+		<Bitmap guid="guidImagesSettings" href="Resources\Gartoon-Team-Gartoon-Categories-Preferences-autocompletion.16.png" usedList="bmpPicSettings" />
+		<Bitmap guid="guidImagesTest" href="Resources\Gartoon-Team-Gartoon-Categories-Applications-science.16.png" usedList="bmpPicTest" />
+		<Bitmap guid="guidImagesImprove" href="Resources\Custom-Icon-Design-Pretty-Office-9-Comment-edit.16.png" usedList="bmpPicImprove" />
+		<Bitmap guid="guidImagesCodeGen" href="Resources\Thalita-Torres-Office-Documents.16.png" usedList="bmpPicCodeGen" />
+		<Bitmap guid="guidImagesPrompt" href="Resources\Double-J-Design-Ravenna-3d-Comments.16.png" usedList="bmpPicPrompt" />
+		<Bitmap guid="guidAIImages" href="Resources\Social-balloon-friends.16.png" usedList="bmpPicAIPrompt" />
+    </Bitmaps>
+  </Commands>
+
+
+	<Symbols>
+		<!-- This is the package guid. -->
+		<GuidSymbol name="guidVSIX_DemoPackage" value="{4607758b-acdd-4838-adb8-1dc2cfa69b00}" />
+
+		<!-- This is the guid used to group the menu commands together -->
+		<GuidSymbol name="guidVSIX_DemoPackageCmdSet" value="{bf54b6c0-6ed7-4107-a84b-c1a031eab60a}">
+			<IDSymbol name="MyMenuGroup" value="0x1020" />
+			<IDSymbol name="cmdShortcutsId" value="0x0100" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImages" value="{96057fbd-ee74-4f5a-a8e6-0078752c237f}" >
+			<IDSymbol name="bmpPic1" value="1" />
+			<IDSymbol name="bmpPic2" value="2" />
+			<IDSymbol name="bmpPicSearch" value="3" />
+			<IDSymbol name="bmpPicX" value="4" />
+			<IDSymbol name="bmpPicArrows" value="5" />
+			<IDSymbol name="bmpPicStrikethrough" value="6" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImagesComment" value="{11111111-1111-1111-1111-111111111111}">
+			<IDSymbol name="bmpPicComment" value="1" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImagesSettings" value="{22222222-2222-2222-2222-222222222222}">
+			<IDSymbol name="bmpPicSettings" value="1" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImagesTest" value="{33333333-3333-3333-3333-333333333333}">
+			<IDSymbol name="bmpPicTest" value="1" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImagesImprove" value="{44444444-4444-4444-4444-444444444444}">
+			<IDSymbol name="bmpPicImprove" value="1" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImagesCodeGen" value="{55555555-5555-5555-5555-555555555555}">
+			<IDSymbol name="bmpPicCodeGen" value="1" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImagesPrompt" value="{66666666-6666-6666-6666-666666666666}">
+			<IDSymbol name="bmpPicPrompt" value="1" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidAIImages" value="{77777777-7777-7777-7777-777777777777}">
+			<IDSymbol name="bmpPicAIPrompt" value="1" />
+		</GuidSymbol>
+	</Symbols>
+</CommandTable>

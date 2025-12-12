@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SQL_Shortcuts.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SyncfusionKey" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Ngo9BigBOggjHTQxAR8/V1NHaF5cWWdCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWH1cc3VSQ2BeVU1zWkM=</Value>
+    </Setting>
+    <Setting Name="ConfigFile" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Config\sqlShortcuts.json</Value>
+    </Setting>
+    <Setting Name="LogFilename" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">SQL_Shortcuts\logs</Value>
+    </Setting>
+    <Setting Name="ShortcutIndicator" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">`</Value>
+    </Setting>
+    <Setting Name="LocalisationResourcePath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">VSIX_AutoComplete_SSMS.Resources.Resource</Value>
+    </Setting>
+    <Setting Name="IsDemo" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ExportFilename" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SQL_Shortcuts.pdf</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

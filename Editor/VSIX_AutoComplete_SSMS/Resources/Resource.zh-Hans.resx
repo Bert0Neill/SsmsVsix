@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error_Disdplay" xml:space="preserve">
+    <value>错误：</value>
+  </data>
+  <data name="Ext_Loaded_Successfully" xml:space="preserve">
+    <value>VSIX SQL Autocomplete扩展已成功加载</value>
+  </data>
+  <data name="Grid_Cell_Button" xml:space="preserve">
+    <value>测试</value>
+  </data>
+  <data name="Grid_Eval_Header" xml:space="preserve">
+    <value>表达式评估</value>
+  </data>
+  <data name="Grid_Key_Exists" xml:space="preserve">
+    <value>快捷键已存在。按Esc取消或更新为唯一键并保存。</value>
+  </data>
+  <data name="Grid_Loading" xml:space="preserve">
+    <value>正在启动frmShortcuts表单</value>
+  </data>
+  <data name="Grid_Load_Error" xml:space="preserve">
+    <value>加载表单时出错</value>
+  </data>
+  <data name="Grid_Msg_Evaluating_Expression" xml:space="preserve">
+    <value>正在评估表达式</value>
+  </data>
+  <data name="Grid_SqlComplete_Empty" xml:space="preserve">
+    <value>SQL Complete不能为空。按Esc取消或更新为唯一的SQL Complete并保存。</value>
+  </data>
+  <data name="Grid_Toast_Contents" xml:space="preserve">
+    <value>SQL快捷方式已保存到文件：</value>
+  </data>
+  <data name="Grid_Toast_Header" xml:space="preserve">
+    <value>SQL VSIX快捷方式</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Body" xml:space="preserve">
+    <value>您有未保存的更改。是否要在关闭前保存？</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Header" xml:space="preserve">
+    <value>未保存的更改</value>
+  </data>
+  <data name="Logger_Error" xml:space="preserve">
+    <value>错误：{0}</value>
+  </data>
+  <data name="Package_Initializing" xml:space="preserve">
+    <value>正在初始化VSIX包</value>
+  </data>
+  <data name="Smo_No_Obj_Explorer" xml:space="preserve">
+    <value>对象资源管理器服务不可用</value>
+  </data>
+  <data name="Smo_No_Container" xml:space="preserve">
+    <value>无法访问对象资源管理器容器</value>
+  </data>
+  <data name="Smo_No_Components" xml:space="preserve">
+    <value>无法访问对象资源管理器组件</value>
+  </data>
+  <data name="Smo_No_ContextService" xml:space="preserve">
+    <value>在对象资源管理器中未找到上下文服务</value>
+  </data>
+  <data name="Smo_No_Access_ObjectExplorerContext" xml:space="preserve">
+    <value>无法访问对象资源管理器上下文</value>
+  </data>
+  <data name="Smo_No_ContextChanged" xml:space="preserve">
+    <value>未找到CurrentContextChanged事件</value>
+  </data>
+  <data name="Smo_No_Method" xml:space="preserve">
+    <value>在目标实例中未找到方法'{0}'</value>
+  </data>
+  <data name="Smo_No_Unbinding" xml:space="preserve">
+    <value>解绑错误</value>
+  </data>
+  <data name="SMO_No_Property" xml:space="preserve">
+    <value>访问属性'{0}'时出错：{1}</value>
+  </data>
+  <data name="StatusBar_Clear" xml:space="preserve">
+    <value>状态栏服务：清除状态栏时出错：</value>
+  </data>
+  <data name="StatusBar_Error" xml:space="preserve">
+    <value>状态栏服务未初始化</value>
+  </data>
+  <data name="StatusBar_Error_Body" xml:space="preserve">
+    <value>状态栏服务错误：</value>
+  </data>
+  <data name="StatusBar_Error_Update" xml:space="preserve">
+    <value>更新状态栏时出错：</value>
+  </data>
+  <data name="StatusBar_Status" xml:space="preserve">
+    <value>状态栏已更新：{0}</value>
+  </data>
+  <data name="Grid_Add_New_Row" xml:space="preserve">
+    <value>添加新的SQL快捷方式（按Tab键在网格中确认）</value>
+  </data>
+  <data name="Grid_Edit_Row" xml:space="preserve">
+    <value>编辑SQL快捷方式</value>
+  </data>
+  <data name="Grid_Demo_Limit" xml:space="preserve">
+    <value>演示版：SQL语句限制为100个字符。</value>
+  </data>
+  <data name="Grid_Insert_Tag" xml:space="preserve">
+    <value>表达式/标签已插入 - {0}</value>
+  </data>
+  <data name="Grid_Shortcut_Exists" xml:space="preserve">
+    <value>快捷方式'{0}'已被使用。</value>
+  </data>
+  <data name="Grid_Error_Title" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="Grid_Hooking_Error" xml:space="preserve">
+    <value>挂钩错误</value>
+  </data>
+  <data name="Grid_Loading_Form" xml:space="preserve">
+    <value>正在加载快捷方式表单</value>
+  </data>
+  <data name="Grid_Loaded_Shortcuts" xml:space="preserve">
+    <value>已加载{0}个SQL快捷方式</value>
+  </data>
+  <data name="Grid_Saved_Shortcuts" xml:space="preserve">
+    <value>已保存{0}个快捷方式</value>
+  </data>
+  <data name="Grid_Updated_Shortcut" xml:space="preserve">
+    <value>SQL快捷方式已更新 - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Shortcut" xml:space="preserve">
+    <value>SQL快捷方式已删除 - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Success" xml:space="preserve">
+    <value>{0}已成功删除</value>
+  </data>
+  <data name="Grid_Added_Shortcut" xml:space="preserve">
+    <value>已添加SQL快捷方式{0}</value>
+  </data>
+  <data name="Smo_Selected_Node" xml:space="preserve">
+    <value>已选择：{0} - {1} - {2} - {3}</value>
+  </data>
+  <data name="Smo_Available_Properties" xml:space="preserve">
+    <value>{0}的可用属性：</value>
+  </data>
+  <data name="Smo_Property_Value" xml:space="preserve">
+    <value>  {0}：{1}</value>
+  </data>
+  <data name="Smo_Property_Error" xml:space="preserve">
+    <value>  {0}：错误：{1}</value>
+  </data>
+</root> 

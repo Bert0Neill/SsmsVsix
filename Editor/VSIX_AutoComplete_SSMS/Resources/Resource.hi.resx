@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error_Disdplay" xml:space="preserve">
+    <value>त्रुटि：</value>
+  </data>
+  <data name="Ext_Loaded_Successfully" xml:space="preserve">
+    <value>VSIX SQL Autocomplete एक्सटेंशन सफलतापूर्वक लोड हो गया</value>
+  </data>
+  <data name="Grid_Cell_Button" xml:space="preserve">
+    <value>परीक्षण</value>
+  </data>
+  <data name="Grid_Eval_Header" xml:space="preserve">
+    <value>अभिव्यक्ति मूल्यांकन</value>
+  </data>
+  <data name="Grid_Loading" xml:space="preserve">
+    <value>frmShortcuts फॉर्म शुरू कर रहा है</value>
+  </data>
+  <data name="Grid_Toast_Contents" xml:space="preserve">
+    <value>SQL शॉर्टकट फ़ाइल में सहेजे गए:</value>
+  </data>
+  <data name="Grid_Toast_Header" xml:space="preserve">
+    <value>VSIX SQL शॉर्टकट</value>
+  </data>
+  <data name="Logger_Error" xml:space="preserve">
+    <value>त्रुटि: {0}</value>
+  </data>
+  <data name="Package_Initializing" xml:space="preserve">
+    <value>VSIX पैकेज आरंभ हो रहा है</value>
+  </data>
+  <data name="Smo_No_Obj_Explorer" xml:space="preserve">
+    <value>Object Explorer सेवा उपलब्ध नहीं है</value>
+  </data>
+  <data name="Smo_No_Container" xml:space="preserve">
+    <value>ObjectExplorer कंटेनर तक पहुंच नहीं सकते</value>
+  </data>
+  <data name="Smo_No_Components" xml:space="preserve">
+    <value>ObjectExplorer कंपोनेंट्स तक पहुंच नहीं सकते</value>
+  </data>
+  <data name="Smo_No_ContextService" xml:space="preserve">
+    <value>ObjectExplorer में ContextService नहीं मिला</value>
+  </data>
+  <data name="Smo_No_Access_ObjectExplorerContext" xml:space="preserve">
+    <value>ObjectExplorerContext तक पहुंच नहीं सकते</value>
+  </data>
+  <data name="Smo_No_ContextChanged" xml:space="preserve">
+    <value>CurrentContextChanged इवेंट नहीं मिला</value>
+  </data>
+  <data name="Smo_No_Method" xml:space="preserve">
+    <value>लक्ष्य इंस्टेंस में मेथड '{0}' नहीं मिला</value>
+  </data>
+  <data name="SMO_No_Property" xml:space="preserve">
+    <value>प्रॉपर्टी '{0}' तक पहुंचने में त्रुटि: {1}</value>
+  </data>
+  <data name="StatusBar_Clear" xml:space="preserve">
+    <value>StatusBarService: स्टेटस बार साफ़ करने में त्रुटि:</value>
+  </data>
+  <data name="StatusBar_Error" xml:space="preserve">
+    <value>StatusBarService आरंभ नहीं किया गया है</value>
+  </data>
+  <data name="StatusBar_Error_Body" xml:space="preserve">
+    <value>StatusBarService त्रुटि:</value>
+  </data>
+  <data name="StatusBar_Error_Update" xml:space="preserve">
+    <value>स्टेटस बार अपडेट करने में त्रुटि:</value>
+  </data>
+  <data name="StatusBar_Status" xml:space="preserve">
+    <value>स्टेटस बार अपडेट किया गया: {0}</value>
+  </data>
+  <data name="Grid_Add_New_Row" xml:space="preserve">
+    <value>नया SQL शॉर्टकट जोड़ें (ग्रिड में कमिट करने के लिए Tab दबाएं)</value>
+  </data>
+  <data name="Grid_Edit_Row" xml:space="preserve">
+    <value>SQL शॉर्टकट संपादित करें</value>
+  </data>
+  <data name="Grid_Demo_Limit" xml:space="preserve">
+    <value>डेमो संस्करण: SQL स्टेटमेंट 100 अक्षरों तक सीमित है।</value>
+  </data>
+  <data name="Grid_Shortcut_Exists" xml:space="preserve">
+    <value>शॉर्टकट '{0}' पहले से उपयोग में है।</value>
+  </data>
+  <data name="Grid_Error_Title" xml:space="preserve">
+    <value>त्रुटि</value>
+  </data>
+  <data name="Grid_Hooking_Error" xml:space="preserve">
+    <value>हुकिंग त्रुटि</value>
+  </data>
+  <data name="Grid_Loading_Form" xml:space="preserve">
+    <value>शॉर्टकट फॉर्म लोड हो रहा है</value>
+  </data>
+  <data name="Grid_Loaded_Shortcuts" xml:space="preserve">
+    <value>{0} SQL शॉर्टकट लोड किए गए</value>
+  </data>
+  <data name="Grid_Saved_Shortcuts" xml:space="preserve">
+    <value>{0} शॉर्टकट सहेजे गए</value>
+  </data>
+  <data name="Grid_Updated_Shortcut" xml:space="preserve">
+    <value>SQL शॉर्टकट अपडेट किया गया - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Shortcut" xml:space="preserve">
+    <value>SQL शॉर्टकट हटाया गया - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Success" xml:space="preserve">
+    <value>{0} सफलतापूर्वक हटाया गया</value>
+  </data>
+  <data name="Grid_Added_Shortcut" xml:space="preserve">
+    <value>SQL शॉर्टकट {0} जोड़ा गया</value>
+  </data>
+  <data name="Smo_Selected_Node" xml:space="preserve">
+    <value>चयनित: {0} - {1} - {2} - {3}</value>
+  </data>
+  <data name="Smo_Available_Properties" xml:space="preserve">
+    <value>{0} के लिए उपलब्ध प्रॉपर्टीज़:</value>
+  </data>
+  <data name="Smo_Property_Value" xml:space="preserve">
+    <value>  {0}: {1}</value>
+  </data>
+  <data name="Smo_Property_Error" xml:space="preserve">
+    <value>  {0}: त्रुटि: {1}</value>
+  </data>
+  <data name="Button_Test" xml:space="preserve">
+    <value>परीक्षण</value>
+  </data>
+  <data name="Button_Test_Sql" xml:space="preserve">
+    <value>SQL परीक्षण</value>
+  </data>
+  <data name="Label_Sql_Shortcut" xml:space="preserve">
+    <value>SQL शॉर्टकट:</value>
+  </data>
+  <data name="Label_Sql_Statement" xml:space="preserve">
+    <value>SQL स्टेटमेंट:</value>
+  </data>
+  <data name="Button_Insert_Table_Tag" xml:space="preserve">
+    <value>&lt;टेबल&gt; टैग सम्मिलित करें</value>
+  </data>
+  <data name="Button_Save" xml:space="preserve">
+    <value>सहेजें</value>
+  </data>
+  <data name="Form_Sql_Expression_Editor" xml:space="preserve">
+    <value>SQL एक्सप्रेशन एडिटर</value>
+  </data>
+  <data name="Banner_Maxlength_10" xml:space="preserve">
+    <value>अधिकतम लंबाई 10 अक्षर</value>
+  </data>
+  <data name="Grid_Header_Sql_Expression" xml:space="preserve">
+    <value>SQL एक्सप्रेशन</value>
+  </data>
+  <data name="Grid_Header_Delete" xml:space="preserve">
+    <value>हटाएं</value>
+  </data>
+  <data name="Grid_Header_Edit" xml:space="preserve">
+    <value>संपादित करें</value>
+  </data>
+  <data name="Button_Add_New_Shortcut" xml:space="preserve">
+    <value>नया शॉर्टकट जोड़ें</value>
+  </data>
+  <data name="Button_Export_Shortcuts" xml:space="preserve">
+    <value>शॉर्टकट निर्यात करें (pdf)</value>
+  </data>
+  <data name="Form_Sql_Expression_Shortcuts" xml:space="preserve">
+    <value>SQL एक्सप्रेशन शॉर्टकट</value>
+  </data>
+  <data name="Status_Auto_Save_Enabled" xml:space="preserve">
+    <value>स्वचालित सहेजना सक्षम (आपके कार्यों को सहेजने की आवश्यकता नहीं है, परिवर्तन स्वचालित रूप से फ़ाइल में सहेजे जाएंगे)</value>
+  </data>
+  <data name="Grid_Shortcuts_Exported_To" xml:space="preserve">
+    <value>शॉर्टकट निर्यात किए गए: {0}</value>
+  </data>
+  <data name="Button_Insert_Date_Expression" xml:space="preserve">
+    <value>दिनांक अभिव्यक्ति सम्मिलित करें</value>
+  </data>
+  <data name="Grid_Header_Shortcut" xml:space="preserve">
+    <value>शॉर्टकट</value>
+  </data>
+  <data name="Grid_Header_Eval_Exp" xml:space="preserve">
+    <value>मूल्यांकन व्यंजक</value>
+  </data>
+</root>

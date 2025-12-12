@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error_Disdplay" xml:space="preserve">
+    <value>오류：</value>
+  </data>
+  <data name="Ext_Loaded_Successfully" xml:space="preserve">
+    <value>VSIX SQL Autocomplete 확장이 성공적으로 로드되었습니다</value>
+  </data>
+  <data name="Grid_Cell_Button" xml:space="preserve">
+    <value>테스트</value>
+  </data>
+  <data name="Grid_Eval_Header" xml:space="preserve">
+    <value>식 평가</value>
+  </data>
+  <data name="Grid_Loading" xml:space="preserve">
+    <value>frmShortcuts 폼 시작 중</value>
+  </data>
+  <data name="Grid_Toast_Contents" xml:space="preserve">
+    <value>SQL 단축키가 파일에 저장되었습니다：</value>
+  </data>
+  <data name="Grid_Toast_Header" xml:space="preserve">
+    <value>SQL VSIX 단축키</value>
+  </data>
+  <data name="Logger_Error" xml:space="preserve">
+    <value>오류：{0}</value>
+  </data>
+  <data name="Package_Initializing" xml:space="preserve">
+    <value>VSIX 패키지 초기화 중</value>
+  </data>
+  <data name="Smo_No_Obj_Explorer" xml:space="preserve">
+    <value>개체 탐색기 서비스를 사용할 수 없습니다</value>
+  </data>
+  <data name="Smo_No_Container" xml:space="preserve">
+    <value>개체 탐색기 컨테이너에 접근할 수 없습니다</value>
+  </data>
+  <data name="Smo_No_Components" xml:space="preserve">
+    <value>개체 탐색기 구성 요소에 접근할 수 없습니다</value>
+  </data>
+  <data name="Smo_No_ContextService" xml:space="preserve">
+    <value>개체 탐색기에서 컨텍스트 서비스를 찾을 수 없습니다</value>
+  </data>
+  <data name="Smo_No_Access_ObjectExplorerContext" xml:space="preserve">
+    <value>개체 탐색기 컨텍스트에 접근할 수 없습니다</value>
+  </data>
+  <data name="Smo_No_ContextChanged" xml:space="preserve">
+    <value>CurrentContextChanged 이벤트를 찾을 수 없습니다</value>
+  </data>
+  <data name="Smo_No_Method" xml:space="preserve">
+    <value>대상 인스턴스에서 메서드'{0}'를 찾을 수 없습니다</value>
+  </data>
+  <data name="SMO_No_Property" xml:space="preserve">
+    <value>속성'{0}'에 접근하는 중 오류 발생：{1}</value>
+  </data>
+  <data name="StatusBar_Clear" xml:space="preserve">
+    <value>상태 표시줄 서비스：상태 표시줄 지우기 중 오류 발생：</value>
+  </data>
+  <data name="StatusBar_Error" xml:space="preserve">
+    <value>상태 표시줄 서비스가 초기화되지 않았습니다</value>
+  </data>
+  <data name="StatusBar_Error_Body" xml:space="preserve">
+    <value>상태 표시줄 서비스 오류：</value>
+  </data>
+  <data name="StatusBar_Error_Update" xml:space="preserve">
+    <value>상태 표시줄 업데이트 중 오류 발생：</value>
+  </data>
+  <data name="StatusBar_Status" xml:space="preserve">
+    <value>상태 표시줄이 업데이트되었습니다：{0}</value>
+  </data>
+  <data name="Grid_Add_New_Row" xml:space="preserve">
+    <value>새 SQL 단축키 추가（그리드에서 확인하려면 Tab 키를 누르세요）</value>
+  </data>
+  <data name="Grid_Edit_Row" xml:space="preserve">
+    <value>SQL 단축키 편집</value>
+  </data>
+  <data name="Grid_Demo_Limit" xml:space="preserve">
+    <value>데모 버전：SQL 문이 100자로 제한됩니다.</value>
+  </data>
+  <data name="Grid_Shortcut_Exists" xml:space="preserve">
+    <value>단축키'{0}'가 이미 사용 중입니다.</value>
+  </data>
+  <data name="Grid_Error_Title" xml:space="preserve">
+    <value>오류</value>
+  </data>
+  <data name="Grid_Hooking_Error" xml:space="preserve">
+    <value>후킹 오류</value>
+  </data>
+  <data name="Grid_Loading_Form" xml:space="preserve">
+    <value>단축키 폼 로드 중</value>
+  </data>
+  <data name="Grid_Loaded_Shortcuts" xml:space="preserve">
+    <value>{0}개의 SQL 단축키가 로드되었습니다</value>
+  </data>
+  <data name="Grid_Saved_Shortcuts" xml:space="preserve">
+    <value>{0}개의 단축키가 저장되었습니다</value>
+  </data>
+  <data name="Grid_Updated_Shortcut" xml:space="preserve">
+    <value>SQL 단축키가 업데이트되었습니다 - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Shortcut" xml:space="preserve">
+    <value>SQL 단축키가 삭제되었습니다 - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Success" xml:space="preserve">
+    <value>{0}이(가) 성공적으로 삭제되었습니다</value>
+  </data>
+  <data name="Grid_Added_Shortcut" xml:space="preserve">
+    <value>SQL 단축키 {0}이(가) 추가되었습니다</value>
+  </data>
+  <data name="Smo_Selected_Node" xml:space="preserve">
+    <value>선택됨：{0} - {1} - {2} - {3}</value>
+  </data>
+  <data name="Smo_Available_Properties" xml:space="preserve">
+    <value>{0}의 사용 가능한 속성：</value>
+  </data>
+  <data name="Smo_Property_Value" xml:space="preserve">
+    <value>  {0}：{1}</value>
+  </data>
+  <data name="Smo_Property_Error" xml:space="preserve">
+    <value>  {0}：오류：{1}</value>
+  </data>
+  <data name="Grid_Key_Exists" xml:space="preserve">
+    <value>단축키가 이미 존재합니다. Esc를 눌러 취소하거나 고유한 키로 업데이트하고 저장하세요.</value>
+  </data>
+  <data name="Grid_Load_Error" xml:space="preserve">
+    <value>폼 로드 중 오류 발생</value>
+  </data>
+  <data name="Grid_Msg_Evaluating_Expression" xml:space="preserve">
+    <value>식 평가 중</value>
+  </data>
+  <data name="Grid_SqlComplete_Empty" xml:space="preserve">
+    <value>SQL Complete는 비워둘 수 없습니다. Esc를 눌러 취소하거나 고유한 SQL Complete로 업데이트하고 저장하세요.</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Body" xml:space="preserve">
+    <value>저장되지 않은 변경 사항이 있습니다. 닫기 전에 저장하시겠습니까？</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Header" xml:space="preserve">
+    <value>저장되지 않은 변경 사항</value>
+  </data>
+  <data name="Smo_No_Unbinding" xml:space="preserve">
+    <value>바인딩 해제 오류</value>
+  </data>
+  <data name="Grid_Insert_Tag" xml:space="preserve">
+    <value>식/태그가 삽입되었습니다 - {0}</value>
+  </data>
+  <data name="Button_Test" xml:space="preserve">
+    <value>테스트</value>
+  </data>
+  <data name="Label_Sql_Shortcut" xml:space="preserve">
+    <value>SQL 바로가기：</value>
+  </data>
+  <data name="Label_Sql_Statement" xml:space="preserve">
+    <value>SQL 문：</value>
+  </data>
+  <data name="Button_Insert_Table_Tag" xml:space="preserve">
+    <value>&lt;테이블&gt; 태그 삽입</value>
+  </data>
+  <data name="Button_Save" xml:space="preserve">
+    <value>저장</value>
+  </data>
+  <data name="Form_Sql_Expression_Editor" xml:space="preserve">
+    <value>SQL 표현식 편집기</value>
+  </data>
+  <data name="Banner_Maxlength_10" xml:space="preserve">
+    <value>최대 길이 10자</value>
+  </data>
+  <data name="Grid_Header_Sql_Expression" xml:space="preserve">
+    <value>SQL 표현식</value>
+  </data>
+  <data name="Grid_Header_Delete" xml:space="preserve">
+    <value>삭제</value>
+  </data>
+  <data name="Grid_Header_Edit" xml:space="preserve">
+    <value>편집</value>
+  </data>
+  <data name="Button_Add_New_Shortcut" xml:space="preserve">
+    <value>새 바로가기 추가</value>
+  </data>
+  <data name="Button_Export_Shortcuts" xml:space="preserve">
+    <value>바로가기 내보내기 (pdf)</value>
+  </data>
+  <data name="Form_Sql_Expression_Shortcuts" xml:space="preserve">
+    <value>SQL 표현식 바로가기</value>
+  </data>
+  <data name="Status_Auto_Save_Enabled" xml:space="preserve">
+    <value>자동 저장 활성화 (작업을 저장할 필요가 없으며 변경 사항이 자동으로 파일에 저장됩니다)</value>
+  </data>
+  <data name="Grid_Shortcuts_Exported_To" xml:space="preserve">
+    <value>바로가기 내보내기 위치: {0}</value>
+  </data>
+  <data name="Button_Insert_Date_Expression" xml:space="preserve">
+    <value>날짜 표현식 삽입</value>
+  </data>
+  <data name="Grid_Header_Shortcut" xml:space="preserve">
+    <value>바로가기</value>
+  </data>
+  <data name="Grid_Header_Eval_Exp" xml:space="preserve">
+    <value>식 평가</value>
+  </data>
+  <data name="Button_Test_Sql" xml:space="preserve">
+    <value>SQL 테스트</value>
+  </data>
+</root>

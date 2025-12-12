@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+	<Metadata>
+		<Identity Id="VSIX_Demo.6e119852-31e0-4299-8f9b-d64c8f676537" Version="1.0" Language="en-US" Publisher="Bert O'Neill" />
+		<DisplayName>SQL_Shortcuts</DisplayName>
+		<Description xml:space="preserve">A Sql Server Mgt. Studio extension that will auto complete your shortcut Sql statements.</Description>
+		<License>License.txt</License>
+		<ReleaseNotes>Release Notes for VSIX SSMS Sql AutoComplete.rtf</ReleaseNotes>
+		<Icon>Images\Fatcow-Farm-Fresh-Db-sql-server.32.png</Icon>
+		<PreviewImage>Images\2025_04_29_231954.png</PreviewImage>
+		<Tags>SSMS, Sql Autocomplete, SQL Complete, Extension</Tags>
+	</Metadata>
+	<Installation>
+		<InstallationTarget Id="Microsoft.SqlServer.Management.SqlStudio" Version="[18.0,)">
+			<ProductArchitecture>amd64</ProductArchitecture>
+		</InstallationTarget>
+	</Installation>
+	<Dependencies>
+		<Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+	</Dependencies>
+	<Prerequisites>
+		<Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,)" DisplayName="Visual Studio core editor" />
+	</Prerequisites>
+	<Assets>
+		<Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+	</Assets>
+</PackageManifest>

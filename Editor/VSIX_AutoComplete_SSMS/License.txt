@@ -1,0 +1,29 @@
+﻿© Bert O'Neill 2025. All rights reserved.
+
+This Software and any associated materials are confidential and proprietary to Bert O'Neill ("Licensor"). By using this Software, you are agreeing to comply with the terms of this License Agreement.
+
+1. **Grant of License**
+   Licensor grants you a limited, non-exclusive, non-transferable license to use the Software for internal business operations on a single machine or as otherwise specified in the applicable agreement with Licensor.
+
+2. **Restrictions**
+   You may not:
+   - Copy, modify, distribute, or create derivative works of the Software, in whole or in part, except as expressly permitted in writing by Licensor.
+   - Reverse-engineer, decompile, or disassemble the Software, or attempt to discover its source code or underlying algorithms.
+   - Use the Software for any illegal purpose or in a manner inconsistent with the terms of this License.
+
+3. **Ownership**
+   All rights, title, and interest in the Software, including any updates or modifications, remain exclusively with Licensor. The Software is licensed, not sold.
+
+4. **Warranties and Liability**
+   The Software is provided "as-is," and Licensor makes no warranties, either express or implied, regarding its functionality, fitness for a particular purpose, or any other aspect of its use. In no event shall Licensor be liable for any direct, indirect, incidental, or consequential damages arising from the use or inability to use the Software.
+
+5. **License Termination**
+   Licensor may terminate this license at any time if you breach any of the terms of this License Agreement. Upon termination, you must immediately cease all use of the Software and return or destroy all copies of the Software.
+
+6. **Support**
+   Licensor may offer support for the Software under a separate agreement. You must have an active support contract to receive any updates or assistance.
+
+For licensing inquiries, support, or additional information, please contact:
+Bert O'Neill
+Email: BertONeill@yahoo.com
+

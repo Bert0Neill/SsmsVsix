@@ -1,0 +1,54 @@
+[
+  {
+    "SqlShort": "s",
+    "SqlComplete": "Select * From "
+  },
+  {
+    "SqlShort": "d",
+    "SqlComplete": "Delete * From "
+  },
+  {
+    "SqlShort": "i",
+    "SqlComplete": "Insert Into "
+  },
+  {
+    "SqlShort": "ws",
+    "SqlComplete": "Where CreatedDate > {DateTime.Now.ToString(\"d\")} "
+  },
+  {
+    "SqlShort": "s",
+    "SqlComplete": "Select * From "
+  },
+  {
+    "SqlShort": "d",
+    "SqlComplete": "Delete * From "
+  },
+  {
+    "SqlShort": "i",
+    "SqlComplete": "Insert Into "
+  },
+  {
+    "SqlShort": "s",
+    "SqlComplete": "Select * From "
+  },
+  {
+    "SqlShort": "d",
+    "SqlComplete": "Delete * From "
+  },
+  {
+    "SqlShort": "i",
+    "SqlComplete": "Insert Into "
+  },
+  {
+    "SqlShort": "s",
+    "SqlComplete": "Select * From "
+  },
+  {
+    "SqlShort": "d",
+    "SqlComplete": "Delete * From "
+  },
+  {
+    "SqlShort": "i",
+    "SqlComplete": "Insert Into "
+  }
+]

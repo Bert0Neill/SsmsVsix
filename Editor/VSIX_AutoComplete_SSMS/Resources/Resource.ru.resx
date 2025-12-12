@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error_Disdplay" xml:space="preserve">
+    <value>Ошибка：</value>
+  </data>
+  <data name="Ext_Loaded_Successfully" xml:space="preserve">
+    <value>Расширение VSIX SQL Autocomplete успешно загружено</value>
+  </data>
+  <data name="Grid_Cell_Button" xml:space="preserve">
+    <value>Тест</value>
+  </data>
+  <data name="Grid_Eval_Header" xml:space="preserve">
+    <value>Вычисление выражения</value>
+  </data>
+  <data name="Grid_Loading" xml:space="preserve">
+    <value>Запуск формы frmShortcuts</value>
+  </data>
+  <data name="Grid_Toast_Contents" xml:space="preserve">
+    <value>SQL горячие клавиши сохранены в файл：</value>
+  </data>
+  <data name="Grid_Toast_Header" xml:space="preserve">
+    <value>SQL VSIX горячие клавиши</value>
+  </data>
+  <data name="Logger_Error" xml:space="preserve">
+    <value>Ошибка：{0}</value>
+  </data>
+  <data name="Package_Initializing" xml:space="preserve">
+    <value>Инициализация пакета VSIX</value>
+  </data>
+  <data name="Smo_No_Obj_Explorer" xml:space="preserve">
+    <value>Служба обозревателя объектов недоступна</value>
+  </data>
+  <data name="Smo_No_Container" xml:space="preserve">
+    <value>Не удалось получить доступ к контейнеру обозревателя объектов</value>
+  </data>
+  <data name="Smo_No_Components" xml:space="preserve">
+    <value>Не удалось получить доступ к компонентам обозревателя объектов</value>
+  </data>
+  <data name="Smo_No_ContextService" xml:space="preserve">
+    <value>Служба контекста не найдена в обозревателе объектов</value>
+  </data>
+  <data name="Smo_No_Access_ObjectExplorerContext" xml:space="preserve">
+    <value>Не удалось получить доступ к контексту обозревателя объектов</value>
+  </data>
+  <data name="Smo_No_ContextChanged" xml:space="preserve">
+    <value>Событие CurrentContextChanged не найдено</value>
+  </data>
+  <data name="Smo_No_Method" xml:space="preserve">
+    <value>Метод'{0}' не найден в целевом экземпляре</value>
+  </data>
+  <data name="SMO_No_Property" xml:space="preserve">
+    <value>Ошибка при доступе к свойству'{0}'：{1}</value>
+  </data>
+  <data name="StatusBar_Clear" xml:space="preserve">
+    <value>Служба строки состояния：Ошибка при очистке строки состояния：</value>
+  </data>
+  <data name="StatusBar_Error" xml:space="preserve">
+    <value>Служба строки состояния не инициализирована</value>
+  </data>
+  <data name="StatusBar_Error_Body" xml:space="preserve">
+    <value>Ошибка службы строки состояния：</value>
+  </data>
+  <data name="StatusBar_Error_Update" xml:space="preserve">
+    <value>Ошибка при обновлении строки состояния：</value>
+  </data>
+  <data name="StatusBar_Status" xml:space="preserve">
+    <value>Строка состояния обновлена：{0}</value>
+  </data>
+  <data name="Grid_Add_New_Row" xml:space="preserve">
+    <value>Добавить новую SQL горячую клавишу（нажмите Tab для подтверждения в сетке）</value>
+  </data>
+  <data name="Grid_Edit_Row" xml:space="preserve">
+    <value>Редактировать SQL горячую клавишу</value>
+  </data>
+  <data name="Grid_Demo_Limit" xml:space="preserve">
+    <value>Демо-версия：SQL выражение ограничено 100 символами.</value>
+  </data>
+  <data name="Grid_Shortcut_Exists" xml:space="preserve">
+    <value>Горячая клавиша'{0}' уже используется.</value>
+  </data>
+  <data name="Grid_Error_Title" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
+  <data name="Grid_Hooking_Error" xml:space="preserve">
+    <value>Ошибка при подключении</value>
+  </data>
+  <data name="Grid_Loading_Form" xml:space="preserve">
+    <value>Загрузка формы горячих клавиш</value>
+  </data>
+  <data name="Grid_Loaded_Shortcuts" xml:space="preserve">
+    <value>{0} SQL горячих клавиш загружено</value>
+  </data>
+  <data name="Grid_Saved_Shortcuts" xml:space="preserve">
+    <value>{0} горячих клавиш сохранено</value>
+  </data>
+  <data name="Grid_Updated_Shortcut" xml:space="preserve">
+    <value>SQL горячая клавиша обновлена - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Shortcut" xml:space="preserve">
+    <value>SQL горячая клавиша удалена - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Success" xml:space="preserve">
+    <value>{0} успешно удалено</value>
+  </data>
+  <data name="Grid_Added_Shortcut" xml:space="preserve">
+    <value>SQL горячая клавиша {0} добавлена</value>
+  </data>
+  <data name="Smo_Selected_Node" xml:space="preserve">
+    <value>Выбрано：{0} - {1} - {2} - {3}</value>
+  </data>
+  <data name="Smo_Available_Properties" xml:space="preserve">
+    <value>Доступные свойства для {0}：</value>
+  </data>
+  <data name="Smo_Property_Value" xml:space="preserve">
+    <value>  {0}：{1}</value>
+  </data>
+  <data name="Smo_Property_Error" xml:space="preserve">
+    <value>  {0}：Ошибка：{1}</value>
+  </data>
+  <data name="Grid_Key_Exists" xml:space="preserve">
+    <value>Горячая клавиша уже существует. Нажмите Esc для отмены или обновите до уникальной клавиши и сохраните.</value>
+  </data>
+  <data name="Grid_Load_Error" xml:space="preserve">
+    <value>Ошибка при загрузке формы</value>
+  </data>
+  <data name="Grid_Msg_Evaluating_Expression" xml:space="preserve">
+    <value>Вычисление выражения</value>
+  </data>
+  <data name="Grid_SqlComplete_Empty" xml:space="preserve">
+    <value>SQL Complete не может быть пустым. Нажмите Esc для отмены или обновите до уникального SQL Complete и сохраните.</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Body" xml:space="preserve">
+    <value>У вас есть несохраненные изменения. Хотите сохранить их перед закрытием？</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Header" xml:space="preserve">
+    <value>Несохраненные изменения</value>
+  </data>
+  <data name="Smo_No_Unbinding" xml:space="preserve">
+    <value>Ошибка при отвязке</value>
+  </data>
+  <data name="Grid_Insert_Tag" xml:space="preserve">
+    <value>Выражение/тег вставлен - {0}</value>
+  </data>
+  <data name="Button_Test" xml:space="preserve">
+    <value>Тест</value>
+  </data>
+  <data name="Label_Sql_Shortcut" xml:space="preserve">
+    <value>SQL-сокращение:</value>
+  </data>
+  <data name="Label_Sql_Statement" xml:space="preserve">
+    <value>SQL-запрос:</value>
+  </data>
+  <data name="Button_Insert_Table_Tag" xml:space="preserve">
+    <value>Вставить тег &lt;Таблица&gt;</value>
+  </data>
+  <data name="Button_Save" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="Form_Sql_Expression_Editor" xml:space="preserve">
+    <value>Редактор SQL-выражений</value>
+  </data>
+  <data name="Banner_Maxlength_10" xml:space="preserve">
+    <value>Максимальная длина 10 символов</value>
+  </data>
+  <data name="Grid_Header_Sql_Expression" xml:space="preserve">
+    <value>SQL-выражение</value>
+  </data>
+  <data name="Grid_Header_Delete" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="Grid_Header_Edit" xml:space="preserve">
+    <value>Редактировать</value>
+  </data>
+  <data name="Button_Add_New_Shortcut" xml:space="preserve">
+    <value>Добавить новое сокращение</value>
+  </data>
+  <data name="Button_Export_Shortcuts" xml:space="preserve">
+    <value>Экспорт сокращений (pdf)</value>
+  </data>
+  <data name="Form_Sql_Expression_Shortcuts" xml:space="preserve">
+    <value>Сокращения SQL-выражений</value>
+  </data>
+  <data name="Status_Auto_Save_Enabled" xml:space="preserve">
+    <value>Автосохранение включено (не нужно сохранять ваши действия, изменения будут автоматически сохранены в файл)</value>
+  </data>
+  <data name="Grid_Shortcuts_Exported_To" xml:space="preserve">
+    <value>Сокращения экспортированы в: {0}</value>
+  </data>
+  <data name="Button_Insert_Date_Expression" xml:space="preserve">
+    <value>Вставить выражение даты</value>
+  </data>
+  <data name="Grid_Header_Shortcut" xml:space="preserve">
+    <value>Сокращение</value>
+  </data>
+  <data name="Grid_Header_Eval_Exp" xml:space="preserve">
+    <value>Оц. Выраж.</value>
+  </data>
+  <data name="Button_Test_Sql" xml:space="preserve">
+    <value>Тест SQL</value>
+  </data>
+</root>

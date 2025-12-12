@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error_Disdplay" xml:space="preserve">
+    <value>错误：</value>
+  </data>
+  <data name="Ext_Loaded_Successfully" xml:space="preserve">
+    <value>VSIX SQL Autocomplete 扩展已成功加载</value>
+  </data>
+  <data name="Grid_Cell_Button" xml:space="preserve">
+    <value>测试</value>
+  </data>
+  <data name="Grid_Eval_Header" xml:space="preserve">
+    <value>表达式求值</value>
+  </data>
+  <data name="Grid_Loading" xml:space="preserve">
+    <value>正在启动 frmShortcuts 表单</value>
+  </data>
+  <data name="Grid_Toast_Contents" xml:space="preserve">
+    <value>SQL 快捷键已保存到文件：</value>
+  </data>
+  <data name="Grid_Toast_Header" xml:space="preserve">
+    <value>VSIX SQL 快捷键</value>
+  </data>
+  <data name="Logger_Error" xml:space="preserve">
+    <value>错误：{0}</value>
+  </data>
+  <data name="Package_Initializing" xml:space="preserve">
+    <value>VSIX 包正在初始化</value>
+  </data>
+  <data name="Smo_No_Obj_Explorer" xml:space="preserve">
+    <value>对象资源管理器服务不可用</value>
+  </data>
+  <data name="Smo_No_Container" xml:space="preserve">
+    <value>无法访问对象资源管理器容器</value>
+  </data>
+  <data name="Smo_No_Components" xml:space="preserve">
+    <value>无法访问对象资源管理器组件</value>
+  </data>
+  <data name="Smo_No_ContextService" xml:space="preserve">
+    <value>在对象资源管理器中未找到上下文服务</value>
+  </data>
+  <data name="Smo_No_Access_ObjectExplorerContext" xml:space="preserve">
+    <value>无法访问对象资源管理器上下文</value>
+  </data>
+  <data name="Smo_No_ContextChanged" xml:space="preserve">
+    <value>未找到 CurrentContextChanged 事件</value>
+  </data>
+  <data name="Smo_No_Method" xml:space="preserve">
+    <value>在目标实例中未找到方法 '{0}'</value>
+  </data>
+  <data name="SMO_No_Property" xml:space="preserve">
+    <value>访问属性 '{0}' 时出错：{1}</value>
+  </data>
+  <data name="StatusBar_Clear" xml:space="preserve">
+    <value>状态栏服务：清除状态栏时出错：</value>
+  </data>
+  <data name="StatusBar_Error" xml:space="preserve">
+    <value>状态栏服务尚未初始化</value>
+  </data>
+  <data name="StatusBar_Error_Body" xml:space="preserve">
+    <value>状态栏服务错误：</value>
+  </data>
+  <data name="StatusBar_Error_Update" xml:space="preserve">
+    <value>更新状态栏时出错：</value>
+  </data>
+  <data name="StatusBar_Status" xml:space="preserve">
+    <value>状态栏已更新：{0}</value>
+  </data>
+  <data name="Grid_Add_New_Row" xml:space="preserve">
+    <value>添加新的 SQL 快捷键（按 Tab 键在网格中提交）</value>
+  </data>
+  <data name="Grid_Edit_Row" xml:space="preserve">
+    <value>编辑 SQL 快捷键</value>
+  </data>
+  <data name="Grid_Demo_Limit" xml:space="preserve">
+    <value>演示版本：SQL 语句限制为 100 个字符。</value>
+  </data>
+  <data name="Grid_Shortcut_Exists" xml:space="preserve">
+    <value>快捷键 '{0}' 已被使用。</value>
+  </data>
+  <data name="Grid_Error_Title" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="Grid_Hooking_Error" xml:space="preserve">
+    <value>挂钩错误</value>
+  </data>
+  <data name="Grid_Loading_Form" xml:space="preserve">
+    <value>正在加载快捷键表单</value>
+  </data>
+  <data name="Grid_Loaded_Shortcuts" xml:space="preserve">
+    <value>已加载 {0} 个 SQL 快捷键</value>
+  </data>
+  <data name="Grid_Saved_Shortcuts" xml:space="preserve">
+    <value>已保存 {0} 个快捷键</value>
+  </data>
+  <data name="Grid_Updated_Shortcut" xml:space="preserve">
+    <value>SQL 快捷键已更新 - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Shortcut" xml:space="preserve">
+    <value>SQL 快捷键已删除 - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Success" xml:space="preserve">
+    <value>{0} 已成功删除</value>
+  </data>
+  <data name="Grid_Added_Shortcut" xml:space="preserve">
+    <value>已添加 SQL 快捷键 {0}</value>
+  </data>
+  <data name="Smo_Selected_Node" xml:space="preserve">
+    <value>已选择：{0} - {1} - {2} - {3}</value>
+  </data>
+  <data name="Smo_Available_Properties" xml:space="preserve">
+    <value>{0} 的可用属性：</value>
+  </data>
+  <data name="Smo_Property_Value" xml:space="preserve">
+    <value>  {0}：{1}</value>
+  </data>
+  <data name="Smo_Property_Error" xml:space="preserve">
+    <value>  {0}：错误：{1}</value>
+  </data>
+  <data name="Button_Test_Sql" xml:space="preserve">
+    <value>测试 SQL</value>
+  </data>
+  <data name="Label_Sql_Shortcut" xml:space="preserve">
+    <value>SQL 快捷方式：</value>
+  </data>
+  <data name="Label_Sql_Statement" xml:space="preserve">
+    <value>SQL 语句：</value>
+  </data>
+  <data name="Button_Insert_Table_Tag" xml:space="preserve">
+    <value>插入 &lt;表&gt; 标签</value>
+  </data>
+  <data name="Button_Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Form_Sql_Expression_Editor" xml:space="preserve">
+    <value>SQL 表达式编辑器</value>
+  </data>
+  <data name="Banner_Maxlength_10" xml:space="preserve">
+    <value>最大长度 10 个字符</value>
+  </data>
+  <data name="Grid_Header_Sql_Expression" xml:space="preserve">
+    <value>SQL 表达式</value>
+  </data>
+  <data name="Grid_Header_Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="Grid_Header_Edit" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="Button_Add_New_Shortcut" xml:space="preserve">
+    <value>添加新快捷方式</value>
+  </data>
+  <data name="Button_Export_Shortcuts" xml:space="preserve">
+    <value>导出快捷方式 (pdf)</value>
+  </data>
+  <data name="Form_Sql_Expression_Shortcuts" xml:space="preserve">
+    <value>SQL 表达式快捷方式</value>
+  </data>
+  <data name="Status_Auto_Save_Enabled" xml:space="preserve">
+    <value>已启用自动保存（无需保存您的操作，更改将自动保存到文件中）</value>
+  </data>
+  <data name="Grid_Shortcuts_Exported_To" xml:space="preserve">
+    <value>快捷方式已导出至：{0}</value>
+  </data>
+  <data name="Button_Insert_Date_Expression" xml:space="preserve">
+    <value>插入日期表达式</value>
+  </data>
+  <data name="Button_Test" xml:space="preserve">
+    <value>测试</value>
+  </data>
+  <data name="Grid_Header_Shortcut" xml:space="preserve">
+    <value>快捷方式</value>
+  </data>
+  <data name="Grid_Header_Eval_Exp" xml:space="preserve">
+    <value>表达式求值</value>
+  </data>
+</root>

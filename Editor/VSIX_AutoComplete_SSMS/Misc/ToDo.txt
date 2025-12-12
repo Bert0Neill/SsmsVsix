@@ -1,0 +1,73 @@
+﻿User Guide (open MD in browser) | Installer Guide\instructions
+
+Demo version
+Seperate out SSMS versions to purchase
+Release notes
+
+
+
+
+| Language        | Culture Code | Example File Name       |
+|----------------|--------------|--------------------------|
+| English         | `en`         | `Resource.en.resx`       |
+| German          | `de`         | `Resource.de.resx`       |
+| French          | `fr`         | `Resource.fr.resx`       |
+| Spanish         | `es`         | `Resource.es.resx`       |
+| Portuguese      | `pt`         | `Resource.pt.resx`       |
+| Russian         | `ru`         | `Resource.ru.resx`       |
+| Hindi           | `hi`         | `Resource.hi.resx`       |
+| Chinese         | `zh`         | `Resource.zh.resx`       |
+| Japanese        | `ja`         | `Resource.ja.resx`       |
+| Korean          | `ko`         | `Resource.ko.resx`       |
+| Arabic          | `ar`         | `Resource.ar.resx`       |
+| Turkish         | `tr`         | `Resource.tr.resx`       |
+
+
+SSMS 19
+--------------
+Core SSMS 19 References
+
+Microsoft.SqlServer.Management.SDK.Sfc - Version 16.0.0.0
+Microsoft.SqlServer.ConnectionInfo - Version 16.0.0.0
+Microsoft.SqlServer.SqlEnum - Version 16.0.0.0
+Microsoft.SqlServer.Smo - Version 16.0.0.0
+
+Object Explorer Tree Node Integration
+
+Microsoft.SqlServer.Management.UI.VSIntegration - Version 16.0.0.0
+Microsoft.SqlServer.Management.SqlStudio.Explorer - Version 16.0.0.0
+Microsoft.SqlServer.Management.Controls - Version 16.0.0.0
+
+Visual Studio Shell Integration
+
+Microsoft.VisualStudio.Shell.15.0 - Version 16.0.0.0
+Microsoft.VisualStudio.Shell.Framework - Version 16.0.0.0
+Microsoft.VisualStudio.Shell.Interop - Version 7.1.40304.0
+Microsoft.VisualStudio.Shell.Interop.8.0 - Version 8.0.0.0
+Microsoft.VisualStudio.Threading - Version 16.0.0.0
+Microsoft.VisualStudio.ComponentModelHost - Version 16.0.0.0
+
+SSMS 18
+--------------
+
+Core SSMS 18 References
+
+Microsoft.SqlServer.Management.SDK.Sfc - Version 15.0.0.0
+Microsoft.SqlServer.ConnectionInfo - Version 15.0.0.0
+Microsoft.SqlServer.SqlEnum - Version 15.0.0.0
+Microsoft.SqlServer.Smo - Version 15.0.0.0
+
+Object Explorer Tree Node References
+
+Microsoft.SqlServer.Management.UI.VSIntegration - Version 15.0.0.0
+Microsoft.SqlServer.Management.SqlStudio.Explorer - Version 15.0.0.0
+Microsoft.SqlServer.Management.Controls - Version 15.0.0.0
+
+Visual Studio Shell Integration
+
+Microsoft.VisualStudio.Shell.15.0 - Version 15.0.0.0
+Microsoft.VisualStudio.Shell.Framework - Version 15.0.0.0
+Microsoft.VisualStudio.Shell.Interop - Version 7.1.40304.0
+Microsoft.VisualStudio.Shell.Interop.8.0 - Version 8.0.0.0
+Microsoft.VisualStudio.Threading - Version 15.8.0.0
+Microsoft.VisualStudio.ComponentModelHost - Version 15.0.0.0

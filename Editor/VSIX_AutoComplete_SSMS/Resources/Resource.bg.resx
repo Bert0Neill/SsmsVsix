@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error_Disdplay" xml:space="preserve">
+    <value>Грешка：</value>
+  </data>
+  <data name="Ext_Loaded_Successfully" xml:space="preserve">
+    <value>Разширението VSIX SQL Autocomplete е заредено успешно</value>
+  </data>
+  <data name="Grid_Cell_Button" xml:space="preserve">
+    <value>Тест</value>
+  </data>
+  <data name="Grid_Eval_Header" xml:space="preserve">
+    <value>Изчисляване на израз</value>
+  </data>
+  <data name="Grid_Key_Exists" xml:space="preserve">
+    <value>Клавишната комбинация вече съществува. Натиснете Esc за отказ или актуализирайте до уникален клавиш и запазете.</value>
+  </data>
+  <data name="Grid_Loading" xml:space="preserve">
+    <value>Стартиране на формуляр frmShortcuts</value>
+  </data>
+  <data name="Grid_Load_Error" xml:space="preserve">
+    <value>Грешка при зареждане на формуляра</value>
+  </data>
+  <data name="Grid_Msg_Evaluating_Expression" xml:space="preserve">
+    <value>Изчисляване на израз</value>
+  </data>
+  <data name="Grid_SqlComplete_Empty" xml:space="preserve">
+    <value>SQL Complete не може да бъде празен. Натиснете Esc за отказ или актуализирайте до уникален SQL Complete и запазете.</value>
+  </data>
+  <data name="Grid_Toast_Contents" xml:space="preserve">
+    <value>SQL клавишни комбинации запазени във файл：</value>
+  </data>
+  <data name="Grid_Toast_Header" xml:space="preserve">
+    <value>SQL VSIX клавишни комбинации</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Body" xml:space="preserve">
+    <value>Имате незапазени промени. Искате ли да ги запазите преди да затворите？</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Header" xml:space="preserve">
+    <value>Незапазени промени</value>
+  </data>
+  <data name="Logger_Error" xml:space="preserve">
+    <value>Грешка：{0}</value>
+  </data>
+  <data name="Package_Initializing" xml:space="preserve">
+    <value>Инициализиране на VSIX пакет</value>
+  </data>
+  <data name="Smo_No_Obj_Explorer" xml:space="preserve">
+    <value>Услугата Обозревател на обекти не е налична</value>
+  </data>
+  <data name="Smo_No_Container" xml:space="preserve">
+    <value>Не може да се получи достъп до контейнера на Обозревателя на обекти</value>
+  </data>
+  <data name="Smo_No_Components" xml:space="preserve">
+    <value>Не може да се получат достъп до компонентите на Обозревателя на обекти</value>
+  </data>
+  <data name="Smo_No_ContextService" xml:space="preserve">
+    <value>Услугата за контекст не е намерена в Обозревателя на обекти</value>
+  </data>
+  <data name="Smo_No_Access_ObjectExplorerContext" xml:space="preserve">
+    <value>Не може да се получи достъп до контекста на Обозревателя на обекти</value>
+  </data>
+  <data name="Smo_No_ContextChanged" xml:space="preserve">
+    <value>Събитието CurrentContextChanged не е намерено</value>
+  </data>
+  <data name="Smo_No_Method" xml:space="preserve">
+    <value>Методът'{0}' не е намерен в целевата инстанция</value>
+  </data>
+  <data name="Smo_No_Unbinding" xml:space="preserve">
+    <value>Грешка при отвързване</value>
+  </data>
+  <data name="SMO_No_Property" xml:space="preserve">
+    <value>Грешка при достъп до свойството'{0}'：{1}</value>
+  </data>
+  <data name="StatusBar_Clear" xml:space="preserve">
+    <value>Услуга лента на състоянието：Грешка при изчистване на лентата на състоянието：</value>
+  </data>
+  <data name="StatusBar_Error" xml:space="preserve">
+    <value>Услугата лента на състоянието не е инициализирана</value>
+  </data>
+  <data name="StatusBar_Error_Body" xml:space="preserve">
+    <value>Грешка в услугата лента на състоянието：</value>
+  </data>
+  <data name="StatusBar_Error_Update" xml:space="preserve">
+    <value>Грешка при актуализиране на лентата на състоянието：</value>
+  </data>
+  <data name="StatusBar_Status" xml:space="preserve">
+    <value>Лента на състоянието актуализирана：{0}</value>
+  </data>
+  <data name="Grid_Add_New_Row" xml:space="preserve">
+    <value>Добавяне на нова SQL клавишна комбинация（натиснете Tab за потвърждение в мрежата）</value>
+  </data>
+  <data name="Grid_Edit_Row" xml:space="preserve">
+    <value>Редактиране на SQL клавишна комбинация</value>
+  </data>
+  <data name="Grid_Demo_Limit" xml:space="preserve">
+    <value>Демо версия：SQL изразът е ограничен до 100 знака.</value>
+  </data>
+  <data name="Grid_Insert_Tag" xml:space="preserve">
+    <value>Израз/етикет вмъкнат - {0}</value>
+  </data>
+  <data name="Grid_Shortcut_Exists" xml:space="preserve">
+    <value>Клавишната комбинация'{0}' вече се използва.</value>
+  </data>
+  <data name="Grid_Error_Title" xml:space="preserve">
+    <value>Грешка</value>
+  </data>
+  <data name="Grid_Hooking_Error" xml:space="preserve">
+    <value>Грешка при свързване</value>
+  </data>
+  <data name="Grid_Loading_Form" xml:space="preserve">
+    <value>Зареждане на формуляр за клавишни комбинации</value>
+  </data>
+  <data name="Grid_Loaded_Shortcuts" xml:space="preserve">
+    <value>{0} SQL клавишни комбинации заредени</value>
+  </data>
+  <data name="Grid_Saved_Shortcuts" xml:space="preserve">
+    <value>{0} клавишни комбинации запазени</value>
+  </data>
+  <data name="Grid_Updated_Shortcut" xml:space="preserve">
+    <value>SQL клавишна комбинация актуализирана - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Shortcut" xml:space="preserve">
+    <value>SQL клавишна комбинация изтрита - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Success" xml:space="preserve">
+    <value>{0} успешно изтрит</value>
+  </data>
+  <data name="Grid_Added_Shortcut" xml:space="preserve">
+    <value>SQL клавишна комбинация {0} добавена</value>
+  </data>
+  <data name="Smo_Selected_Node" xml:space="preserve">
+    <value>Избрано：{0} - {1} - {2} - {3}</value>
+  </data>
+  <data name="Smo_Available_Properties" xml:space="preserve">
+    <value>Налични свойства за {0}：</value>
+  </data>
+  <data name="Smo_Property_Value" xml:space="preserve">
+    <value>  {0}：{1}</value>
+  </data>
+  <data name="Smo_Property_Error" xml:space="preserve">
+    <value>  {0}：Грешка：{1}</value>
+  </data>
+</root> 

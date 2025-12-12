@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error_Disdplay" xml:space="preserve">
+    <value>Hiba：</value>
+  </data>
+  <data name="Ext_Loaded_Successfully" xml:space="preserve">
+    <value>A VSIX SQL Autocomplete bővítmény sikeresen betöltve</value>
+  </data>
+  <data name="Grid_Cell_Button" xml:space="preserve">
+    <value>Teszt</value>
+  </data>
+  <data name="Grid_Eval_Header" xml:space="preserve">
+    <value>Kifejezés kiértékelése</value>
+  </data>
+  <data name="Grid_Key_Exists" xml:space="preserve">
+    <value>A billentyűparancs már létezik. Nyomja meg az Esc gombot a megszakításhoz, vagy frissítsen egyedi billentyűre és mentsen.</value>
+  </data>
+  <data name="Grid_Loading" xml:space="preserve">
+    <value>frmShortcuts űrlap indítása</value>
+  </data>
+  <data name="Grid_Load_Error" xml:space="preserve">
+    <value>Hiba az űrlap betöltésekor</value>
+  </data>
+  <data name="Grid_Msg_Evaluating_Expression" xml:space="preserve">
+    <value>Kifejezés kiértékelése</value>
+  </data>
+  <data name="Grid_SqlComplete_Empty" xml:space="preserve">
+    <value>Az SQL Complete nem lehet üres. Nyomja meg az Esc gombot a megszakításhoz, vagy frissítsen egyedi SQL Complete-ra és mentsen.</value>
+  </data>
+  <data name="Grid_Toast_Contents" xml:space="preserve">
+    <value>SQL billentyűparancsok mentve fájlba：</value>
+  </data>
+  <data name="Grid_Toast_Header" xml:space="preserve">
+    <value>SQL VSIX billentyűparancsok</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Body" xml:space="preserve">
+    <value>Mentettlen módosítások vannak. Szeretné menteni őket bezárás előtt？</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Header" xml:space="preserve">
+    <value>Mentettlen módosítások</value>
+  </data>
+  <data name="Logger_Error" xml:space="preserve">
+    <value>Hiba：{0}</value>
+  </data>
+  <data name="Package_Initializing" xml:space="preserve">
+    <value>VSIX csomag inicializálása</value>
+  </data>
+  <data name="Smo_No_Obj_Explorer" xml:space="preserve">
+    <value>Az Objektumkezelő szolgáltatás nem érhető el</value>
+  </data>
+  <data name="Smo_No_Container" xml:space="preserve">
+    <value>Nem sikerült hozzáférni az Objektumkezelő konténerhez</value>
+  </data>
+  <data name="Smo_No_Components" xml:space="preserve">
+    <value>Nem sikerült hozzáférni az Objektumkezelő komponenseihez</value>
+  </data>
+  <data name="Smo_No_ContextService" xml:space="preserve">
+    <value>A kontextusszolgáltatás nem található az Objektumkezelőben</value>
+  </data>
+  <data name="Smo_No_Access_ObjectExplorerContext" xml:space="preserve">
+    <value>Nem sikerült hozzáférni az Objektumkezelő kontextusához</value>
+  </data>
+  <data name="Smo_No_ContextChanged" xml:space="preserve">
+    <value>A CurrentContextChanged esemény nem található</value>
+  </data>
+  <data name="Smo_No_Method" xml:space="preserve">
+    <value>A'{0}' metódus nem található a célpéldányban</value>
+  </data>
+  <data name="Smo_No_Unbinding" xml:space="preserve">
+    <value>Hiba a leválasztás során</value>
+  </data>
+  <data name="SMO_No_Property" xml:space="preserve">
+    <value>Hiba a'{0}' tulajdonság elérésénél：{1}</value>
+  </data>
+  <data name="StatusBar_Clear" xml:space="preserve">
+    <value>Állapotsor szolgáltatás：Hiba az állapotsor törlésekor：</value>
+  </data>
+  <data name="StatusBar_Error" xml:space="preserve">
+    <value>Az állapotsor szolgáltatás nincs inicializálva</value>
+  </data>
+  <data name="StatusBar_Error_Body" xml:space="preserve">
+    <value>Állapotsor szolgáltatás hiba：</value>
+  </data>
+  <data name="StatusBar_Error_Update" xml:space="preserve">
+    <value>Hiba az állapotsor frissítésekor：</value>
+  </data>
+  <data name="StatusBar_Status" xml:space="preserve">
+    <value>Állapotsor frissítve：{0}</value>
+  </data>
+  <data name="Grid_Add_New_Row" xml:space="preserve">
+    <value>Új SQL billentyűparancs hozzáadása（nyomja meg a Tab gombot a rácson belüli megerősítéshez）</value>
+  </data>
+  <data name="Grid_Edit_Row" xml:space="preserve">
+    <value>SQL billentyűparancs szerkesztése</value>
+  </data>
+  <data name="Grid_Demo_Limit" xml:space="preserve">
+    <value>Demó verzió：SQL kifejezés 100 karakterre korlátozva.</value>
+  </data>
+  <data name="Grid_Insert_Tag" xml:space="preserve">
+    <value>Kifejezés/címke beszúrva - {0}</value>
+  </data>
+  <data name="Grid_Shortcut_Exists" xml:space="preserve">
+    <value>A'{0}' billentyűparancs már használatban van.</value>
+  </data>
+  <data name="Grid_Error_Title" xml:space="preserve">
+    <value>Hiba</value>
+  </data>
+  <data name="Grid_Hooking_Error" xml:space="preserve">
+    <value>Hiba a csatlakozás során</value>
+  </data>
+  <data name="Grid_Loading_Form" xml:space="preserve">
+    <value>Billentyűparancs űrlap betöltése</value>
+  </data>
+  <data name="Grid_Loaded_Shortcuts" xml:space="preserve">
+    <value>{0} SQL billentyűparancs betöltve</value>
+  </data>
+  <data name="Grid_Saved_Shortcuts" xml:space="preserve">
+    <value>{0} billentyűparancs mentve</value>
+  </data>
+  <data name="Grid_Updated_Shortcut" xml:space="preserve">
+    <value>SQL billentyűparancs frissítve - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Shortcut" xml:space="preserve">
+    <value>SQL billentyűparancs törölve - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Success" xml:space="preserve">
+    <value>{0} sikeresen törölve</value>
+  </data>
+  <data name="Grid_Added_Shortcut" xml:space="preserve">
+    <value>SQL billentyűparancs {0} hozzáadva</value>
+  </data>
+  <data name="Smo_Selected_Node" xml:space="preserve">
+    <value>Kiválasztva：{0} - {1} - {2} - {3}</value>
+  </data>
+  <data name="Smo_Available_Properties" xml:space="preserve">
+    <value>Elérhető tulajdonságok {0} számára：</value>
+  </data>
+  <data name="Smo_Property_Value" xml:space="preserve">
+    <value>  {0}：{1}</value>
+  </data>
+  <data name="Smo_Property_Error" xml:space="preserve">
+    <value>  {0}：Hiba：{1}</value>
+  </data>
+</root> 

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error_Disdplay" xml:space="preserve">
+    <value>Eroare：</value>
+  </data>
+  <data name="Ext_Loaded_Successfully" xml:space="preserve">
+    <value>Extensia VSIX SQL Autocomplete a fost încărcată cu succes</value>
+  </data>
+  <data name="Grid_Cell_Button" xml:space="preserve">
+    <value>Testare</value>
+  </data>
+  <data name="Grid_Eval_Header" xml:space="preserve">
+    <value>Evaluare expresie</value>
+  </data>
+  <data name="Grid_Key_Exists" xml:space="preserve">
+    <value>Scurtătura există deja. Apăsați Esc pentru a anula sau actualizați la o tastă unică și salvați.</value>
+  </data>
+  <data name="Grid_Loading" xml:space="preserve">
+    <value>Pornire formular frmShortcuts</value>
+  </data>
+  <data name="Grid_Load_Error" xml:space="preserve">
+    <value>Eroare la încărcarea formularului</value>
+  </data>
+  <data name="Grid_Msg_Evaluating_Expression" xml:space="preserve">
+    <value>Evaluare expresie</value>
+  </data>
+  <data name="Grid_SqlComplete_Empty" xml:space="preserve">
+    <value>SQL Complete nu poate fi gol. Apăsați Esc pentru a anula sau actualizați la un SQL Complete unic și salvați.</value>
+  </data>
+  <data name="Grid_Toast_Contents" xml:space="preserve">
+    <value>Scurtături SQL salvate în fișier：</value>
+  </data>
+  <data name="Grid_Toast_Header" xml:space="preserve">
+    <value>Scurtături SQL VSIX</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Body" xml:space="preserve">
+    <value>Aveți modificări nesalvate. Doriți să le salvați înainte de închidere？</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Header" xml:space="preserve">
+    <value>Modificări nesalvate</value>
+  </data>
+  <data name="Logger_Error" xml:space="preserve">
+    <value>Eroare：{0}</value>
+  </data>
+  <data name="Package_Initializing" xml:space="preserve">
+    <value>Inițializare pachet VSIX</value>
+  </data>
+  <data name="Smo_No_Obj_Explorer" xml:space="preserve">
+    <value>Serviciul Explorator de obiecte nu este disponibil</value>
+  </data>
+  <data name="Smo_No_Container" xml:space="preserve">
+    <value>Nu se poate accesa containerul Explorator de obiecte</value>
+  </data>
+  <data name="Smo_No_Components" xml:space="preserve">
+    <value>Nu se pot accesa componentele Explorator de obiecte</value>
+  </data>
+  <data name="Smo_No_ContextService" xml:space="preserve">
+    <value>Serviciul de context nu a fost găsit în Explorator de obiecte</value>
+  </data>
+  <data name="Smo_No_Access_ObjectExplorerContext" xml:space="preserve">
+    <value>Nu se poate accesa contextul Explorator de obiecte</value>
+  </data>
+  <data name="Smo_No_ContextChanged" xml:space="preserve">
+    <value>Evenimentul CurrentContextChanged nu a fost găsit</value>
+  </data>
+  <data name="Smo_No_Method" xml:space="preserve">
+    <value>Metoda'{0}' nu a fost găsită în instanța țintă</value>
+  </data>
+  <data name="Smo_No_Unbinding" xml:space="preserve">
+    <value>Eroare la deconectare</value>
+  </data>
+  <data name="SMO_No_Property" xml:space="preserve">
+    <value>Eroare la accesarea proprietății'{0}'：{1}</value>
+  </data>
+  <data name="StatusBar_Clear" xml:space="preserve">
+    <value>Serviciu bară de stare：Eroare la ștergerea barei de stare：</value>
+  </data>
+  <data name="StatusBar_Error" xml:space="preserve">
+    <value>Serviciul barei de stare nu este inițializat</value>
+  </data>
+  <data name="StatusBar_Error_Body" xml:space="preserve">
+    <value>Eroare serviciu bară de stare：</value>
+  </data>
+  <data name="StatusBar_Error_Update" xml:space="preserve">
+    <value>Eroare la actualizarea barei de stare：</value>
+  </data>
+  <data name="StatusBar_Status" xml:space="preserve">
+    <value>Bară de stare actualizată：{0}</value>
+  </data>
+  <data name="Grid_Add_New_Row" xml:space="preserve">
+    <value>Adăugare scurtătură SQL nouă（apăsați Tab pentru a confirma în grilă）</value>
+  </data>
+  <data name="Grid_Edit_Row" xml:space="preserve">
+    <value>Editare scurtătură SQL</value>
+  </data>
+  <data name="Grid_Demo_Limit" xml:space="preserve">
+    <value>Versiune demo：Expresia SQL limitată la 100 de caractere.</value>
+  </data>
+  <data name="Grid_Insert_Tag" xml:space="preserve">
+    <value>Expresie/etichetă inserată - {0}</value>
+  </data>
+  <data name="Grid_Shortcut_Exists" xml:space="preserve">
+    <value>Scurtătura'{0}' este deja în uz.</value>
+  </data>
+  <data name="Grid_Error_Title" xml:space="preserve">
+    <value>Eroare</value>
+  </data>
+  <data name="Grid_Hooking_Error" xml:space="preserve">
+    <value>Eroare la conectare</value>
+  </data>
+  <data name="Grid_Loading_Form" xml:space="preserve">
+    <value>Încărcare formular scurtături</value>
+  </data>
+  <data name="Grid_Loaded_Shortcuts" xml:space="preserve">
+    <value>{0} scurtături SQL încărcate</value>
+  </data>
+  <data name="Grid_Saved_Shortcuts" xml:space="preserve">
+    <value>{0} scurtături salvate</value>
+  </data>
+  <data name="Grid_Updated_Shortcut" xml:space="preserve">
+    <value>Scurtătură SQL actualizată - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Shortcut" xml:space="preserve">
+    <value>Scurtătură SQL ștearsă - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Success" xml:space="preserve">
+    <value>{0} șters cu succes</value>
+  </data>
+  <data name="Grid_Added_Shortcut" xml:space="preserve">
+    <value>Scurtătură SQL {0} adăugată</value>
+  </data>
+  <data name="Smo_Selected_Node" xml:space="preserve">
+    <value>Selectat：{0} - {1} - {2} - {3}</value>
+  </data>
+  <data name="Smo_Available_Properties" xml:space="preserve">
+    <value>Proprietăți disponibile pentru {0}：</value>
+  </data>
+  <data name="Smo_Property_Value" xml:space="preserve">
+    <value>  {0}：{1}</value>
+  </data>
+  <data name="Smo_Property_Error" xml:space="preserve">
+    <value>  {0}：Eroare：{1}</value>
+  </data>
+</root> 

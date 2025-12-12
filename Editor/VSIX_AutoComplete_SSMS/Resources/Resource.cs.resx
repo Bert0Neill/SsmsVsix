@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error_Disdplay" xml:space="preserve">
+    <value>Chyba：</value>
+  </data>
+  <data name="Ext_Loaded_Successfully" xml:space="preserve">
+    <value>Rozšíření VSIX SQL Autocomplete bylo úspěšně načteno</value>
+  </data>
+  <data name="Grid_Cell_Button" xml:space="preserve">
+    <value>Testovat</value>
+  </data>
+  <data name="Grid_Eval_Header" xml:space="preserve">
+    <value>Vyhodnocení výrazu</value>
+  </data>
+  <data name="Grid_Key_Exists" xml:space="preserve">
+    <value>Zkratka již existuje. Stiskněte Esc pro zrušení nebo aktualizujte na jedinečnou klávesu a uložte.</value>
+  </data>
+  <data name="Grid_Loading" xml:space="preserve">
+    <value>Spouštění formuláře frmShortcuts</value>
+  </data>
+  <data name="Grid_Load_Error" xml:space="preserve">
+    <value>Chyba při načítání formuláře</value>
+  </data>
+  <data name="Grid_Msg_Evaluating_Expression" xml:space="preserve">
+    <value>Vyhodnocování výrazu</value>
+  </data>
+  <data name="Grid_SqlComplete_Empty" xml:space="preserve">
+    <value>SQL Complete nemůže být prázdné. Stiskněte Esc pro zrušení nebo aktualizujte na jedinečné SQL Complete a uložte.</value>
+  </data>
+  <data name="Grid_Toast_Contents" xml:space="preserve">
+    <value>SQL zkratky uloženy do souboru：</value>
+  </data>
+  <data name="Grid_Toast_Header" xml:space="preserve">
+    <value>SQL VSIX zkratky</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Body" xml:space="preserve">
+    <value>Máte neuložené změny. Chcete je uložit před zavřením？</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Header" xml:space="preserve">
+    <value>Neuložené změny</value>
+  </data>
+  <data name="Logger_Error" xml:space="preserve">
+    <value>Chyba：{0}</value>
+  </data>
+  <data name="Package_Initializing" xml:space="preserve">
+    <value>Inicializace balíčku VSIX</value>
+  </data>
+  <data name="Smo_No_Obj_Explorer" xml:space="preserve">
+    <value>Služba Průzkumníka objektů není k dispozici</value>
+  </data>
+  <data name="Smo_No_Container" xml:space="preserve">
+    <value>Nelze získat přístup ke kontejneru Průzkumníka objektů</value>
+  </data>
+  <data name="Smo_No_Components" xml:space="preserve">
+    <value>Nelze získat přístup ke komponentám Průzkumníka objektů</value>
+  </data>
+  <data name="Smo_No_ContextService" xml:space="preserve">
+    <value>Kontextová služba nebyla nalezena v Průzkumníku objektů</value>
+  </data>
+  <data name="Smo_No_Access_ObjectExplorerContext" xml:space="preserve">
+    <value>Nelze získat přístup ke kontextu Průzkumníka objektů</value>
+  </data>
+  <data name="Smo_No_ContextChanged" xml:space="preserve">
+    <value>Událost CurrentContextChanged nebyla nalezena</value>
+  </data>
+  <data name="Smo_No_Method" xml:space="preserve">
+    <value>Metoda'{0}' nebyla nalezena v cílové instanci</value>
+  </data>
+  <data name="Smo_No_Unbinding" xml:space="preserve">
+    <value>Chyba při odpojování</value>
+  </data>
+  <data name="SMO_No_Property" xml:space="preserve">
+    <value>Chyba při přístupu k vlastnosti'{0}'：{1}</value>
+  </data>
+  <data name="StatusBar_Clear" xml:space="preserve">
+    <value>Služba stavového řádku：Chyba při čištění stavového řádku：</value>
+  </data>
+  <data name="StatusBar_Error" xml:space="preserve">
+    <value>Služba stavového řádku není inicializována</value>
+  </data>
+  <data name="StatusBar_Error_Body" xml:space="preserve">
+    <value>Chyba služby stavového řádku：</value>
+  </data>
+  <data name="StatusBar_Error_Update" xml:space="preserve">
+    <value>Chyba při aktualizaci stavového řádku：</value>
+  </data>
+  <data name="StatusBar_Status" xml:space="preserve">
+    <value>Stavový řádek aktualizován：{0}</value>
+  </data>
+  <data name="Grid_Add_New_Row" xml:space="preserve">
+    <value>Přidat novou SQL zkratku（stiskněte Tab pro potvrzení v mřížce）</value>
+  </data>
+  <data name="Grid_Edit_Row" xml:space="preserve">
+    <value>Upravit SQL zkratku</value>
+  </data>
+  <data name="Grid_Demo_Limit" xml:space="preserve">
+    <value>Demoverze：SQL výraz omezen na 100 znaků.</value>
+  </data>
+  <data name="Grid_Insert_Tag" xml:space="preserve">
+    <value>Výraz/štítek vložen - {0}</value>
+  </data>
+  <data name="Grid_Shortcut_Exists" xml:space="preserve">
+    <value>Zkratka'{0}' je již používána.</value>
+  </data>
+  <data name="Grid_Error_Title" xml:space="preserve">
+    <value>Chyba</value>
+  </data>
+  <data name="Grid_Hooking_Error" xml:space="preserve">
+    <value>Chyba při připojování</value>
+  </data>
+  <data name="Grid_Loading_Form" xml:space="preserve">
+    <value>Načítání formuláře zkratek</value>
+  </data>
+  <data name="Grid_Loaded_Shortcuts" xml:space="preserve">
+    <value>Načteno {0} SQL zkratek</value>
+  </data>
+  <data name="Grid_Saved_Shortcuts" xml:space="preserve">
+    <value>Uloženo {0} zkratek</value>
+  </data>
+  <data name="Grid_Updated_Shortcut" xml:space="preserve">
+    <value>SQL zkratka aktualizována - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Shortcut" xml:space="preserve">
+    <value>SQL zkratka smazána - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Success" xml:space="preserve">
+    <value>{0} úspěšně smazáno</value>
+  </data>
+  <data name="Grid_Added_Shortcut" xml:space="preserve">
+    <value>SQL zkratka {0} přidána</value>
+  </data>
+  <data name="Smo_Selected_Node" xml:space="preserve">
+    <value>Vybráno：{0} - {1} - {2} - {3}</value>
+  </data>
+  <data name="Smo_Available_Properties" xml:space="preserve">
+    <value>Dostupné vlastnosti pro {0}：</value>
+  </data>
+  <data name="Smo_Property_Value" xml:space="preserve">
+    <value>  {0}：{1}</value>
+  </data>
+  <data name="Smo_Property_Error" xml:space="preserve">
+    <value>  {0}：Chyba：{1}</value>
+  </data>
+</root> 

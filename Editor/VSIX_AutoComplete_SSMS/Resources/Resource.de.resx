@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error_Disdplay" xml:space="preserve">
+    <value>Fehler:</value>
+  </data>
+  <data name="Ext_Loaded_Successfully" xml:space="preserve">
+    <value>VSIX SQL Autocomplete-Erweiterung erfolgreich geladen</value>
+  </data>
+  <data name="Grid_Cell_Button" xml:space="preserve">
+    <value>Testen</value>
+  </data>
+  <data name="Grid_Eval_Header" xml:space="preserve">
+    <value>Ausdr. Ausw.</value>
+  </data>
+  <data name="Grid_Loading" xml:space="preserve">
+    <value>Starte frmShortcuts-Formular</value>
+  </data>
+  <data name="Grid_Toast_Contents" xml:space="preserve">
+    <value>SQL-Tastenkombinationen in Datei gespeichert:</value>
+  </data>
+  <data name="Grid_Toast_Header" xml:space="preserve">
+    <value>SQL VSIX-Tastenkombination</value>
+  </data>
+  <data name="Logger_Error" xml:space="preserve">
+    <value>Fehler: {0}</value>
+  </data>
+  <data name="Package_Initializing" xml:space="preserve">
+    <value>Initialisiere VSIX-Paket</value>
+  </data>
+  <data name="Smo_No_Obj_Explorer" xml:space="preserve">
+    <value>Objekt-Explorer-Dienst nicht verfügbar</value>
+  </data>
+  <data name="Smo_No_Container" xml:space="preserve">
+    <value>Kein Zugriff auf Objekt-Explorer-Container möglich</value>
+  </data>
+  <data name="Smo_No_Components" xml:space="preserve">
+    <value>Kein Zugriff auf Objekt-Explorer-Komponenten möglich</value>
+  </data>
+  <data name="Smo_No_ContextService" xml:space="preserve">
+    <value>Kontextdienst im Objekt-Explorer nicht gefunden</value>
+  </data>
+  <data name="Smo_No_Access_ObjectExplorerContext" xml:space="preserve">
+    <value>Kein Zugriff auf Objekt-Explorer-Kontext möglich</value>
+  </data>
+  <data name="Smo_No_ContextChanged" xml:space="preserve">
+    <value>CurrentContextChanged-Ereignis nicht gefunden</value>
+  </data>
+  <data name="Smo_No_Method" xml:space="preserve">
+    <value>Methode '{0}' in Zielinstanz nicht gefunden</value>
+  </data>
+  <data name="SMO_No_Property" xml:space="preserve">
+    <value>Fehler beim Zugriff auf Eigenschaft '{0}': {1}</value>
+  </data>
+  <data name="StatusBar_Clear" xml:space="preserve">
+    <value>Statusleisten-Dienst: Fehler beim Löschen der Statusleiste:</value>
+  </data>
+  <data name="StatusBar_Error" xml:space="preserve">
+    <value>Statusleisten-Dienst wurde nicht initialisiert</value>
+  </data>
+  <data name="StatusBar_Error_Body" xml:space="preserve">
+    <value>Statusleisten-Dienstfehler:</value>
+  </data>
+  <data name="StatusBar_Error_Update" xml:space="preserve">
+    <value>Fehler beim Aktualisieren der Statusleiste:</value>
+  </data>
+  <data name="StatusBar_Status" xml:space="preserve">
+    <value>Statusleiste aktualisiert: {0}</value>
+  </data>
+  <data name="Grid_Add_New_Row" xml:space="preserve">
+    <value>Neue SQL-Tastenkombination hinzufügen (Tab drücken, um in der Tabelle zu bestätigen)</value>
+  </data>
+  <data name="Grid_Edit_Row" xml:space="preserve">
+    <value>SQL-Tastenkombination bearbeiten</value>
+  </data>
+  <data name="Grid_Demo_Limit" xml:space="preserve">
+    <value>Demoversion: SQL-Anweisung auf 100 Zeichen begrenzt.</value>
+  </data>
+  <data name="Grid_Shortcut_Exists" xml:space="preserve">
+    <value>Die Tastenkombination '{0}' wird bereits verwendet.</value>
+  </data>
+  <data name="Grid_Error_Title" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="Grid_Hooking_Error" xml:space="preserve">
+    <value>Einbindungsfehler</value>
+  </data>
+  <data name="Grid_Loading_Form" xml:space="preserve">
+    <value>Lade Tastenkombinationsformular</value>
+  </data>
+  <data name="Grid_Loaded_Shortcuts" xml:space="preserve">
+    <value>{0} SQL-Tastenkombinationen geladen</value>
+  </data>
+  <data name="Grid_Saved_Shortcuts" xml:space="preserve">
+    <value>{0} Tastenkombinationen gespeichert</value>
+  </data>
+  <data name="Grid_Updated_Shortcut" xml:space="preserve">
+    <value>SQL-Tastenkombination aktualisiert - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Shortcut" xml:space="preserve">
+    <value>SQL-Tastenkombination gelöscht - {0}</value>
+  </data>
+  <data name="Grid_Deleted_Success" xml:space="preserve">
+    <value>{0} erfolgreich gelöscht</value>
+  </data>
+  <data name="Grid_Added_Shortcut" xml:space="preserve">
+    <value>SQL-Tastenkombination {0} hinzugefügt</value>
+  </data>
+  <data name="Smo_Selected_Node" xml:space="preserve">
+    <value>Ausgewählt: {0} - {1} - {2} - {3}</value>
+  </data>
+  <data name="Smo_Available_Properties" xml:space="preserve">
+    <value>Verfügbare Eigenschaften für {0}:</value>
+  </data>
+  <data name="Smo_Property_Value" xml:space="preserve">
+    <value>  {0}: {1}</value>
+  </data>
+  <data name="Smo_Property_Error" xml:space="preserve">
+    <value>  {0}: Fehler: {1}</value>
+  </data>
+  <data name="Grid_Key_Exists" xml:space="preserve">
+    <value>Die Tastenkombination existiert bereits. Drücken Sie Esc zum Abbrechen oder aktualisieren Sie auf eine eindeutige Taste und speichern Sie.</value>
+  </data>
+  <data name="Grid_Load_Error" xml:space="preserve">
+    <value>Fehler beim Laden des Formulars</value>
+  </data>
+  <data name="Grid_Msg_Evaluating_Expression" xml:space="preserve">
+    <value>Werte Ausdruck aus</value>
+  </data>
+  <data name="Grid_SqlComplete_Empty" xml:space="preserve">
+    <value>SQL Complete darf nicht leer sein. Drücken Sie Esc zum Abbrechen oder aktualisieren Sie auf ein eindeutiges SQL Complete und speichern Sie.</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Body" xml:space="preserve">
+    <value>Sie haben ungespeicherte Änderungen. Möchten Sie vor dem Schließen speichern?</value>
+  </data>
+  <data name="Grid_Unsaved_Changes_Header" xml:space="preserve">
+    <value>Ungespeicherte Änderungen</value>
+  </data>
+  <data name="Smo_No_Unbinding" xml:space="preserve">
+    <value>Entbindungsfehler</value>
+  </data>
+  <data name="Grid_Insert_Tag" xml:space="preserve">
+    <value>Ausdruck/Tag eingefügt - {0}</value>
+  </data>
+  <data name="Button_Test" xml:space="preserve">
+    <value>Testen</value>
+  </data>
+  <data name="Label_Sql_Shortcut" xml:space="preserve">
+    <value>SQL-Kürzel:</value>
+  </data>
+  <data name="Label_Sql_Statement" xml:space="preserve">
+    <value>SQL-Anweisung:</value>
+  </data>
+  <data name="Button_Insert_Table_Tag" xml:space="preserve">
+    <value>&lt;Tabelle&gt;-Tag einfügen</value>
+  </data>
+  <data name="Button_Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="Form_Sql_Expression_Editor" xml:space="preserve">
+    <value>SQL-Ausdruckseditor</value>
+  </data>
+  <data name="Banner_Maxlength_10" xml:space="preserve">
+    <value>Maximallänge 10 Zeichen</value>
+  </data>
+  <data name="Grid_Header_Sql_Expression" xml:space="preserve">
+    <value>SQL-Ausdruck</value>
+  </data>
+  <data name="Grid_Header_Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="Grid_Header_Edit" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="Button_Add_New_Shortcut" xml:space="preserve">
+    <value>Neues Kürzel hinzufügen</value>
+  </data>
+  <data name="Button_Export_Shortcuts" xml:space="preserve">
+    <value>Kürzel exportieren (pdf)</value>
+  </data>
+  <data name="Form_Sql_Expression_Shortcuts" xml:space="preserve">
+    <value>SQL-Ausdruckskürzel</value>
+  </data>
+  <data name="Status_Auto_Save_Enabled" xml:space="preserve">
+    <value>Automatisches Speichern aktiviert (Sie müssen Ihre Aktionen nicht speichern, die Änderungen werden automatisch in der Datei gespeichert)</value>
+  </data>
+  <data name="Grid_Shortcuts_Exported_To" xml:space="preserve">
+    <value>Kürzel exportiert nach: {0}</value>
+  </data>
+  <data name="Button_Insert_Date_Expression" xml:space="preserve">
+    <value>Datum-Ausdruck einfügen</value>
+  </data>
+  <data name="Grid_Header_Shortcut" xml:space="preserve">
+    <value>Kürzel</value>
+  </data>
+  <data name="Grid_Header_Eval_Exp" xml:space="preserve">
+    <value>Ausw. Ausdr.</value>
+  </data>
+  <data name="Button_Test_Sql" xml:space="preserve">
+    <value>SQL testen</value>
+  </data>
+</root>
