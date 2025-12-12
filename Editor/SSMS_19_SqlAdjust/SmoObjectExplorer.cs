@@ -1,5 +1,4 @@
 ﻿using Microsoft.SqlServer.Management.UI.VSIntegration.ObjectExplorer;
-using Microsoft.VisualStudio.Shell.Interop;
 using SSMS_SqlAdjust_Interfaces;
 using System;
 using System.ComponentModel;
