@@ -7,6 +7,9 @@ OR
 C:\Program Files (x86)\Microsoft SQL Server Management Studio 19\Common7\IDE\Ssms.exe
 C:\Program Files (x86)\Microsoft SQL Server Management Studio 19\Common7\IDE\Extensions
 
+Ollama
+------
+ollama run qwen2.5-coder:32b-instruct-q4_0
 
 https://ollama.com/library/sqlcoder
 https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_0
