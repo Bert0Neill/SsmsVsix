@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{C6850127-F1A2-4432-837D-266195CE9C09}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AI_Buddy</RootNamespace>
+    <AssemblyName>AI_Buddy</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
+    <UseCodebase>true</UseCodebase>
+    <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>true</CopyOutputSymbolsToOutputDirectory>
+    <StartAction>Program</StartAction>
+    <StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
+    <StartArguments>/rootsuffix Exp</StartArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CopyVsixExtensionFiles>False</CopyVsixExtensionFiles>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Commands\AIHealthCheckCmd.cs" />
+    <Compile Include="Commands\AI_BuddyPackage.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AI_BuddyPackage.vsct</DependentUpon>
+    </Compile>
+    <Compile Include="Commands\DisplayPromptCmd.cs" />
+    <Compile Include="Commands\GenerateCodeFromHintCmd.cs" />
+    <Compile Include="Commands\GenerateCommentsCmd.cs" />
+    <Compile Include="Commands\GenerateUnitTestCmd.cs" />
+    <Compile Include="Commands\PropertiesCmd.cs" />
+    <Compile Include="Commands\SuggestImprovementsCmd.cs" />
+    <Compile Include="Components\PromptWindow.cs" />
+    <Compile Include="Components\PromptWindowControl.xaml.cs">
+      <DependentUpon>PromptWindowControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\StringToVisibilityConverter.cs" />
+    <Compile Include="Forms\PropertiesFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PropertiesFrm.Designer.cs">
+      <DependentUpon>PropertiesFrm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\VisualPrompt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VisualPrompt.Designer.cs">
+      <DependentUpon>VisualPrompt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AIHosterResponse.cs" />
+    <Compile Include="Models\AIProperties.cs" />
+    <Compile Include="Resources\PromptStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PromptStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AI_BuddyPackage.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Services\AIService.cs" />
+    <Compile Include="Services\EditorService.cs" />
+    <Compile Include="Services\ErrorService.cs" />
+    <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\RichTextBoxParagraphGenerator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ReadMe\User Guide - AI Buddy and Hosting DeepSeek Locally.docx" />
+    <Content Include="ReadMe\User Guide - Slim - AI Buddy and Hosting DeepSeek Locally.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <None Include="ReadMe\UserGuide.md" />
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="HtmlToXamlConverter">
+      <Version>1.0.5727.24510</Version>
+    </PackageReference>
+    <PackageReference Include="Markdig">
+      <Version>0.40.0</Version>
+    </PackageReference>
+    <PackageReference Include="Markdown.Xaml">
+      <Version>1.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces">
+      <Version>9.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SemanticKernel">
+      <Version>1.38.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.0.32112.339" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.12.2069" />
+    <PackageReference Include="Ollama">
+      <Version>1.14.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Drawing.Common">
+      <Version>9.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Http.Json">
+      <Version>9.0.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Commands\Resources\AIHealthCheckCmd.png" />
+    <Content Include="Commands\Resources\emergency_health_healthcare.png" />
+    <Content Include="ReadMe\Images\EditorContextMenu.png" />
+    <Content Include="ReadMe\Images\test.png" />
+    <Content Include="terminal.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <None Include="ReadMe\ReadMe.md" />
+    <VSCTCompile Include="Commands\AI_BuddyPackage.vsct">
+      <Generator>VsctGenerator</Generator>
+      <ResourceName>Menus.ctmenu</ResourceName>
+      <LastGenOutput>AI_BuddyPackage.cs</LastGenOutput>
+    </VSCTCompile>
+    <Content Include="Commands\Resources\Custom-Icon-Design-Pretty-Office-9-Comment-edit.16.png" />
+    <Content Include="Commands\Resources\DisplayPromptCmd.png" />
+    <Content Include="Commands\Resources\Double-J-Design-Origami-Colored-Pencil-Blue-document.16.png" />
+    <Content Include="Commands\Resources\Double-J-Design-Ravenna-3d-Comments.16.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Commands\Resources\Social-balloon-friends.16.png" />
+    <Content Include="Commands\Resources\Dtafalonso-Modern-Xp-ModernXP-30-Filetype-Text.16.png" />
+    <Content Include="Commands\Resources\Gartoon-Team-Gartoon-Categories-Applications-science.16.png" />
+    <Content Include="Commands\Resources\Gartoon-Team-Gartoon-Categories-Preferences-autocompletion.16.png" />
+    <Content Include="Commands\Resources\GenerateCodeFromTextCmd.png" />
+    <Content Include="Commands\Resources\GenerateCommentsCmd.png" />
+    <Content Include="Commands\Resources\GenerateUnitTestCmd.png" />
+    <Content Include="Commands\Resources\HighlightedTextCommand.png" />
+    <Content Include="Commands\Resources\Icons8-Ios7-Science-Test-Tube.16.png" />
+    <Content Include="Commands\Resources\Kyo-Tux-Soft-Chat.16.png" />
+    <Content Include="Commands\Resources\MainMenuCmd.png" />
+    <Content Include="Commands\Resources\Rafiqul-Hassan-Blogger-Settings-2.16.png" />
+    <Content Include="Commands\Resources\Resources\DummyMenuCmd.png" />
+    <Content Include="Commands\Resources\SuggestImprovementsCmd.png" />
+    <Content Include="Commands\Resources\Thalita-Torres-Office-Documents.16.png" />
+    <Content Include="Components\Resources\ToolWindow1Command.png" />
+    <Content Include="Images\229125_graph_line_icon.png" />
+    <Content Include="Images\2799210_business_planing_graph_report_seo_icon.png" />
+    <Content Include="Images\285657_floppy_guardar_save_icon %281%29.png" />
+    <Content Include="Images\285657_floppy_guardar_save_icon.png" />
+    <Content Include="Images\296926_text_down_paper_arrow_document_icon %281%29.png" />
+    <Content Include="Images\296926_text_down_paper_arrow_document_icon.png" />
+    <Content Include="Images\3338976_business tools_diagram_chart_graph_group_icon.png" />
+    <Content Include="Images\5172491_chat_text_icon.png" />
+    <Content Include="Images\5955449_find_glass_magnifier_search_zoom_icon %281%29.png" />
+    <Content Include="Images\5955449_find_glass_magnifier_search_zoom_icon %282%29.png" />
+    <Content Include="Images\5955449_find_glass_magnifier_search_zoom_icon.png" />
+    <Content Include="Images\5978656_clipboard_corona_coronavirus_medical_report_icon.png" />
+    <Content Include="Images\7088613_database_diagram_chart_data_statistics_icon %281%29.png" />
+    <Content Include="Images\7088613_database_diagram_chart_data_statistics_icon.png" />
+    <Content Include="Images\85307_edit_file_icon %281%29.png" />
+    <Content Include="Images\85307_edit_file_icon.png" />
+    <Content Include="Images\85331_glass_magnifying_icon %281%29.png" />
+    <Content Include="Images\85331_glass_magnifying_icon.png" />
+    <Content Include="Images\85334_file_open_icon %281%29.png" />
+    <Content Include="Images\85334_file_open_icon.png" />
+    <Content Include="Images\85343_file_search_icon %281%29.png" />
+    <Content Include="Images\85343_file_search_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Files\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\PropertiesFrm.resx">
+      <DependentUpon>PropertiesFrm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VisualPrompt.resx">
+      <DependentUpon>VisualPrompt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\PromptStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>PromptStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Components\PromptWindowControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
