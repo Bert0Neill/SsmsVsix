@@ -1,18 +1,4 @@
-SSMS - SMO Extension
-1) Create ERD for a table (1 level deep)
-2) Generate Unit Test for DB (Sproc\View\Table...) without AI - display existing form
-3) Configure AI (set defaults like what programming language and Unit Test framework to prompt with)
-
-SSMS - Editor Extension
-1) AI Hoster (Ollama) running
-2) 
-
-A Visual Studio or SSMS extension
-That understands the SQL I am writing to suggest SQL syntax to complete the Join\Sub Select\Groiping etc.
-Select the database, then supply all the schema and sproc\views\fnxs to AI
-As the user types push that to AI as a prompt to complete based on schema
-Then prompt to complete the statement
-Suggest in light grey text with a tab to accept
+Prompt AI with josn synatx:
 
 Run Ollama with SQL LLM 
 
@@ -262,3 +248,399 @@ Columns:
 - CountryId int FK -> Countries.Id
 ----------------------------------------------------------
 
+Get related tables for JOIN
+------------------------------
+-- Tables Orders references
+SELECT
+    rt.name AS RelatedTable,
+    rs.name AS RelatedSchema,
+    'OUT' AS Direction,
+    cp.name AS FromColumn,
+    cr.name AS ToColumn
+FROM sys.foreign_keys fk
+JOIN sys.foreign_key_columns fkc ON fk.object_id = fkc.constraint_object_id
+JOIN sys.tables pt ON fk.parent_object_id = pt.object_id
+JOIN sys.tables rt ON fk.referenced_object_id = rt.object_id
+JOIN sys.schemas rs ON rt.schema_id = rs.schema_id
+JOIN sys.columns cp ON fkc.parent_object_id = cp.object_id AND fkc.parent_column_id = cp.column_id
+JOIN sys.columns cr ON fkc.referenced_object_id = cr.object_id AND fkc.referenced_column_id = cr.column_id
+WHERE pt.name = @Table AND SCHEMA_NAME(pt.schema_id) = @Schema
+
+UNION ALL
+
+-- Tables that reference Orders
+SELECT
+    pt.name AS RelatedTable,
+    ps.name AS RelatedSchema,
+    'IN' AS Direction,
+    cr.name AS FromColumn,
+    cp.name AS ToColumn
+FROM sys.foreign_keys fk
+JOIN sys.foreign_key_columns fkc ON fk.object_id = fkc.constraint_object_id
+JOIN sys.tables pt ON fk.parent_object_id = pt.object_id
+JOIN sys.schemas ps ON pt.schema_id = ps.schema_id
+JOIN sys.tables rt ON fk.referenced_object_id = rt.object_id
+JOIN sys.columns cp ON fkc.parent_object_id = cp.object_id AND fkc.parent_column_id = cp.column_id
+JOIN sys.columns cr ON fkc.referenced_object_id = cr.object_id AND fkc.referenced_column_id = cr.column_id
+WHERE rt.name = @Table AND SCHEMA_NAME(rt.schema_id) = @Schema;
+
+---------------------------------
+
+record JoinCandidate(
+    string Schema,
+    string Table,
+    string LeftColumn,
+    string RightColumn
+);
+
+----------------------------
+
+You are a SQL JOIN autocomplete engine.
+
+Rules:
+- Return ONLY JOIN clauses
+- No explanations
+- Use only provided join candidates
+- Use table aliases
+- Valid T-SQL
+- One suggestion per line
+
+Existing SQL:
+SELECT *
+FROM Orders o
+JOIN |
+
+Join candidates:
+Customers
+  Orders.CustomerId = Customers.Id
+
+OrderItems
+  OrderItems.OrderId = Orders.Id
+
+ --------------Get Active DB------------------------
+ using EnvDTE;
+using Microsoft.SqlServer.Management.UI.VSIntegration;
+using Microsoft.VisualStudio.Shell;
+
+var dte = await ServiceProvider.GetServiceAsync(typeof(DTE)) as DTE;
+var activeDoc = dte?.ActiveDocument;
+
+if (activeDoc == null)
+    return;
+
+	var connectionService =
+    ServiceProvider.GetService(typeof(IConnectionService)) as IConnectionService;
+
+if (connectionService == null)
+    return;
+
+	var connection = connectionService.GetConnection(activeDoc.FullName);
+
+if (connection == null)
+    return;
+
+	string databaseName = connection.DatabaseName;
+string serverName   = connection.ServerName;
+string userName     = connection.UserName;
+
+-----------------Capture User Clicking in editor------------------------
+using EnvDTE;
+using Microsoft.VisualStudio.Shell;
+
+public sealed class EditorTracker
+{
+    private readonly DTE _dte;
+    private DocumentEvents _docEvents;
+
+    public EditorTracker(DTE dte)
+    {
+        _dte = dte;
+        HookEvents();
+    }
+
+    private void HookEvents()
+    {
+        _docEvents = _dte.Events.DocumentEvents;
+        _docEvents.DocumentActivated += OnDocumentActivated;
+    }
+
+    private void OnDocumentActivated(Document doc)
+    {
+        if (!IsSqlDocument(doc))
+            return;
+
+        // User clicked into a SQL editor
+        HandleEditorActivated(doc);
+    }
+
+    private static bool IsSqlDocument(Document doc)
+        => doc.Language == "SQL";
+}
+
+--------------Get current DB-----------------------
+using Microsoft.SqlServer.Management.UI.VSIntegration;
+
+private void HandleEditorActivated(Document doc)
+{
+    var connectionService =
+        ServiceProvider.GlobalProvider.GetService(typeof(IConnectionService))
+        as IConnectionService;
+
+    if (connectionService == null)
+        return;
+
+    var connection = connectionService.GetConnection(doc.FullName);
+    if (connection == null)
+        return;
+
+    string server   = connection.ServerName;
+    string database = connection.DatabaseName;
+    Guid connectionId = connection.ConnectionId;
+
+    // 🔥 This is the live editor DB
+}
+
+---------------------Load full db schema------------------
+SchemaCache LoadSchema(IConnection connection)
+{
+    var serverConn = new ServerConnection
+    {
+        ServerInstance = connection.ServerName,
+        LoginSecure = true // or SQL auth if needed
+    };
+
+    var server = new Server(serverConn);
+    var db = server.Databases[connection.DatabaseName];
+
+    var schema = new SchemaCache();
+
+    foreach (Table table in db.Tables)
+    {
+        if (table.IsSystemObject)
+            continue;
+
+        var t = new TableSchema
+        {
+            Name = table.Name,
+            Schema = table.Schema
+        };
+
+        // Columns
+        foreach (Column col in table.Columns)
+        {
+            t.Columns.Add(new ColumnSchema
+            {
+                Name = col.Name,
+                Type = col.DataType.Name,
+                IsNullable = col.Nullable
+            });
+        }
+
+        // PK
+        foreach (Index idx in table.Indexes)
+        {
+            if (!idx.IsPrimaryKey) continue;
+
+            t.PrimaryKey = idx.IndexedColumns
+                .Cast<IndexedColumn>()
+                .Select(c => c.Name)
+                .ToList();
+        }
+
+        // FKs
+        foreach (ForeignKey fk in table.ForeignKeys)
+        {
+            t.ForeignKeys.Add(new ForeignKeySchema
+            {
+                Name = fk.Name,
+                ReferencedTable = fk.ReferencedTable,
+                Columns = fk.Columns
+                    .Cast<ForeignKeyColumn>()
+                    .Select(c => (c.Name, c.ReferencedColumn))
+                    .ToList()
+            });
+        }
+
+        schema.Tables.Add(t);
+    }
+
+    return schema;
+}
+
+----------------Joins------------------------------
+Dictionary<string, List<JoinEdge>> BuildJoinGraph(SchemaCache schema)
+{
+    var graph = new Dictionary<string, List<JoinEdge>>();
+
+    foreach (var table in schema.Tables)
+    {
+        foreach (var fk in table.ForeignKeys)
+        {
+            graph.TryAdd(table.Name, new());
+            graph[table.Name].Add(new JoinEdge
+            {
+                FromTable = table.Name,
+                ToTable = fk.ReferencedTable,
+                Columns = fk.Columns
+            });
+        }
+    }
+
+    return graph;
+}
+
+----------------Josn Payload--------------------
+{
+  "currentDatabase": "SalesDB",
+  "typedTables": ["Customers"],
+  "relatedTables": ["Orders", "Invoices"],
+  "joins": [
+    "Customers.Id = Orders.CustomerId",
+    "Orders.Id = Invoices.OrderId"
+  ]
+}
+------------------------------------------------
+
+Example Prompt:
+
+{
+  "context": "sql_autocomplete",
+  "existing_sql": "SELECT * FROM Orders o JOIN ",
+  "existing_tables": [
+    { "schema": "dbo", "table": "Orders", "alias": "o" }
+  ],
+  "join_candidates": [
+    {
+      "schema": "dbo",
+      "table": "Customers",
+      "joins": [
+        { "left": "Orders.CustomerId", "right": "Customers.Id" }
+      ]
+    },
+    {
+      "schema": "dbo",
+      "table": "OrderItems",
+      "joins": [
+        { "left": "OrderItems.OrderId", "right": "Orders.Id" }
+      ]
+    }
+  ],
+  "rules": {
+    "max_suggestions": 5,
+    "alias_style": "short"
+  }
+}
+
+Example Suggestion:
+------------------
+{
+  "suggestions": [
+    {
+      "type": "join",
+      "sql": "JOIN Customers c ON c.Id = o.CustomerId",
+      "tables": ["Customers"]
+    },
+    {
+      "type": "join",
+      "sql": "JOIN OrderItems oi ON oi.OrderId = o.Id",
+      "tables": ["OrderItems"]
+    }
+  ]
+}
+-----------Complete AI Prompt-------------------
+You are a SQL autocomplete engine used inside SQL Server Management Studio.
+
+STRICT RULES:
+- Output MUST be valid JSON
+- Output MUST contain ONLY JSON
+- Do NOT include explanations, comments, or markdown
+- Do NOT repeat the input SQL
+- Use ONLY the provided schema and join candidates
+- Generate syntactically valid T-SQL
+- If no valid suggestions exist, return an empty suggestions array
+
+OUTPUT FORMAT (exactly):
+{
+  "suggestions": [
+    {
+      "type": "join",
+      "sql": "string",
+      "tables": ["string"]
+    }
+  ]
+}
+
+INPUT CONTEXT:
+{
+  "existing_sql": "{{SQL_UP_TO_CARET}}",
+
+  "existing_tables": [
+    {
+      "schema": "dbo",
+      "table": "Orders",
+      "alias": "o"
+    }
+  ],
+
+  "join_candidates": [
+    {
+      "schema": "dbo",
+      "table": "Customers",
+      "joins": [
+        {
+          "left": "Orders.CustomerId",
+          "right": "Customers.Id"
+        }
+      ]
+    },
+    {
+      "schema": "dbo",
+      "table": "OrderItems",
+      "joins": [
+        {
+          "left": "OrderItems.OrderId",
+          "right": "Orders.Id"
+        }
+      ]
+    }
+  ],
+
+  "rules": {
+    "max_suggestions": 5,
+    "alias_style": "short",
+    "prefer_pk_fk": true
+  }
+}
+
+---------Ollama Suggest Prompt--------------------------
+{
+  "model": "qwen2.5-coder:7b",
+  "prompt": "<PROMPT ABOVE>",
+  "stream": false,
+  "options": {
+    "temperature": 0.1,
+    "top_p": 0.9,
+    "num_predict": 200,
+    "stop": [
+      "\n\n",
+      "```"
+    ]
+  }
+}
+
+-------Example Suggested Output-------------------------
+{
+  "suggestions": [
+    {
+      "type": "join",
+      "sql": "JOIN Customers c ON c.Id = o.CustomerId",
+      "tables": ["Customers"]
+    },
+    {
+      "type": "join",
+      "sql": "JOIN OrderItems oi ON oi.OrderId = o.Id",
+      "tables": ["OrderItems"]
+    }
+  ]
+}
+------------------------------------
