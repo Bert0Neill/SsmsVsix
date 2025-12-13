@@ -14,8 +14,8 @@
     <ProjectGuid>{975C546D-CA07-4FD1-A63E-AB51A98A4483}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SsmsAiToolbar</RootNamespace>
-    <AssemblyName>SsmsAiToolbar</AssemblyName>
+    <RootNamespace>SsmsEditorAI</RootNamespace>
+    <AssemblyName>SsmsEditorAI</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <UseCodebase>true</UseCodebase>
