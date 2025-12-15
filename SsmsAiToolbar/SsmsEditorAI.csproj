@@ -67,6 +67,7 @@
     <Compile Include="Services\InlineCSharpHelper.cs" />
     <Compile Include="Services\LoggerService.cs" />
     <Compile Include="Services\ShortcutEvaluation.cs" />
+    <Compile Include="Services\SsmsHelper.cs" />
     <Compile Include="Services\StatusBarService.cs" />
     <Compile Include="SsmsAiToolbarPackage.cs" />
   </ItemGroup>
@@ -227,9 +228,25 @@
     <Content Include="Misc\Info.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Editor\SSMS_18_SqlAdjust\SSMS_SqlAdjust.18.csproj">
+      <Project>{cfba4630-a3db-46ff-9e90-53aa42e8a9d8}</Project>
+      <Name>SSMS_SqlAdjust.18</Name>
+      <Aliases>ssms18</Aliases>
+    </ProjectReference>
     <ProjectReference Include="..\Editor\SSMS_19_SqlAdjust\SSMS_SqlAdjust.19.csproj">
       <Project>{921cbe81-c659-4909-b6f5-6b3fa5349473}</Project>
       <Name>SSMS_SqlAdjust.19</Name>
+      <Aliases>ssms19</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\Editor\SSMS_20_SqlAdjust\SSMS_SqlAdjust.20.csproj">
+      <Project>{a816f21f-48ad-49dd-8776-d1a9f264a509}</Project>
+      <Name>SSMS_SqlAdjust.20</Name>
+      <Aliases>ssms20</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\Editor\SSMS_21_SqlAdjust\SSMS_SqlAdjust.21.csproj">
+      <Project>{cf35b71a-8441-48d9-92a5-dfbed33aab65}</Project>
+      <Name>SSMS_SqlAdjust.21</Name>
+      <Aliases>ssms21</Aliases>
     </ProjectReference>
     <ProjectReference Include="..\Editor\SSMS_SqlAdjust_Interfaces\SSMS_SqlAdjust_Interfaces.csproj">
       <Project>{64b5fbbb-a832-46ba-bb61-bdfaf4a15286}</Project>

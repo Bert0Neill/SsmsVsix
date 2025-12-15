@@ -1,4 +1,10 @@
-﻿using EnvDTE;
+﻿extern alias ssms18;
+extern alias ssms19;
+extern alias ssms20;
+extern alias ssms21;
+
+
+using EnvDTE;
 using Microsoft.ServiceHub.Resources;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
@@ -15,6 +21,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Task = System.Threading.Tasks.Task;
+
 
 namespace SsmsAiToolbar
 {
@@ -53,7 +60,7 @@ namespace SsmsAiToolbar
         private string _filePath = string.Empty;
         //private FileService _fileService;
         public static IObjectExplorerHelper _smoObjectExplorer;
-        //private SsmsHelper _helperService;
+        private SsmsHelper _helperService;
 
         #region Package Members
 
@@ -69,6 +76,10 @@ namespace SsmsAiToolbar
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+            _helperService = new SsmsHelper();
+
+            BindSmoEvent(); // bind to the selection event of the SMO table\view node
 
             await MonitorEditorWindow(); // capture events when user types into SQL editor
 
@@ -279,6 +290,31 @@ namespace SsmsAiToolbar
             {
                 LoggerService.Error($"{ex.Message}");
             }
+        }
+
+        private void BindSmoEvent()
+        {
+            switch (_helperService.RetrieveSsmsVersion())
+            {
+                case "SSMS 18":
+                    _smoObjectExplorer = new ssms18::SSMS_18_SqlAdjust.SmoObjectExplorer(this);
+                    break;
+                case "SSMS 19":
+                    _smoObjectExplorer = new ssms19::SSMS_19_SqlAdjust.SmoObjectExplorer(this);
+                    break;
+                case "SSMS 20":
+                    _smoObjectExplorer = new ssms20::SSMS_20_SqlAdjust.SmoObjectExplorer(this);
+                    break;
+                case "SSMS 21":
+                    _smoObjectExplorer = new ssms21::SSMS_21_SqlAdjust.SmoObjectExplorer(this);
+                    break;
+                default:
+                    // default to SSMS 20 - most common version
+                    _smoObjectExplorer = new ssms20::SSMS_20_SqlAdjust.SmoObjectExplorer(this);
+                    break;
+            }
+
+            _smoObjectExplorer.HookSelectionChanged(SELECTION_EVENT);
         }
 
         #endregion
