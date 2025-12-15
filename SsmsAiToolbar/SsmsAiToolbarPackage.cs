@@ -1,4 +1,15 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿using EnvDTE;
+using Microsoft.ServiceHub.Resources;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.Editor;
+using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Text.Tagging;
+using Microsoft.VisualStudio.TextManager.Interop;
+using SSMS_SqlAdjust_Interfaces;
+using SsmsEditorAI.Services;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -35,6 +46,15 @@ namespace SsmsAiToolbar
         /// </summary>
         public const string PackageGuidString = "faba82a2-c872-4238-9d9b-80b03daee65e";
 
+        private DTE _dte;
+        private IVsTextViewFilter _textViewFilter;
+        private IVsStatusbar _statusBar;
+        private const string SELECTION_EVENT = "Provider_SelectionChanged";
+        private string _filePath = string.Empty;
+        //private FileService _fileService;
+        public static IObjectExplorerHelper _smoObjectExplorer;
+        //private SsmsHelper _helperService;
+
         #region Package Members
 
         /// <summary>
@@ -49,62 +69,216 @@ namespace SsmsAiToolbar
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-            
-            // Diagnostic: Log package initialization
-            Debug.WriteLine("SsmsAiToolbarPackage: Initializing...");
-            
-            try
-            {
-                await SsmsAiToolbar.Commands.EditorContextMenu.InitializeAsync(this);
-                Debug.WriteLine("SsmsAiToolbarPackage: EditorContextMenu initialized");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"SsmsAiToolbarPackage: EditorContextMenu initialization failed: {ex.Message}");
-            }
 
-            try
-            {
-                await SsmsAiToolbar.Commands.ToolsMenuCmd.InitializeAsync(this);
-                Debug.WriteLine("SsmsAiToolbarPackage: ToolsMenuCmd initialized");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"SsmsAiToolbarPackage: EditorContextMenu initialization failed: {ex.Message}");
-            }
+            await MonitorEditorWindow(); // capture events when user types into SQL editor
+
+            //// Diagnostic: Log package initialization
+            //Debug.WriteLine("SsmsAiToolbarPackage: Initializing...");
 
             //try
             //{
-            //    await SsmsAiToolbar.Commands.ShowTableNameCommand.InitializeAsync(this);
-
-            //    // Verify the command instance was created
-            //    if (SsmsAiToolbar.Commands.ShowTableNameCommand.Instance != null)
-            //    {
-            //        Debug.WriteLine("SsmsAiToolbarPackage: ShowTableNameCommand initialized and Instance is set");
-            //    }
-            //    else
-            //    {
-            //        Debug.WriteLine("SsmsAiToolbarPackage: WARNING - ShowTableNameCommand.Instance is null after initialization!");
-            //    }
+            //    await SsmsAiToolbar.Commands.EditorContextMenu.InitializeAsync(this);
+            //    Debug.WriteLine("SsmsAiToolbarPackage: EditorContextMenu initialized");
             //}
             //catch (Exception ex)
             //{
-            //    Debug.WriteLine($"SsmsAiToolbarPackage: ShowTableNameCommand initialization failed: {ex.Message}\n{ex.StackTrace}");
+            //    Debug.WriteLine($"SsmsAiToolbarPackage: EditorContextMenu initialization failed: {ex.Message}");
             //}
 
-            // Initialize Object Explorer menu handler
+            //try
+            //{
+            //    await SsmsAiToolbar.Commands.ToolsMenuCmd.InitializeAsync(this);
+            //    Debug.WriteLine("SsmsAiToolbarPackage: ToolsMenuCmd initialized");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine($"SsmsAiToolbarPackage: EditorContextMenu initialization failed: {ex.Message}");
+            //}
+
+            ////try
+            ////{
+            ////    await SsmsAiToolbar.Commands.ShowTableNameCommand.InitializeAsync(this);
+
+            ////    // Verify the command instance was created
+            ////    if (SsmsAiToolbar.Commands.ShowTableNameCommand.Instance != null)
+            ////    {
+            ////        Debug.WriteLine("SsmsAiToolbarPackage: ShowTableNameCommand initialized and Instance is set");
+            ////    }
+            ////    else
+            ////    {
+            ////        Debug.WriteLine("SsmsAiToolbarPackage: WARNING - ShowTableNameCommand.Instance is null after initialization!");
+            ////    }
+            ////}
+            ////catch (Exception ex)
+            ////{
+            ////    Debug.WriteLine($"SsmsAiToolbarPackage: ShowTableNameCommand initialization failed: {ex.Message}\n{ex.StackTrace}");
+            ////}
+
+            //// Initialize Object Explorer menu handler
+            //try
+            //{
+            //    SsmsAiToolbar.Commands.ObjectExplorerMenuHandler.Initialize(this);
+            //    Debug.WriteLine("SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialized");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine($"SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialization failed: {ex.Message}\n{ex.StackTrace}");
+            //}
+
+            //Debug.WriteLine("SsmsAiToolbarPackage: Initialization complete");
+            //await SsmsAiToolbar.Commands.ToolsMenuCmd.InitializeAsync(this);
+        }
+
+        private async Task MonitorEditorWindow()
+        {
             try
             {
-                SsmsAiToolbar.Commands.ObjectExplorerMenuHandler.Initialize(this);
-                Debug.WriteLine("SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialized");
+                _dte = await GetServiceAsync(typeof(DTE)) as DTE;
+                if (_dte == null)
+                {
+                    //Debug.WriteLine(Resource.Smo_No_Obj_Explorer);
+                    return;
+                }
+                var textManager = await GetServiceAsync(typeof(SVsTextManager)) as IVsTextManager;
+                if (textManager == null)
+                {
+                    //Debug.WriteLine(Resource.Smo_No_Container);
+                }
+                var componentModel = await GetServiceAsync(typeof(SComponentModel)) as IComponentModel;
+                if (componentModel == null)
+                {
+                    //Debug.WriteLine(Resource.Smo_No_Components);
+                    return;
+                }
+                var editorFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
+                if (editorFactory == null)
+                {
+                    //Debug.WriteLine(Resource.Smo_No_ContextService);
+                    return;
+                }
+
+                // Monitor documents
+                var runningDocumentTable = new RunningDocumentTable(this);
+
+                // Monitor window activation
+                var events = _dte.Events;
+                if (events != null)
+                {
+                    var windowEvents = events.WindowEvents;
+                    if (windowEvents != null)
+                    {
+                        windowEvents.WindowActivated += OnWindowActivated;
+                    }
+                }
+                else
+                {
+                    //Debug.WriteLine(Resource.Smo_No_Access_ObjectExplorerContext);
+                }
+
+                // Check if there's an active window already and hook into it
+                if (_dte.ActiveWindow != null && _dte.ActiveWindow.Document != null)
+                {
+                    //Debug.WriteLine(Resource.Grid_Loading);
+                    OnWindowActivated(_dte.ActiveWindow, null);
+                }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"SsmsAiToolbarPackage: ObjectExplorerMenuHandler initialization failed: {ex.Message}\n{ex.StackTrace}");
+                LoggerService.Error($"{ex.Message}");
             }
+        }
 
-            Debug.WriteLine("SsmsAiToolbarPackage: Initialization complete");
-            await SsmsAiToolbar.Commands.ToolsMenuCmd.InitializeAsync(this);
+        private void OnWindowActivated(EnvDTE.Window gotFocus, EnvDTE.Window lostFocus)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            try
+            {
+                const string ACCEPT_FILE_TYPE = "SQL";
+                const string ACCEPT_FILE_EXT = ".sql";
+
+                // Check if document exists
+                if (gotFocus?.Document == null)
+                {
+                    Debug.WriteLine("VSIX Package: No document in focus");
+                    return;
+                }
+
+                // Check if it's a SQL document
+                bool isSqlFile = false;
+                try
+                {
+                    string docLanguage = gotFocus.Document.Language;
+                    string docFileName = gotFocus.Document.FullName;
+
+                    LoggerService.Info($"VSIX Package: Document language: {docLanguage}, Filename: {docFileName}");
+
+                    isSqlFile = docLanguage == ACCEPT_FILE_TYPE || docFileName.EndsWith(ACCEPT_FILE_EXT, StringComparison.OrdinalIgnoreCase);
+                }
+                catch (Exception ex)
+                {
+                    LoggerService.Error($"{ex.Message}");
+                    return;
+                }
+
+                if (isSqlFile)
+                {
+                    Debug.WriteLine("VSIX Package: SQL file detected, setting up event handlers");
+
+                    var componentModel = this.GetService(typeof(SComponentModel)) as IComponentModel;
+                    if (componentModel == null)
+                    {
+                        Debug.WriteLine("VSIX Package: ComponentModel is null");
+                        return;
+                    }
+
+                    var editorFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
+                    var textManager = this.GetService(typeof(SVsTextManager)) as IVsTextManager;
+
+                    if (textManager == null || editorFactory == null)
+                    {
+                        Debug.WriteLine("VSIX Package: TextManager or EditorFactory is null");
+                        return;
+                    }
+
+                    IVsTextView textView;
+                    int result = textManager.GetActiveView(1, null, out textView);
+                    if (ErrorHandler.Failed(result) || textView == null)
+                    {
+                        Debug.WriteLine($"VSIX Package: Failed to get active text view, result: {result}");
+                        return;
+                    }
+
+                    var wpfTextView = editorFactory.GetWpfTextView(textView);
+                    if (wpfTextView != null)
+                    {
+                        Debug.WriteLine("VSIX Package: Setting up text view filter");
+
+                        IVsTextView nativeTextView = editorFactory.GetViewAdapter(wpfTextView);
+                        if (nativeTextView != null)
+                        {
+                            _textViewFilter = new ShortcutEvaluation(this, nativeTextView);
+                            result = nativeTextView.AddCommandFilter(
+                                (IOleCommandTarget)_textViewFilter,
+                                out IOleCommandTarget nextCommandFilter // Correct type
+                            );
+                            if (result == VSConstants.S_OK)
+                            {
+                                ((ShortcutEvaluation)_textViewFilter)._nextFilter = nextCommandFilter;
+                                Debug.WriteLine("VSIX Package: Tab key filter installed successfully");
+                            }
+                            else
+                            {
+                                Debug.WriteLine($"VSIX Package: Failed to install tab key filter, result: {result}");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerService.Error($"{ex.Message}");
+            }
         }
 
         #endregion
