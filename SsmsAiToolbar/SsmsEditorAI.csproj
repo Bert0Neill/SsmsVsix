@@ -120,6 +120,7 @@
     <Content Include="Misc\Play.png" />
     <Content Include="Misc\QuestionMark.png" />
     <None Include="Resources\Image1.png" />
+    <Content Include="Misc\SQL AI Buddy.txt" />
     <Content Include="Resources\Play.png" />
     <None Include="Resources\plus.jpg" />
     <Content Include="Resources\QuestionMark.png" />
