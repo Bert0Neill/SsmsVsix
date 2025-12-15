@@ -83,6 +83,9 @@ namespace SsmsAiToolbar
 
             await MonitorEditorWindow(); // capture events when user types into SQL editor
 
+            await SsmsAiToolbar.Commands.ToolsMenuCmd.InitializeAsync(this); // Tools Menu
+            await SsmsAiToolbar.Commands.EditorContextMenu.InitializeAsync(this); // Editor context menu
+
             //// Diagnostic: Log package initialization
             //Debug.WriteLine("SsmsAiToolbarPackage: Initializing...");
 
