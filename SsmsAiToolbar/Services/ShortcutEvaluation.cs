@@ -37,9 +37,18 @@ namespace SsmsEditorAI.Services
             if (componentModel != null)
             {
                 var editorFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
-                if (editorFactory != null)
+                //if (editorFactory != null)
+                //{
+                //    _wpfTextView = editorFactory.GetWpfTextView(textView);
+                //}
+
+
+                if (_wpfTextView != null)
                 {
                     _wpfTextView = editorFactory.GetWpfTextView(textView);
+                    _wpfTextView.GotAggregateFocus += OnEditorActivated;
+                    _wpfTextView.LostAggregateFocus += OnEditorDeactivated;
+                    _wpfTextView.Closed += OnTextViewClosed;
                 }
             }
         }
@@ -161,5 +170,22 @@ namespace SsmsEditorAI.Services
         //        s.SqlShort.Trim().Equals(sqlShort.Trim(), StringComparison.OrdinalIgnoreCase)
         //    );
         //}
+
+        private void OnEditorActivated(object sender, EventArgs e)
+        {
+            // Editor tab is active
+        }
+
+        private void OnEditorDeactivated(object sender, EventArgs e)
+        {
+            // Editor tab lost focus
+        }
+
+        private void OnTextViewClosed(object sender, EventArgs e)
+        {
+            _wpfTextView.GotAggregateFocus -= OnEditorActivated;
+            _wpfTextView.LostAggregateFocus -= OnEditorDeactivated;
+            _wpfTextView.Closed -= OnTextViewClosed;
+        }
     }
 }

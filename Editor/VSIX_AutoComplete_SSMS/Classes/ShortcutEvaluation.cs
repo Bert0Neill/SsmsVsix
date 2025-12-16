@@ -40,6 +40,7 @@ namespace VSIX_AutoComplete_SSMS.Classes
                 {
                     _wpfTextView = editorFactory.GetWpfTextView(textView);
                 }
+
             }
         }
 
@@ -160,5 +161,7 @@ namespace VSIX_AutoComplete_SSMS.Classes
                 s.SqlShort.Trim().Equals(sqlShort.Trim(), StringComparison.OrdinalIgnoreCase)
             );
         }
+
+       
     }
 }
