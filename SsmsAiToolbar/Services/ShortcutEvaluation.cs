@@ -40,6 +40,13 @@ namespace SsmsEditorAI.Services
                 if (editorFactory != null)
                 {
                     _wpfTextView = editorFactory.GetWpfTextView(textView);
+
+                    if (_wpfTextView != null)
+                    {
+                        _wpfTextView.GotAggregateFocus += OnEditorActivated;
+                        _wpfTextView.LostAggregateFocus += OnEditorDeactivated;
+                    }
+
                 }
             }
         }
@@ -161,5 +168,22 @@ namespace SsmsEditorAI.Services
         //        s.SqlShort.Trim().Equals(sqlShort.Trim(), StringComparison.OrdinalIgnoreCase)
         //    );
         //}
+
+        #region Handlers
+
+        private void OnEditorActivated(object sender, EventArgs e)
+        {
+            // Editor is active
+        }
+
+        private void OnEditorDeactivated(object sender, EventArgs e)
+        {
+            // Editor lost focus
+        }
+
+
+        #endregion
     }
+
+
 }
