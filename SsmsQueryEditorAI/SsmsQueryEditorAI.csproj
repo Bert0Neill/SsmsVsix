@@ -59,10 +59,10 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Services\Connection\MonitorDbConnectionService.cs" />
-    <Compile Include="Services\LoggerService.cs" />
+    <Compile Include="Services\Helper\LoggerService.cs" />
     <Compile Include="Services\AI\AIEditorService.cs" />
-    <Compile Include="Services\SsmsHelper.cs" />
-    <Compile Include="Services\StatusBarService.cs" />
+    <Compile Include="Services\Helper\SsmsHelper.cs" />
+    <Compile Include="Services\SSMS\StatusBarService.cs" />
     <Compile Include="SsmsQueryEditorAIPackage.cs" />
   </ItemGroup>
   <ItemGroup>
