@@ -12,13 +12,12 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
 using SSMS_SqlAdjust_Interfaces;
+using SsmsQueryEditorAI.Resources;
 using SsmsQueryEditorAI.Services;
 using System;
 using System.Diagnostics;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-using YourExtensionNamespace;
 using Task = System.Threading.Tasks.Task;
 
 namespace SsmsQueryEditorAI
@@ -48,17 +47,11 @@ namespace SsmsQueryEditorAI
     [ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class SsmsQueryEditorAIPackage : AsyncPackage
     {
-        /// <summary>
-        /// SsmsQueryEditorAIPackage GUID string.
-        /// </summary>
         public const string PackageGuidString = "f79b07ee-abe6-4e30-bb4f-c6808f451d62";
-
         private DTE _dte;
         private IVsTextViewFilter _textViewFilter;
         private IVsStatusbar _statusBar;
         private const string SELECTION_EVENT = "Provider_SelectionChanged";
-        private string _filePath = string.Empty;
-        //private FileService _fileService;
         public static IObjectExplorerHelper _smoObjectExplorer;
         private SsmsHelper _helperService;
 
@@ -67,87 +60,14 @@ namespace SsmsQueryEditorAI
 
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            // When initialized asynchronously, the current thread may be a background thread at this point.
-            // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            
+            Debug.WriteLine("Initializing SSMS AI Service...");
             await SsmsQueryEditorAI.Commands.ConfigureAI_Cmd.InitializeAsync(this);
-
-            //Debug.WriteLine("Initializing SQL Connection Monitor...");
-
-            //try
-            //{
-            //    // Create monitor
-            //    var monitor = new ActiveDocumentMonitor();
-
-            //    // Subscribe to connection changes
-            //    monitor.ConnectionChanged += (connection) =>
-            //    {
-            //        if (connection.IsConnected)
-            //        {
-            //            // Connection established
-            //            Debug.WriteLine($"✓ Connected to: {connection.ServerName}.{connection.DatabaseName}");
-
-            //            // YOU CAN DO THESE THINGS:
-
-            //            // 1. Update UI
-            //            // UpdateStatusBar($"Connected to {connection.ServerName}.{connection.DatabaseName}");
-
-            //            // 2. Log to file
-            //            // File.AppendAllText("connections.log", $"{DateTime.Now}: {connection.ServerName}.{connection.DatabaseName}\n");
-
-            //            // 3. Store for later use
-            //            // LastConnection = connection;
-
-            //            // 4. Fetch schema information
-            //            // FetchDatabaseSchema(connection.ServerName, connection.DatabaseName);
-
-            //            // 5. Update tool window
-            //            // if (_toolWindow != null) _toolWindow.UpdateConnection(connection);
-            //        }
-            //        else
-            //        {
-            //            // No connection
-            //            Debug.WriteLine("✗ Not connected to any database");
-
-            //            // Update UI to show disconnected state
-            //            // UpdateStatusBar("Not connected");
-            //        }
-            //    };
-
-            //    // Subscribe to document changes
-            //    monitor.DocumentActivated += (documentName) =>
-            //    {
-            //        Debug.WriteLine($"📄 Active document: {documentName}");
-
-            //        // You can track which document is active
-            //        // ActiveDocumentName = documentName;
-            //    };
-
-            //    // Initialize the monitor
-            //    monitor.Initialize();
-
-            //    // Store reference to keep it alive
-            //    _monitor = monitor;
-
-            //    Debug.WriteLine("✅ Monitor initialized successfully");
-
-            //    // Optional: Get initial connection state
-            //    await Task.Delay(1000); // Wait a bit
-            //    var initialConnection = monitor.GetActiveDocumentConnection();
-            //    if (initialConnection.IsConnected)
-            //    {
-            //        Debug.WriteLine($"Initial state: Connected to {initialConnection}");
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    Debug.WriteLine($"❌ Initialization failed: {ex.Message}");
-            //    Debug.WriteLine($"Stack trace: {ex.StackTrace}");
-            //}
 
             // original initialization code
             _helperService = new SsmsHelper();
-            BindSmoEvent(); // bind to the selection event of the SMO table\view node
+            InitializeSmoObjectExplorer(); // register the correct SSMS version to its Obj. Explorer
             await MonitorEditorWindow(); // capture events when user types into SQL editor
         }
 
@@ -158,24 +78,24 @@ namespace SsmsQueryEditorAI
                 _dte = await GetServiceAsync(typeof(DTE)) as DTE;
                 if (_dte == null)
                 {
-                    //Debug.WriteLine(Resource.Smo_No_Obj_Explorer);
+                    Debug.WriteLine(Resource.Smo_No_Obj_Explorer);
                     return;
                 }
                 var textManager = await GetServiceAsync(typeof(SVsTextManager)) as IVsTextManager;
                 if (textManager == null)
                 {
-                    //Debug.WriteLine(Resource.Smo_No_Container);
+                    Debug.WriteLine(Resource.Smo_No_Container);
                 }
                 var componentModel = await GetServiceAsync(typeof(SComponentModel)) as IComponentModel;
                 if (componentModel == null)
                 {
-                    //Debug.WriteLine(Resource.Smo_No_Components);
+                    Debug.WriteLine(Resource.Smo_No_Components);
                     return;
                 }
                 var editorFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
                 if (editorFactory == null)
                 {
-                    //Debug.WriteLine(Resource.Smo_No_ContextService);
+                    Debug.WriteLine(Resource.Smo_No_ContextService);
                     return;
                 }
 
@@ -194,13 +114,13 @@ namespace SsmsQueryEditorAI
                 }
                 else
                 {
-                    //Debug.WriteLine(Resource.Smo_No_Access_ObjectExplorerContext);
+                    Debug.WriteLine(Resource.Smo_No_Access_ObjectExplorerContext);
                 }
 
                 // Check if there's an active window already and hook into it
                 if (_dte.ActiveWindow != null && _dte.ActiveWindow.Document != null)
                 {
-                    //Debug.WriteLine(Resource.Grid_Loading);
+                    Debug.WriteLine(Resource.Grid_Loading);
                     OnWindowActivated(_dte.ActiveWindow, null);
                 }
             }
@@ -279,14 +199,16 @@ namespace SsmsQueryEditorAI
                         IVsTextView nativeTextView = editorFactory.GetViewAdapter(wpfTextView);
                         if (nativeTextView != null)
                         {
-                            _textViewFilter = new ShortcutEvaluation(this, nativeTextView);
+                            _textViewFilter = new AIEditorService(this, nativeTextView); // AIEditorService - hooks into editor events (monitoring of active SQL editors for connection string)
+
+                            // Before you process commands (typing, paste, enter, shortcuts, etc.), let my object see them first (YourFilter → ExistingFilter → Editor → Default behavior)
                             result = nativeTextView.AddCommandFilter(
                                 (IOleCommandTarget)_textViewFilter,
-                                out IOleCommandTarget nextCommandFilter // Correct type
-                            );
+                                out IOleCommandTarget nextCommandFilter);
+
                             if (result == VSConstants.S_OK)
                             {
-                                ((ShortcutEvaluation)_textViewFilter)._nextFilter = nextCommandFilter;
+                                ((AIEditorService)_textViewFilter)._nextFilter = nextCommandFilter;
                                 Debug.WriteLine("VSIX Package: Tab key filter installed successfully");
                             }
                             else
@@ -303,7 +225,7 @@ namespace SsmsQueryEditorAI
             }
         }
 
-        private void BindSmoEvent()
+        private void InitializeSmoObjectExplorer()
         {
             switch (_helperService.RetrieveSsmsVersion())
             {
@@ -328,22 +250,7 @@ namespace SsmsQueryEditorAI
             _smoObjectExplorer.HookSelectionChanged(SELECTION_EVENT);
         }
 
-        private void OnActiveSqlDocumentConnectionChanged(string serverName, string databaseName)
-        {
-            // Handle the connection change
-            if (serverName != null && databaseName != null)
-            {
-                Debug.WriteLine($"Active SQL document connected to: {serverName}.{databaseName}");
-            }
-            else
-            {
-                Debug.WriteLine("Active SQL document is not connected.");
-            }
-        }
-
-        
-    }
-
+    } // class
 
     #endregion
 }

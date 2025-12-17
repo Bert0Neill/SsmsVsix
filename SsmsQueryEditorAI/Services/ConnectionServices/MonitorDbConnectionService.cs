@@ -5,12 +5,8 @@ using System.Diagnostics;
 using System.Threading;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Operations;
-using Microsoft.VisualStudio.Text.Tagging;
-using Microsoft.VisualStudio.Utilities;
-using System.ComponentModel.Composition;
 
-public class SqlConnectionMonitorService
+public class MonitorDbConnectionService
 {
     private DTE _dte;
     private IWpfTextView _currentView;
@@ -41,10 +37,10 @@ public class SqlConnectionMonitorService
         // Initial connection check
         UpdateConnectionFromCaption();
 
-        // Monitor text changes
+        // Hook up text changes
         view.TextBuffer.Changed += OnTextBufferChanged;
 
-        // Monitor view focus
+        // Hook up view focus
         view.GotAggregateFocus += OnViewGotFocus;
         view.LostAggregateFocus += OnViewLostFocus;
 
@@ -65,7 +61,8 @@ public class SqlConnectionMonitorService
             _pollingTimer.Dispose();
             _pollingTimer = null;
         }
-
+        
+        // Unhook events
         if (_currentView != null)
         {
             _currentView.TextBuffer.Changed -= OnTextBufferChanged;
@@ -78,10 +75,11 @@ public class SqlConnectionMonitorService
 
     private void PollForCaptionChanges(object state)
     {
-        if (!_isMonitoring) return;
+        if (!_isMonitoring) return; // has monitoring stopped
 
         try
         {
+            // Get the current caption of the active sql tab on UI thread
             ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -173,7 +171,7 @@ public class SqlConnectionMonitorService
                     Debug.WriteLine($"Connection updated: {server}.{database}");
 
                     // Notify about connection change
-                    //ConnectionChanged?.Invoke(server, database);
+                    ConnectionChanged?.Invoke(server, database);
 
                     // If this is a new connection (was null before)
                     if (string.IsNullOrEmpty(oldServer) && !string.IsNullOrEmpty(server))
@@ -243,7 +241,10 @@ public class SqlConnectionMonitorService
                 return true;
             }
         }
-        catch { }
+        catch (Exception) 
+        { 
+            throw;
+        }
 
         return false;
     }

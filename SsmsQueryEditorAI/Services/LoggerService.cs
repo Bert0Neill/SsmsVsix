@@ -1,7 +1,6 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.IO;
-//using SQL_Shortcuts.Resources;
 
 namespace SsmsQueryEditorAI.Services
 {
@@ -19,7 +18,7 @@ namespace SsmsQueryEditorAI.Services
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
 
-            _logPath = Path.Combine(folder, $"log-{DateTime.Now:yyyy-MM-dd}.txt");
+            _logPath = Path.Combine(folder, $"SSMS_AI_Logs -{DateTime.Now:yyyy-MM-dd}.txt");
 
             return _logPath;
         }
