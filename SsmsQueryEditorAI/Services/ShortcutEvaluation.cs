@@ -14,6 +14,7 @@ using System.Diagnostics;
 //using VSIX_AutoComplete_SSMS.Models;
 using System.Linq;
 using System.Text.RegularExpressions;
+using YourExtensionNamespace;
 //using SQL_Shortcuts.Resources;
 
 namespace SsmsQueryEditorAI.Services
@@ -64,13 +65,32 @@ namespace SsmsQueryEditorAI.Services
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
             // Only handle regular typing
-            if (pguidCmdGroup == VSConstants.VSStd2K &&
-                nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
+            if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
             {
                 char typedChar = (char)(ushort)System.Runtime.InteropServices.Marshal.GetObjectForNativeVariant(pvaIn);
 
                 try
                 {
+                    //var service = new SsmsConnectionService();
+                    //service.DebugMessage += (msg) => Debug.WriteLine($"[Test] {msg}");
+
+                    //service.Initialize();
+
+                    //var connection = service.GetActiveConnection();
+                    //Debug.WriteLine($"Test connection: {connection}");
+
+                    //if (connection.IsConnected)
+                    //{
+                    //    Debug.WriteLine($"✅ Connected to: {connection.ServerName}.{connection.DatabaseName}");
+                    //}
+                    //else
+                    //{
+                    //    Debug.WriteLine($"⚠️ Not connected");
+                    //}
+
+                    //service.Dispose();
+
+
                     if (_wpfTextView != null)
                     {
                         var caretPosition = _wpfTextView.Caret.Position.BufferPosition;
@@ -246,5 +266,102 @@ namespace SsmsQueryEditorAI.Services
                 }
             }
         }
+
+        
+
+        private void ProcessTypingWithConnection(char typedChar, ConnectionInfo connection)
+        {
+            try
+            {
+                if (_wpfTextView == null) return;
+
+                var caretPosition = _wpfTextView.Caret.Position.BufferPosition;
+                var snapshot = _wpfTextView.TextSnapshot;
+
+                // Get text up to caret
+                string textUpToCaret = snapshot.GetText(0, caretPosition.Position);
+
+                // Check for FROM keyword
+                bool fromExists = Regex.IsMatch(textUpToCaret, @"\bfrom\b", RegexOptions.IgnoreCase);
+
+                Debug.WriteLine($"Typed '{typedChar}' on {connection}");
+
+                // Do something based on what was typed
+                if (typedChar == '`' || typedChar == '[')
+                {
+                    Debug.WriteLine($"Backtick/bracket typed on {connection.Server}.{connection.Database}");
+
+                    if (fromExists)
+                    {
+                        Debug.WriteLine("FROM clause exists - suggesting table names");
+                        SuggestTablesForDatabase(connection);
+                    }
+                }
+                else if (typedChar == '.')
+                {
+                    Debug.WriteLine("Dot typed - suggesting schema/table names");
+                    SuggestSchemaObjects(connection, textUpToCaret);
+                }
+                else if (char.IsLetter(typedChar) || typedChar == ' ')
+                {
+                    // Check for SQL keywords that need database context
+                    CheckForDatabaseContextKeywords(textUpToCaret + typedChar, connection);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ProcessTypingWithConnection error: {ex.Message}");
+            }
+        }
+
+        private void SuggestTablesForDatabase(ConnectionInfo connection)
+        {
+            Debug.WriteLine($"Would suggest tables from {connection.Database} on {connection.Server}");
+
+            // Here you would:
+            // 1. Query the database for table names
+            // 2. Show Intellisense suggestions
+            // 3. Or do whatever you need with the connection info
+        }
+
+        private void SuggestSchemaObjects(ConnectionInfo connection, string textUpToCaret)
+        {
+            // Parse the text before the dot to understand context
+            // Example: "SELECT * FROM dbo." -> suggest table names in dbo schema
+            // Example: "SELECT Customer." -> suggest column names
+
+            Debug.WriteLine($"Schema suggestion for {connection}");
+        }
+
+        private void CheckForDatabaseContextKeywords(string text, ConnectionInfo connection)
+        {
+            // Check for USE statement
+            if (text.TrimEnd().EndsWith("USE ", StringComparison.OrdinalIgnoreCase))
+            {
+                Debug.WriteLine($"User is typing USE statement on {connection}");
+            }
+
+            // Check for specific database references
+            if (text.Contains(".") && text.Contains("dbo"))
+            {
+                Debug.WriteLine($"User is referencing schema objects on {connection.Database}");
+            }
+        }
+
+        private void OnConnectionRetrieved(ConnectionInfo connection)
+        {
+            Debug.WriteLine($"Connection retrieved: {connection}");
+
+            if (connection.IsConnected)
+            {
+                // You can now use connection.ServerName and connection.DatabaseName
+                // for whatever you need (logging, suggestions, validation, etc.)
+                Debug.WriteLine($"Working with: {connection.Server}.{connection.Database}");
+            }
+        }
+
+       
+
+
     }
 }

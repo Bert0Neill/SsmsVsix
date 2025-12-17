@@ -173,7 +173,7 @@ public class SqlConnectionMonitorService
                     Debug.WriteLine($"Connection updated: {server}.{database}");
 
                     // Notify about connection change
-                    ConnectionChanged?.Invoke(server, database);
+                    //ConnectionChanged?.Invoke(server, database);
 
                     // If this is a new connection (was null before)
                     if (string.IsNullOrEmpty(oldServer) && !string.IsNullOrEmpty(server))
