@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
+using SsmsQueryEditorAI.Models;
 using System;
 using System.Diagnostics;
 using System.Text.RegularExpressions;

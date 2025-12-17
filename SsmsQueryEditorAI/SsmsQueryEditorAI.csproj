@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Commands\ConfigureAI_Cmd.cs" />
     <Compile Include="Misc\Extensions.cs" />
+    <Compile Include="Models\ConnectionInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Resource.Designer.cs">
       <DependentUpon>Resource.resx</DependentUpon>
@@ -57,9 +58,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Services\ConnectionServices\MonitorDbConnectionService.cs" />
+    <Compile Include="Services\Connection\MonitorDbConnectionService.cs" />
     <Compile Include="Services\LoggerService.cs" />
-    <Compile Include="Services\AIEditorService.cs" />
+    <Compile Include="Services\AI\AIEditorService.cs" />
     <Compile Include="Services\SsmsHelper.cs" />
     <Compile Include="Services\StatusBarService.cs" />
     <Compile Include="SsmsQueryEditorAIPackage.cs" />

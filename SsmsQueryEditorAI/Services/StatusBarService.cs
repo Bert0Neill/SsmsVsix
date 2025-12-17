@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.Shell;
 using System;
 using Task = System.Threading.Tasks.Task;
-//using SQL_Shortcuts.Resources;
+using SsmsQueryEditorAI.Resources;
 
 namespace SsmsQueryEditorAI.Services
 {
@@ -33,7 +33,7 @@ namespace SsmsQueryEditorAI.Services
             {
                 if (_instance == null)
                 {
-                    //throw new InvalidOperationException(Resource.StatusBar_Error);
+                    throw new InvalidOperationException(Resource.StatusBar_Error);
                 }
                 return _instance;
             }
@@ -49,24 +49,25 @@ namespace SsmsQueryEditorAI.Services
 
             if (_statusBar == null)
             {
-               // System.Diagnostics.Debug.WriteLine(Resource.StatusBar_Error_Body);
+                System.Diagnostics.Debug.WriteLine(Resource.StatusBar_Error_Body);
                 return;
             }
 
             try
             {
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor;
+
                 // Clear previous text
                 _statusBar.FreezeOutput(0);
                 _statusBar.Clear();
 
                 // Set new text
                 _statusBar.SetText(text);
-                //System.Diagnostics.Debug.WriteLine($"{Resource.StatusBar_Status} '{text}'");
+                System.Diagnostics.Debug.WriteLine($"{Resource.StatusBar_Status} '{text}'");
             }
             catch (Exception ex)
             {
-                //SimpleLogger.Error($"{Resource.StatusBar_Error_Body} {ex.Message}");
+                LoggerService.Error($"{Resource.StatusBar_Error_Body} {ex.Message}");
             }
             finally
             {
@@ -85,7 +86,7 @@ namespace SsmsQueryEditorAI.Services
 
             if (_statusBar == null)
             {
-                //System.Diagnostics.Debug.WriteLine(Resource.StatusBar_Error_Body);
+                System.Diagnostics.Debug.WriteLine(Resource.StatusBar_Error_Body);
                 return;
             }
 
@@ -100,7 +101,7 @@ namespace SsmsQueryEditorAI.Services
             }
             catch (Exception ex)
             {
-                //SimpleLogger.Error($"{Resource.StatusBar_Error_Body} {ex.Message}");
+                LoggerService.Error($"{Resource.StatusBar_Error_Body} {ex.Message}");
             }
         }
 
@@ -113,7 +114,7 @@ namespace SsmsQueryEditorAI.Services
 
             if (_statusBar == null)
             {
-                //System.Diagnostics.Debug.WriteLine(Resource.StatusBar_Error_Body);
+                System.Diagnostics.Debug.WriteLine(Resource.StatusBar_Error_Body);
                 return;
             }
 
@@ -121,11 +122,11 @@ namespace SsmsQueryEditorAI.Services
             {
                 _statusBar.FreezeOutput(0);
                 _statusBar.Clear();
-                //System.Diagnostics.Debug.WriteLine(Resource.StatusBar_Status);
+                System.Diagnostics.Debug.WriteLine(Resource.StatusBar_Status);
             }
             catch (Exception ex)
             {
-                //SimpleLogger.Error($"{Resource.StatusBar_Clear} {ex.Message}");
+                LoggerService.Error($"{Resource.StatusBar_Clear} {ex.Message}");
             }
         }
 
@@ -151,7 +152,7 @@ namespace SsmsQueryEditorAI.Services
             }
             catch (Exception ex)
             {
-                //SimpleLogger.Error($"{Resource.StatusBar_Error_Update} {ex.Message}");
+                LoggerService.Error($"{Resource.StatusBar_Error_Update} {ex.Message}");
             }
         }
     }
