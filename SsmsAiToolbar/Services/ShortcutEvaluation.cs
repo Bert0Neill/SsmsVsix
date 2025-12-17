@@ -46,9 +46,9 @@ namespace SsmsEditorAI.Services
                 if (_wpfTextView != null)
                 {
                     _wpfTextView = editorFactory.GetWpfTextView(textView);
-                    _wpfTextView.GotAggregateFocus += OnEditorActivated;
-                    _wpfTextView.LostAggregateFocus += OnEditorDeactivated;
-                    _wpfTextView.Closed += OnTextViewClosed;
+                    //_wpfTextView.GotAggregateFocus += OnEditorActivated;
+                    //_wpfTextView.LostAggregateFocus += OnEditorDeactivated;
+                    //_wpfTextView.Closed += OnTextViewClosed;
                 }
             }
         }
