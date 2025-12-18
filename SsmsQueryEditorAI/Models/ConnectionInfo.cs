@@ -1,4 +1,4 @@
-﻿namespace SsmsQueryEditorAI.Models
+﻿namespace SSMS_AI_Buddy.Models
 {
     public class ConnectionInfo
     {

@@ -61,7 +61,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6) AI Buddy", "6) AI Buddy"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSIX_AI_Buddy.AI_Buddy", "AI_Buddy\VSIX_AI_Buddy.AI_Buddy.csproj", "{C6850127-F1A2-4432-837D-266195CE9C09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsQueryEditorAI", "SsmsQueryEditorAI\SsmsQueryEditorAI.csproj", "{011E9125-6660-49DF-86C3-C5D599697C88}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsmsAIBuddy", "SsmsQueryEditorAI\SsmsAIBuddy.csproj", "{011E9125-6660-49DF-86C3-C5D599697C88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

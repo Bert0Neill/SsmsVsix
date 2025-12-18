@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace SsmsQueryEditorAI.Services
+namespace SSMS_AI_Buddy.Services
 {
     public static class LoggerService
     {

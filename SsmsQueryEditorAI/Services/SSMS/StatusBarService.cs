@@ -2,9 +2,9 @@
 using Microsoft.VisualStudio.Shell;
 using System;
 using Task = System.Threading.Tasks.Task;
-using SsmsQueryEditorAI.Resources;
+using SSMS_AI_Buddy.Resources;
 
-namespace SsmsQueryEditorAI.Services
+namespace SSMS_AI_Buddy.Services
 {
     public class StatusBarService
     {

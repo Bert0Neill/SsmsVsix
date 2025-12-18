@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Process = System.Diagnostics.Process;
 
-namespace SsmsQueryEditorAI.Services
+namespace SSMS_AI_Buddy.Services
 {
     internal class SsmsHelper
     {

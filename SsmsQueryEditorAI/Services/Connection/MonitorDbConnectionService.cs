@@ -5,294 +5,297 @@ using System.Diagnostics;
 using System.Threading;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using SsmsQueryEditorAI.Models;
+using SSMS_AI_Buddy.Models;
 
-public class MonitorDbConnectionService
+namespace SSMS_AI_Buddy.Services.Connection
 {
-    private DTE _dte;
-    private IWpfTextView _currentView;
-    private string _currentServer;
-    private string _currentDatabase;
-    private string _lastKnownCaption;
-    private bool _isMonitoring;
-    private Timer _pollingTimer;
-
-    public event Action<string, string> ConnectionChanged;
-    public event Action<string> ConnectionLost;
-    public event Action<string, string, string> SqlTypedWithConnection;
-
-    public void InitializeForView(IWpfTextView view)
+    public class MonitorDbConnectionService
     {
-        ThreadHelper.ThrowIfNotOnUIThread();
+        private DTE _dte;
+        private IWpfTextView _currentView;
+        private string _currentServer;
+        private string _currentDatabase;
+        private string _lastKnownCaption;
+        private bool _isMonitoring;
+        private Timer _pollingTimer;
 
-        _currentView = view;
+        public event Action<string, string> ConnectionChanged;
+        public event Action<string> ConnectionLost;
+        public event Action<string, string, string> SqlTypedWithConnection;
 
-        // Get DTE
-        _dte = Package.GetGlobalService(typeof(DTE)) as DTE;
-        if (_dte == null)
+        public void InitializeForView(IWpfTextView view)
         {
-            Debug.WriteLine("DTE not available");
-            return;
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            _currentView = view;
+
+            // Get DTE
+            _dte = Package.GetGlobalService(typeof(DTE)) as DTE;
+            if (_dte == null)
+            {
+                Debug.WriteLine("DTE not available");
+                return;
+            }
+
+            // Initial connection check
+            UpdateConnectionFromCaption();
+
+            // Hook up text changes
+            view.TextBuffer.Changed += OnTextBufferChanged;
+
+            // Hook up view focus
+            view.GotAggregateFocus += OnViewGotFocus;
+            view.LostAggregateFocus += OnViewLostFocus;
+
+            // Start polling timer for caption changes
+            _pollingTimer = new Timer(PollForCaptionChanges, null, 1000, 1000);
+
+            _isMonitoring = true;
+
+            Debug.WriteLine($"Connection monitor initialized for view: {view}");
         }
 
-        // Initial connection check
-        UpdateConnectionFromCaption();
-
-        // Hook up text changes
-        view.TextBuffer.Changed += OnTextBufferChanged;
-
-        // Hook up view focus
-        view.GotAggregateFocus += OnViewGotFocus;
-        view.LostAggregateFocus += OnViewLostFocus;
-
-        // Start polling timer for caption changes
-        _pollingTimer = new Timer(PollForCaptionChanges, null, 1000, 1000);
-
-        _isMonitoring = true;
-
-        Debug.WriteLine($"Connection monitor initialized for view: {view}");
-    }
-
-    public void StopMonitoring()
-    {
-        _isMonitoring = false;
-
-        if (_pollingTimer != null)
+        public void StopMonitoring()
         {
-            _pollingTimer.Dispose();
-            _pollingTimer = null;
-        }
-        
-        // Unhook events
-        if (_currentView != null)
-        {
-            _currentView.TextBuffer.Changed -= OnTextBufferChanged;
-            _currentView.GotAggregateFocus -= OnViewGotFocus;
-            _currentView.LostAggregateFocus -= OnViewLostFocus;
+            _isMonitoring = false;
+
+            if (_pollingTimer != null)
+            {
+                _pollingTimer.Dispose();
+                _pollingTimer = null;
+            }
+
+            // Unhook events
+            if (_currentView != null)
+            {
+                _currentView.TextBuffer.Changed -= OnTextBufferChanged;
+                _currentView.GotAggregateFocus -= OnViewGotFocus;
+                _currentView.LostAggregateFocus -= OnViewLostFocus;
+            }
+
+            Debug.WriteLine("Connection monitoring stopped");
         }
 
-        Debug.WriteLine("Connection monitoring stopped");
-    }
-
-    private void PollForCaptionChanges(object state)
-    {
-        if (!_isMonitoring) return; // has monitoring stopped
-
-        try
+        private void PollForCaptionChanges(object state)
         {
-            // Get the current caption of the active sql tab on UI thread
+            if (!_isMonitoring) return; // has monitoring stopped
+
+            try
+            {
+                // Get the current caption of the active sql tab on UI thread
+                ThreadHelper.JoinableTaskFactory.Run(async () =>
+                {
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                    if (_dte?.ActiveDocument?.ActiveWindow == null) return;
+
+                    var currentCaption = _dte.ActiveDocument.ActiveWindow.Caption;
+                    if (currentCaption != _lastKnownCaption)
+                    {
+                        _lastKnownCaption = currentCaption;
+                        UpdateConnectionFromCaption();
+                    }
+                });
+            }
+            catch { }
+        }
+
+        private void OnTextBufferChanged(object sender, TextContentChangedEventArgs e)
+        {
+            if (!_isMonitoring) return;
+
             ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-                if (_dte?.ActiveDocument?.ActiveWindow == null) return;
-
-                var currentCaption = _dte.ActiveDocument.ActiveWindow.Caption;
-                if (currentCaption != _lastKnownCaption)
+                try
                 {
-                    _lastKnownCaption = currentCaption;
-                    UpdateConnectionFromCaption();
+                    // Get the typed text
+                    foreach (var change in e.Changes)
+                    {
+                        if (change.NewLength > 0)
+                        {
+                            var typedText = change.NewText;
+
+                            // Notify about typed SQL with connection context
+                            if (!string.IsNullOrEmpty(_currentServer))
+                            {
+                                SqlTypedWithConnection?.Invoke(typedText, _currentServer, _currentDatabase);
+                            }
+
+                            // Check for USE statements
+                            CheckForUseStatement(typedText);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error in text buffer change: {ex.Message}");
                 }
             });
         }
-        catch { }
-    }
 
-    private void OnTextBufferChanged(object sender, TextContentChangedEventArgs e)
-    {
-        if (!_isMonitoring) return;
-
-        ThreadHelper.JoinableTaskFactory.Run(async () =>
+        private void OnViewGotFocus(object sender, EventArgs e)
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            if (!_isMonitoring) return;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
+            UpdateConnectionFromCaption();
+            Debug.WriteLine("View got focus");
+        }
+
+        private void OnViewLostFocus(object sender, EventArgs e)
+        {
+            if (!_isMonitoring) return;
+
+            Debug.WriteLine("View lost focus");
+        }
+
+        private void UpdateConnectionFromCaption()
+        {
             try
             {
-                // Get the typed text
-                foreach (var change in e.Changes)
+                if (_dte?.ActiveDocument?.ActiveWindow == null) return;
+
+                var caption = _dte.ActiveDocument.ActiveWindow.Caption;
+                if (string.IsNullOrEmpty(caption)) return;
+
+                // Parse caption for connection info
+                if (TryParseConnectionFromCaption(caption, out string server, out string database))
                 {
-                    if (change.NewLength > 0)
+                    if (_currentServer != server || _currentDatabase != database)
                     {
-                        var typedText = change.NewText;
+                        var oldServer = _currentServer;
+                        var oldDatabase = _currentDatabase;
 
-                        // Notify about typed SQL with connection context
-                        if (!string.IsNullOrEmpty(_currentServer))
+                        _currentServer = server;
+                        _currentDatabase = database;
+
+                        Debug.WriteLine($"Connection updated: {server}.{database}");
+
+                        // Notify about connection change
+                        ConnectionChanged?.Invoke(server, database);
+
+                        // If this is a new connection (was null before)
+                        if (string.IsNullOrEmpty(oldServer) && !string.IsNullOrEmpty(server))
                         {
-                            SqlTypedWithConnection?.Invoke(typedText, _currentServer, _currentDatabase);
+                            Debug.WriteLine($"New connection established: {server}.{database}");
                         }
+                    }
+                }
+                else
+                {
+                    // No connection in caption
+                    if (!string.IsNullOrEmpty(_currentServer))
+                    {
+                        Debug.WriteLine($"Connection lost: {_currentServer}.{_currentDatabase}");
+                        ConnectionLost?.Invoke($"{_currentServer}.{_currentDatabase}");
 
-                        // Check for USE statements
-                        CheckForUseStatement(typedText);
+                        _currentServer = null;
+                        _currentDatabase = null;
                     }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error in text buffer change: {ex.Message}");
+                Debug.WriteLine($"Error updating connection: {ex.Message}");
             }
-        });
-    }
+        }
 
-    private void OnViewGotFocus(object sender, EventArgs e)
-    {
-        if (!_isMonitoring) return;
-
-        ThreadHelper.ThrowIfNotOnUIThread();
-        UpdateConnectionFromCaption();
-        Debug.WriteLine("View got focus");
-    }
-
-    private void OnViewLostFocus(object sender, EventArgs e)
-    {
-        if (!_isMonitoring) return;
-
-        Debug.WriteLine("View lost focus");
-    }
-
-    private void UpdateConnectionFromCaption()
-    {
-        try
+        private bool TryParseConnectionFromCaption(string caption, out string server, out string database)
         {
-            if (_dte?.ActiveDocument?.ActiveWindow == null) return;
+            server = null;
+            database = null;
 
-            var caption = _dte.ActiveDocument.ActiveWindow.Caption;
-            if (string.IsNullOrEmpty(caption)) return;
-
-            // Parse caption for connection info
-            if (TryParseConnectionFromCaption(caption, out string server, out string database))
+            try
             {
-                if (_currentServer != server || _currentDatabase != database)
+                if (!caption.Contains(" - ")) return false;
+
+                var parts = caption.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length < 2) return false;
+
+                var connectionPart = parts[1].Trim();
+
+                // Check if connecting
+                if (connectionPart.Equals("Connecting...", StringComparison.OrdinalIgnoreCase))
+                    return false;
+
+                // Remove username if present
+                var parenIndex = connectionPart.IndexOf('(');
+                if (parenIndex > 0)
                 {
-                    var oldServer = _currentServer;
-                    var oldDatabase = _currentDatabase;
+                    connectionPart = connectionPart.Substring(0, parenIndex).Trim();
+                }
 
-                    _currentServer = server;
-                    _currentDatabase = database;
+                // Check for server.database format
+                var dotIndex = connectionPart.IndexOf('.');
+                if (dotIndex > 0)
+                {
+                    server = connectionPart.Substring(0, dotIndex);
+                    database = connectionPart.Substring(dotIndex + 1);
+                    return true;
+                }
 
-                    Debug.WriteLine($"Connection updated: {server}.{database}");
-
-                    // Notify about connection change
-                    ConnectionChanged?.Invoke(server, database);
-
-                    // If this is a new connection (was null before)
-                    if (string.IsNullOrEmpty(oldServer) && !string.IsNullOrEmpty(server))
-                    {
-                        Debug.WriteLine($"New connection established: {server}.{database}");
-                    }
+                // Check if it's just a server name
+                if (!connectionPart.Contains(" ") && !connectionPart.Contains("("))
+                {
+                    server = connectionPart;
+                    database = "master";
+                    return true;
                 }
             }
-            else
+            catch (Exception)
             {
-                // No connection in caption
-                if (!string.IsNullOrEmpty(_currentServer))
+                throw;
+            }
+
+            return false;
+        }
+
+        private void CheckForUseStatement(string typedText)
+        {
+            if (string.IsNullOrEmpty(typedText)) return;
+
+            try
+            {
+                if (typedText.IndexOf("USE ", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    Debug.WriteLine($"Connection lost: {_currentServer}.{_currentDatabase}");
-                    ConnectionLost?.Invoke($"{_currentServer}.{_currentDatabase}");
-
-                    _currentServer = null;
-                    _currentDatabase = null;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Error updating connection: {ex.Message}");
-        }
-    }
-
-    private bool TryParseConnectionFromCaption(string caption, out string server, out string database)
-    {
-        server = null;
-        database = null;
-
-        try
-        {
-            if (!caption.Contains(" - ")) return false;
-
-            var parts = caption.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length < 2) return false;
-
-            var connectionPart = parts[1].Trim();
-
-            // Check if connecting
-            if (connectionPart.Equals("Connecting...", StringComparison.OrdinalIgnoreCase))
-                return false;
-
-            // Remove username if present
-            var parenIndex = connectionPart.IndexOf('(');
-            if (parenIndex > 0)
-            {
-                connectionPart = connectionPart.Substring(0, parenIndex).Trim();
-            }
-
-            // Check for server.database format
-            var dotIndex = connectionPart.IndexOf('.');
-            if (dotIndex > 0)
-            {
-                server = connectionPart.Substring(0, dotIndex);
-                database = connectionPart.Substring(dotIndex + 1);
-                return true;
-            }
-
-            // Check if it's just a server name
-            if (!connectionPart.Contains(" ") && !connectionPart.Contains("("))
-            {
-                server = connectionPart;
-                database = "master";
-                return true;
-            }
-        }
-        catch (Exception) 
-        { 
-            throw;
-        }
-
-        return false;
-    }
-
-    private void CheckForUseStatement(string typedText)
-    {
-        if (string.IsNullOrEmpty(typedText)) return;
-
-        try
-        {
-            if (typedText.IndexOf("USE ", StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                var lines = typedText.Split('\n');
-                foreach (var line in lines)
-                {
-                    var trimmed = line.Trim();
-                    if (trimmed.StartsWith("USE ", StringComparison.OrdinalIgnoreCase))
+                    var lines = typedText.Split('\n');
+                    foreach (var line in lines)
                     {
-                        var dbName = trimmed.Substring(4).Trim().TrimEnd(';', ' ', '\r');
-                        Debug.WriteLine($"USE statement detected: {dbName}");
-
-                        if (!string.IsNullOrEmpty(_currentServer))
+                        var trimmed = line.Trim();
+                        if (trimmed.StartsWith("USE ", StringComparison.OrdinalIgnoreCase))
                         {
-                            Debug.WriteLine($"Database context would change to: {_currentServer}.{dbName}");
+                            var dbName = trimmed.Substring(4).Trim().TrimEnd(';', ' ', '\r');
+                            Debug.WriteLine($"USE statement detected: {dbName}");
+
+                            if (!string.IsNullOrEmpty(_currentServer))
+                            {
+                                Debug.WriteLine($"Database context would change to: {_currentServer}.{dbName}");
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
             }
+            catch { }
         }
-        catch { }
-    }
 
-    public ConnectionInfo GetCurrentConnection()
-    {
-        return new ConnectionInfo
+        public ConnectionInfo GetCurrentConnection()
         {
-            Server = _currentServer,
-            Database = _currentDatabase,
-            IsConnected = !string.IsNullOrEmpty(_currentServer),
-            Caption = _lastKnownCaption
-        };
+            return new ConnectionInfo
+            {
+                Server = _currentServer,
+                Database = _currentDatabase,
+                IsConnected = !string.IsNullOrEmpty(_currentServer),
+                Caption = _lastKnownCaption
+            };
+        }
+
+        public string GetCurrentCaption()
+        {
+            return _lastKnownCaption;
+        }
     }
 
-    public string GetCurrentCaption()
-    {
-        return _lastKnownCaption;
-    }
 }
-

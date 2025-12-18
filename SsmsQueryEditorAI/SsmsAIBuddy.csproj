@@ -14,8 +14,8 @@
     <ProjectGuid>{011E9125-6660-49DF-86C3-C5D599697C88}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SsmsQueryEditorAI</RootNamespace>
-    <AssemblyName>SsmsQueryEditorAI</AssemblyName>
+    <RootNamespace>SSMS_AI_Buddy</RootNamespace>
+    <AssemblyName>SSMS_AI_Buddy</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <UseCodebase>true</UseCodebase>

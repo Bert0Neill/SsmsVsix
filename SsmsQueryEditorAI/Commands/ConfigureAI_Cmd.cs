@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 
-namespace SsmsQueryEditorAI.Commands
+namespace SSMS_AI_Buddy.Commands
 {
     /// <summary>
     /// Command handler

@@ -7,13 +7,14 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
-using SsmsQueryEditorAI.Models;
+using SSMS_AI_Buddy.Models;
+using SSMS_AI_Buddy.Services.Connection;
 using System;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
-namespace SsmsQueryEditorAI.Services
+namespace SSMS_AI_Buddy.Services
 {
     internal class AIEditorService : IOleCommandTarget, IVsTextViewFilter
     {
