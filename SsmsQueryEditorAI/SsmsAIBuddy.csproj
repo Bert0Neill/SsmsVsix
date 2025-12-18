@@ -51,7 +51,13 @@
     <Compile Include="Commands\ConfigureAI_Cmd.cs" />
     <Compile Include="Misc\Extensions.cs" />
     <Compile Include="Models\ConnectionInfo.cs" />
+    <Compile Include="Models\DbSchema.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\AI_Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AI_Resource.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\Resource.Designer.cs">
       <DependentUpon>Resource.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -62,6 +68,13 @@
     <Compile Include="Services\Helper\LoggerService.cs" />
     <Compile Include="Services\AI\AIEditorService.cs" />
     <Compile Include="Services\Helper\SsmsHelper.cs" />
+    <Compile Include="Services\SSMS\EditorHelper.cs" />
+    <Compile Include="Services\SSMS\OllamaSchemaBuilder.cs" />
+    <Compile Include="Services\SSMS\SqlAnalyzer.cs" />
+    <Compile Include="Services\SSMS\JoinGraphBuilder.cs" />
+    <Compile Include="Services\SSMS\DatabaseSchemaReader.cs" />
+    <Compile Include="Services\SSMS\SchemaReader.cs" />
+    <Compile Include="Services\SSMS\SchemaCache.cs" />
     <Compile Include="Services\SSMS\StatusBarService.cs" />
     <Compile Include="SsmsQueryEditorAIPackage.cs" />
   </ItemGroup>
@@ -154,6 +167,10 @@
     <Content Include="Misc\SQL AI Buddy.txt" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\AI_Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AI_Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>

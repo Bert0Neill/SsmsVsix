@@ -1,4 +1,5 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
+using SSMS_AI_Buddy.Services.SSMS;
 using System;
 using System.IO;
 

@@ -15,6 +15,7 @@ namespace SSMS_AI_Buddy.Services.Connection
         private IWpfTextView _currentView;
         private string _currentServer;
         private string _currentDatabase;
+        private string _currentUsername;
         private string _lastKnownCaption;
         private bool _isMonitoring;
         private Timer _pollingTimer;
@@ -161,7 +162,7 @@ namespace SSMS_AI_Buddy.Services.Connection
                 if (string.IsNullOrEmpty(caption)) return;
 
                 // Parse caption for connection info
-                if (TryParseConnectionFromCaption(caption, out string server, out string database))
+                if (TryParseConnectionFromCaption(caption, out string server, out string database, out string username))
                 {
                     if (_currentServer != server || _currentDatabase != database)
                     {
@@ -170,6 +171,7 @@ namespace SSMS_AI_Buddy.Services.Connection
 
                         _currentServer = server;
                         _currentDatabase = database;
+                        _currentUsername = username;
 
                         Debug.WriteLine($"Connection updated: {server}.{database}");
 
@@ -179,7 +181,7 @@ namespace SSMS_AI_Buddy.Services.Connection
                         // If this is a new connection (was null before)
                         if (string.IsNullOrEmpty(oldServer) && !string.IsNullOrEmpty(server))
                         {
-                            Debug.WriteLine($"New connection established: {server}.{database}");
+                            Debug.WriteLine($"New connection established: {server}.{database}.{username}");
                         }
                     }
                 }
@@ -188,11 +190,12 @@ namespace SSMS_AI_Buddy.Services.Connection
                     // No connection in caption
                     if (!string.IsNullOrEmpty(_currentServer))
                     {
-                        Debug.WriteLine($"Connection lost: {_currentServer}.{_currentDatabase}");
-                        ConnectionLost?.Invoke($"{_currentServer}.{_currentDatabase}");
+                        Debug.WriteLine($"Connection lost: {_currentServer}.{_currentDatabase}.{_currentUsername}");
+                        ConnectionLost?.Invoke($"{_currentServer}.{_currentDatabase}.{_currentUsername}");
 
                         _currentServer = null;
                         _currentDatabase = null;
+                        _currentUsername = null;
                     }
                 }
             }
@@ -202,55 +205,108 @@ namespace SSMS_AI_Buddy.Services.Connection
             }
         }
 
-        private bool TryParseConnectionFromCaption(string caption, out string server, out string database)
+        //private bool TryParseConnectionFromCaption(string caption, out string server, out string database)
+        //{
+        //    server = null;
+        //    database = null;
+
+        //    try
+        //    {
+        //        if (!caption.Contains(" - ")) return false;
+
+        //        var parts = caption.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
+        //        if (parts.Length < 2) return false;
+
+        //        var connectionPart = parts[1].Trim();
+
+        //        // Check if connecting
+        //        if (connectionPart.Equals("Connecting...", StringComparison.OrdinalIgnoreCase))
+        //            return false;
+
+        //        // Remove username if present
+        //        var parenIndex = connectionPart.IndexOf('(');
+        //        if (parenIndex > 0)
+        //        {
+        //            connectionPart = connectionPart.Substring(0, parenIndex).Trim();
+        //        }
+
+        //        // Check for server.database format
+        //        var dotIndex = connectionPart.IndexOf('.');
+        //        if (dotIndex > 0)
+        //        {
+        //            server = connectionPart.Substring(0, dotIndex);
+        //            database = connectionPart.Substring(dotIndex + 1);
+        //            return true;
+        //        }
+
+        //        // Check if it's just a server name
+        //        if (!connectionPart.Contains(" ") && !connectionPart.Contains("("))
+        //        {
+        //            server = connectionPart;
+        //            database = "master";
+        //            return true;
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+
+        //    return false;
+        //}
+
+        private bool TryParseConnectionFromCaption(
+    string caption,
+    out string server,
+    out string database,
+    out string userName)
         {
             server = null;
             database = null;
+            userName = null;
 
-            try
+            if (string.IsNullOrWhiteSpace(caption) || !caption.Contains(" - "))
+                return false;
+
+            var parts = caption.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length < 2)
+                return false;
+
+            var connectionPart = parts[1].Trim();
+
+            if (connectionPart.Equals("Connecting...", StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            // Extract username if present: (user)
+            var openParen = connectionPart.IndexOf('(');
+            if (openParen > 0)
             {
-                if (!caption.Contains(" - ")) return false;
-
-                var parts = caption.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length < 2) return false;
-
-                var connectionPart = parts[1].Trim();
-
-                // Check if connecting
-                if (connectionPart.Equals("Connecting...", StringComparison.OrdinalIgnoreCase))
-                    return false;
-
-                // Remove username if present
-                var parenIndex = connectionPart.IndexOf('(');
-                if (parenIndex > 0)
+                var closeParen = connectionPart.IndexOf(')', openParen);
+                if (closeParen > openParen)
                 {
-                    connectionPart = connectionPart.Substring(0, parenIndex).Trim();
-                }
+                    userName = connectionPart
+                        .Substring(openParen + 1, closeParen - openParen - 1)
+                        .Trim();
 
-                // Check for server.database format
-                var dotIndex = connectionPart.IndexOf('.');
-                if (dotIndex > 0)
-                {
-                    server = connectionPart.Substring(0, dotIndex);
-                    database = connectionPart.Substring(dotIndex + 1);
-                    return true;
-                }
-
-                // Check if it's just a server name
-                if (!connectionPart.Contains(" ") && !connectionPart.Contains("("))
-                {
-                    server = connectionPart;
-                    database = "master";
-                    return true;
+                    connectionPart = connectionPart.Substring(0, openParen).Trim();
                 }
             }
-            catch (Exception)
+
+            // server.database
+            var dotIndex = connectionPart.IndexOf('.');
+            if (dotIndex > 0)
             {
-                throw;
+                server = connectionPart.Substring(0, dotIndex);
+                database = connectionPart.Substring(dotIndex + 1);
+                return true;
             }
 
-            return false;
+            // server only
+            server = connectionPart;
+            database = "master";
+            return true;
         }
+
 
         private void CheckForUseStatement(string typedText)
         {
@@ -288,7 +344,8 @@ namespace SSMS_AI_Buddy.Services.Connection
                 Server = _currentServer,
                 Database = _currentDatabase,
                 IsConnected = !string.IsNullOrEmpty(_currentServer),
-                Caption = _lastKnownCaption
+                Caption = _lastKnownCaption,
+                Username = _currentUsername
             };
         }
 

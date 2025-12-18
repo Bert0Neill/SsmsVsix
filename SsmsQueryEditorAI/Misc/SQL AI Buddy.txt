@@ -644,3 +644,36 @@ INPUT CONTEXT:
   ]
 }
 ------------------------------------
+
+Editor Keystroke
+   ↓
+TYPECHAR → space / enter
+   ↓
+FROM/JOIN detected?
+   ↓
+Extract tables
+   ↓
+Expand join paths (FK graph)
+   ↓
+Load schema from cache
+   ↓
+Attach indexes
+   ↓
+Build JSON
+   ↓
+Prompt Ollama
+------------------------------------------
+
+Next upgrades (optional but powerful)
+
+If you want, I can next add:
+
+🔥 Cost-based join ranking
+
+🔥 SQL text diff & inline suggestion preview
+
+🔥 Per-database schema versioning
+
+🔥 “Explain why this join” AI responses
+
+🔥 Execution-plan-aware prompts

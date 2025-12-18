@@ -67,6 +67,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Task = System.Threading.Tasks.Task;
+using SSMS_AI_Buddy.Services.SSMS;
 
 namespace SSMS_AI_Buddy
 {

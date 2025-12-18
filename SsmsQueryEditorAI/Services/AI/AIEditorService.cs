@@ -9,8 +9,11 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using SSMS_AI_Buddy.Models;
 using SSMS_AI_Buddy.Services.Connection;
+using SSMS_AI_Buddy.Services.SSMS;
+using SSMS_AI_Buddy.Services.SSMS.SSMS_AI_Buddy.Services.SSMS;
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
@@ -24,6 +27,11 @@ namespace SSMS_AI_Buddy.Services
         public IOleCommandTarget _nextFilter { get; set; }
         private IWpfTextView _wpfTextView;
         private MonitorDbConnectionService _activeMonitor;
+        private string _connectionString;
+        private string _serverName;
+        private string _databaseName;
+        private string _connectionKey;
+        private string _username;
         #endregion
 
         public AIEditorService(SsmsQueryEditorAIPackage package, IVsTextView textView)
@@ -70,58 +78,94 @@ namespace SSMS_AI_Buddy.Services
         /// <param name="pvaIn"></param>
         /// <param name="pvaOut"></param>
         /// <returns></returns>
+        //public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
+        //{
+        //    // Only handle regular typing
+        //    if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
+        //    {
+        //        char typedChar = (char)(ushort)System.Runtime.InteropServices.Marshal.GetObjectForNativeVariant(pvaIn);
+
+        //        try
+        //        {
+        //            if (_wpfTextView != null)
+        //            {
+        //                var caretPosition = _wpfTextView.Caret.Position.BufferPosition;
+        //                var snapshot = _wpfTextView.TextSnapshot;
+
+        //                // Get the entire text from the start of the buffer up to the caret
+        //                string textUpToCaret = snapshot.GetText(0, caretPosition.Position);
+
+        //                // Split into statements if needed (optional)
+        //                // For simplicity, just work with the text up to caret
+        //                string currentStatement = textUpToCaret;
+
+        //                // Check if "FROM" keyword exists (case-insensitive)
+        //                bool fromExists = Regex.IsMatch(currentStatement, @"\bfrom\b", RegexOptions.IgnoreCase);
+
+        //                if (fromExists)
+        //                {
+        //                    Debug.WriteLine($"Typed char: {typedChar}, FROM exists: {fromExists}");
+
+        //                    // Example: take action if backtick typed and FROM exists
+        //                    if (typedChar == '`')
+        //                    {
+        //                        if (fromExists)
+        //                        {
+        //                            Debug.WriteLine("FROM already typed, do something...");
+        //                        }
+        //                        else
+        //                        {
+        //                            Debug.WriteLine("No FROM yet, do something else...");
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Debug.WriteLine($"Error in Exec: {ex.Message}");
+        //        }
+        //    }
+
+        //    // Call next filter to not block normal typing
+        //    return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
+        //}
+
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
-            // Only handle regular typing
             if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
             {
-                char typedChar = (char)(ushort)System.Runtime.InteropServices.Marshal.GetObjectForNativeVariant(pvaIn);
+                char typedChar = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
 
-                try
+                if (typedChar == ' ' || typedChar == '\n')
                 {
-                    if (_wpfTextView != null)
+                    var sql = EditorHelper.GetCurrentEditorText();
+
+                    if (SqlAnalyzer.ShouldTrigger(sql))
                     {
-                        var caretPosition = _wpfTextView.Caret.Position.BufferPosition;
-                        var snapshot = _wpfTextView.TextSnapshot;
+                        var schema = SchemaCache.GetOrAdd(
+                            _connectionKey,
+                            () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
 
-                        // Get the entire text from the start of the buffer up to the caret
-                        string textUpToCaret = snapshot.GetText(0, caretPosition.Position);
+                        var tables = SqlAnalyzer.ExtractTables(sql);
 
-                        // Split into statements if needed (optional)
-                        // For simplicity, just work with the text up to caret
-                        string currentStatement = textUpToCaret;
+                        var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
+                        var expanded = JoinGraphBuilder.Expand(tables, graph);
 
-                        // Check if "FROM" keyword exists (case-insensitive)
-                        bool fromExists = Regex.IsMatch(currentStatement, @"\bfrom\b", RegexOptions.IgnoreCase);
+                        var json = OllamaSchemaBuilder.Build(
+                            _databaseName,
+                            schema,
+                            expanded);
 
-                        if (fromExists)
-                        {
-                            Debug.WriteLine($"Typed char: {typedChar}, FROM exists: {fromExists}");
-
-                            // Example: take action if backtick typed and FROM exists
-                            if (typedChar == '`')
-                            {
-                                if (fromExists)
-                                {
-                                    Debug.WriteLine("FROM already typed, do something...");
-                                }
-                                else
-                                {
-                                    Debug.WriteLine("No FROM yet, do something else...");
-                                }
-                            }
-                        }
+                        // 👉 SEND json + prompt to Ollama
                     }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error in Exec: {ex.Message}");
                 }
             }
 
-            // Call next filter to not block normal typing
-            return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
-        }
+                // Call next filter to not block normal typing
+                return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
+            }
+        
 
         public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
         {
@@ -201,11 +245,44 @@ namespace SSMS_AI_Buddy.Services
         {
             Debug.WriteLine($"Active connection changed: {server}.{database}");
 
-            // You can now:
-            // 1. Update UI to show current connection
-            // 2. Load connection-specific settings
-            // 3. Validate current SQL against this connection
-            // 4. Fetch schema information for IntelliSense
+            _serverName = server;
+            _databaseName = database;
+            var connectionInfo = _activeMonitor.GetCurrentConnection();
+            _username = connectionInfo.Username;
+           _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
+            _connectionKey = $"{server}|{database}|{connectionInfo.Username}";
+
+            //var schemaText = DatabaseSchemaReader.ReadSchema(server: server, database: database);
+            //Console.WriteLine(schemaText);
+
+            //string connectionKey = $"{server}|{database}|{user}";
+
+            //var sqlText = GetCurrentEditorText();
+
+            //var referencedTables = SchemaService.ExtractTableNames(sqlText);
+
+            //var schema = SchemaCache.GetOrAdd(connectionKey, () =>
+            //{
+            //    return LoadSchemaFromDatabase(); // your existing reader
+            //});
+
+            //var filteredTables = SchemaService.FilterTables(schema.Tables, referencedTables);
+
+            //var json = SchemaService.BuildSchemaJson(
+            //    database,
+            //    filteredTables,
+            //    schema.Columns,
+            //    schema.PrimaryKeys,
+            //    schema.ForeignKeys);
+
+            //// SEND `json` TO OLLAMA
+
+            //var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
+
+            //var expandedTables =
+            //    JoinGraphBuilder.ExpandJoinPaths(referencedTables, graph);
+
+
         }
         #endregion
 
@@ -247,10 +324,57 @@ namespace SSMS_AI_Buddy.Services
 
             Debug.WriteLine($"Schema suggestion for {connection}");
         }
-        #endregion
 
-        #region Interface IVsTextViewFilter Members
-        public int GetDataTipText(TextSpan[] pSpan, out string pbstrText)
+        private bool ShouldTriggerAi(string sql)
+        {
+            if (sql.Length < 10)
+                return false;
+
+            return Regex.IsMatch(
+                sql,
+                @"\b(from|join)\b",
+                RegexOptions.IgnoreCase);
+        }
+
+       
+
+private string GetCurrentEditorText()
+    {
+        ThreadHelper.ThrowIfNotOnUIThread();
+
+        IVsTextManager textManager =
+            (IVsTextManager)ServiceProvider.GlobalProvider.GetService(
+                typeof(SVsTextManager));
+
+        if (textManager == null)
+            return string.Empty;
+
+        IVsTextView textView;
+        textManager.GetActiveView(1, null, out textView);
+
+        if (textView == null)
+            return string.Empty;
+
+        IVsTextLines lines;
+        textView.GetBuffer(out lines);
+
+        int lastLine, lastIndex;
+        lines.GetLastLineIndex(out lastLine, out lastIndex);
+
+        string text;
+        lines.GetLineText(
+            0, 0,
+            lastLine, lastIndex,
+            out text);
+
+        return text ?? string.Empty;
+    }
+
+
+    #endregion
+
+    #region Interface IVsTextViewFilter Members
+    public int GetDataTipText(TextSpan[] pSpan, out string pbstrText)
         {
             var nextTextViewFilter = _nextFilter as IVsTextViewFilter;
             if (nextTextViewFilter != null)

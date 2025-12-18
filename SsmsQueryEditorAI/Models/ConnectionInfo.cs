@@ -4,6 +4,7 @@
     {
         public string Server { get; set; }
         public string Database { get; set; }
+        public string Username { get; set; }
         public bool IsConnected { get; set; }
         public string Caption { get; set; }
 

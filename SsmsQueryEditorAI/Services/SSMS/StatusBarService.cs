@@ -4,7 +4,7 @@ using System;
 using Task = System.Threading.Tasks.Task;
 using SSMS_AI_Buddy.Resources;
 
-namespace SSMS_AI_Buddy.Services
+namespace SSMS_AI_Buddy.Services.SSMS
 {
     public class StatusBarService
     {
