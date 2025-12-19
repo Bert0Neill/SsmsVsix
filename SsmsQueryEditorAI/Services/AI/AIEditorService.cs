@@ -152,10 +152,7 @@ namespace SSMS_AI_Buddy.Services
                         var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
                         var expanded = JoinGraphBuilder.Expand(tables, graph);
 
-                        var json = OllamaSchemaBuilder.Build(
-                            _databaseName,
-                            schema,
-                            expanded);
+                        var json = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
 
                         // 👉 SEND json + prompt to Ollama
                     }
@@ -252,37 +249,10 @@ namespace SSMS_AI_Buddy.Services
            _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
             _connectionKey = $"{server}|{database}|{connectionInfo.Username}";
 
-            //var schemaText = DatabaseSchemaReader.ReadSchema(server: server, database: database);
-            //Console.WriteLine(schemaText);
-
-            //string connectionKey = $"{server}|{database}|{user}";
-
-            //var sqlText = GetCurrentEditorText();
-
-            //var referencedTables = SchemaService.ExtractTableNames(sqlText);
-
-            //var schema = SchemaCache.GetOrAdd(connectionKey, () =>
-            //{
-            //    return LoadSchemaFromDatabase(); // your existing reader
-            //});
-
-            //var filteredTables = SchemaService.FilterTables(schema.Tables, referencedTables);
-
-            //var json = SchemaService.BuildSchemaJson(
-            //    database,
-            //    filteredTables,
-            //    schema.Columns,
-            //    schema.PrimaryKeys,
-            //    schema.ForeignKeys);
-
-            //// SEND `json` TO OLLAMA
-
-            //var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
-
-            //var expandedTables =
-            //    JoinGraphBuilder.ExpandJoinPaths(referencedTables, graph);
-
-
+            // get DB schema and cache it
+            SchemaCache.GetOrAdd(
+                          _connectionKey,
+                          () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
         }
         #endregion
 
@@ -335,41 +305,6 @@ namespace SSMS_AI_Buddy.Services
                 @"\b(from|join)\b",
                 RegexOptions.IgnoreCase);
         }
-
-       
-
-private string GetCurrentEditorText()
-    {
-        ThreadHelper.ThrowIfNotOnUIThread();
-
-        IVsTextManager textManager =
-            (IVsTextManager)ServiceProvider.GlobalProvider.GetService(
-                typeof(SVsTextManager));
-
-        if (textManager == null)
-            return string.Empty;
-
-        IVsTextView textView;
-        textManager.GetActiveView(1, null, out textView);
-
-        if (textView == null)
-            return string.Empty;
-
-        IVsTextLines lines;
-        textView.GetBuffer(out lines);
-
-        int lastLine, lastIndex;
-        lines.GetLastLineIndex(out lastLine, out lastIndex);
-
-        string text;
-        lines.GetLineText(
-            0, 0,
-            lastLine, lastIndex,
-            out text);
-
-        return text ?? string.Empty;
-    }
-
 
     #endregion
 
