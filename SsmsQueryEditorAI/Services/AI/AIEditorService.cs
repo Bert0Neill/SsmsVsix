@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
@@ -12,7 +13,9 @@ using SSMS_AI_Buddy.Services.Connection;
 using SSMS_AI_Buddy.Services.SSMS;
 using SSMS_AI_Buddy.Services.SSMS.SSMS_AI_Buddy.Services.SSMS;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -52,7 +55,7 @@ namespace SSMS_AI_Buddy.Services
 
             if (editorFactory == null)
                 return;
-            
+
             _wpfTextView = editorFactory.GetWpfTextView(textView);
 
             if (_wpfTextView == null)
@@ -159,10 +162,11 @@ namespace SSMS_AI_Buddy.Services
                 }
             }
 
-                // Call next filter to not block normal typing
-                return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
-            }
-        
+            // Call next filter to not block normal typing
+            return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
+        }
+
+
 
         public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
         {
@@ -246,7 +250,7 @@ namespace SSMS_AI_Buddy.Services
             _databaseName = database;
             var connectionInfo = _activeMonitor.GetCurrentConnection();
             _username = connectionInfo.Username;
-           _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
+            _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
             _connectionKey = $"{server}|{database}|{connectionInfo.Username}";
 
             // get DB schema and cache it
@@ -306,10 +310,12 @@ namespace SSMS_AI_Buddy.Services
                 RegexOptions.IgnoreCase);
         }
 
-    #endregion
 
-    #region Interface IVsTextViewFilter Members
-    public int GetDataTipText(TextSpan[] pSpan, out string pbstrText)
+
+        #endregion
+
+        #region Interface IVsTextViewFilter Members
+        public int GetDataTipText(TextSpan[] pSpan, out string pbstrText)
         {
             var nextTextViewFilter = _nextFilter as IVsTextViewFilter;
             if (nextTextViewFilter != null)
@@ -339,4 +345,6 @@ namespace SSMS_AI_Buddy.Services
         }
         #endregion
     }
+
+
 }

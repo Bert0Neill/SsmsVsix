@@ -62,10 +62,10 @@ namespace SSMS_AI_Buddy.Resources {
         
         /// <summary>
         ///   Looks up a localized string similar to DATABASE SCHEMA (JSON):
-        ///{{schema_json}}
+        ///{0}
         ///
         ///USER SQL (INCOMPLETE):
-        ///{{current_sql}}
+        ///{1}
         ///
         ///TASK:
         ///- Complete or improve the SQL
