@@ -119,10 +119,10 @@
   </resheader>
   <data name="AI_Prompt" xml:space="preserve">
     <value>DATABASE SCHEMA (JSON):
-{{schema_json}}
+{0}
 
 USER SQL (INCOMPLETE):
-{{current_sql}}
+{1}
 
 TASK:
 - Complete or improve the SQL

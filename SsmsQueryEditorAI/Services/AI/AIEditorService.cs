@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
@@ -14,6 +15,7 @@ using SSMS_AI_Buddy.Services.SSMS.SSMS_AI_Buddy.Services.SSMS;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -72,7 +74,7 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
 
             if (editorFactory == null)
                 return;
-            
+
             _wpfTextView = editorFactory.GetWpfTextView(textView);
 
             if (_wpfTextView == null)
@@ -244,8 +246,10 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
                 }
             }
 
+            // Call next filter to not block normal typing
             return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
         }
+
 
 
         public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
@@ -330,7 +334,7 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
             _databaseName = database;
             var connectionInfo = _activeMonitor.GetCurrentConnection();
             _username = connectionInfo.Username;
-           _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
+            _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
             _connectionKey = $"{server}|{database}|{connectionInfo.Username}";
 
             // get DB schema and cache it
@@ -390,71 +394,10 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
                 RegexOptions.IgnoreCase);
         }
 
-        #endregion
+    #endregion
 
-
-
-        private void RenderOrReplaceSuggestion()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            string newText =
-                _suggestions[_suggestionIndex] +
-                Environment.NewLine +
-                $"-- Suggestion {_suggestionIndex + 1} of {_suggestions.Count} (TAB to cycle)";
-
-            // FIRST render: capture caret ONCE
-            if (!_isSuggesting)
-            {
-                _textView.GetCaretPos(out _insertLine, out _insertColumn);
-            }
-            else
-            {
-                // REMOVE old ghost text using ORIGINAL position
-                _textView.ReplaceTextOnLine(
-                    _insertLine,
-                    _insertColumn,
-                    _currentGhostText.Length,
-                    string.Empty,
-                    0);
-            }
-
-            // INSERT new ghost text at SAME position
-            _textView.ReplaceTextOnLine(
-                _insertLine,
-                _insertColumn,
-                0,
-                newText,
-                newText.Length);
-
-            _currentGhostText = newText;
-            _isSuggesting = true;
-        }
-
-
-        private void ClearSuggestion()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (!_isSuggesting || string.IsNullOrEmpty(_currentGhostText))
-                return;
-
-            _textView.ReplaceTextOnLine(
-                _insertLine,
-                _insertColumn,
-                _currentGhostText.Length,
-                string.Empty,
-                0);
-
-            _isSuggesting = false;
-            _currentGhostText = null;
-        }
-
-
-
-
-        #region Interface IVsTextViewFilter Members
-        public int GetDataTipText(TextSpan[] pSpan, out string pbstrText)
+    #region Interface IVsTextViewFilter Members
+    public int GetDataTipText(TextSpan[] pSpan, out string pbstrText)
         {
             var nextTextViewFilter = _nextFilter as IVsTextViewFilter;
             if (nextTextViewFilter != null)
@@ -484,4 +427,6 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
         }
         #endregion
     }
+
+
 }

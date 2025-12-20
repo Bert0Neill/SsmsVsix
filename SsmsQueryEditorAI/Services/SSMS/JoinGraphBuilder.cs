@@ -5,11 +5,9 @@ namespace SSMS_AI_Buddy.Services.SSMS
 {
     public static class JoinGraphBuilder
     {
-        public static Dictionary<string, List<string>> BuildGraph(
-            List<ForeignKeyInfo> fks)
+        public static Dictionary<string, List<string>> BuildGraph(List<ForeignKeyInfo> fks)
         {
-            var graph = new Dictionary<string, List<string>>(
-                System.StringComparer.OrdinalIgnoreCase);
+            var graph = new Dictionary<string, List<string>>(System.StringComparer.OrdinalIgnoreCase);
 
             foreach (var fk in fks)
             {
@@ -22,9 +20,7 @@ namespace SSMS_AI_Buddy.Services.SSMS
             return graph;
         }
 
-        public static HashSet<string> Expand(
-            HashSet<string> seeds,
-            Dictionary<string, List<string>> graph)
+        public static HashSet<string> Expand(HashSet<string> seeds, Dictionary<string, List<string>> graph)
         {
             var result = new HashSet<string>(seeds, System.StringComparer.OrdinalIgnoreCase);
             var queue = new Queue<string>(seeds);
