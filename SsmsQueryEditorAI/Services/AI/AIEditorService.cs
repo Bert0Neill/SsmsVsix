@@ -12,6 +12,7 @@ using SSMS_AI_Buddy.Services.Connection;
 using SSMS_AI_Buddy.Services.SSMS;
 using SSMS_AI_Buddy.Services.SSMS.SSMS_AI_Buddy.Services.SSMS;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -33,6 +34,25 @@ namespace SSMS_AI_Buddy.Services
         private string _connectionKey;
         private string _username;
         #endregion
+
+        private bool _isSuggesting;
+        private int _suggestionIndex;
+
+        private int _insertLine;
+        private int _insertColumn;
+        private string _currentGhostText;
+
+        private readonly List<string> _suggestions = new List<string>()
+{
+@"Customers c
+JOIN Orders o ON c.CustomerID = o.CustomerID",
+
+@"Orders o
+JOIN OrderItems oi ON o.OrderID = oi.OrderID"
+};
+
+
+
 
         public AIEditorService(SsmsQueryEditorAIPackage package, IVsTextView textView)
         {
@@ -131,38 +151,102 @@ namespace SSMS_AI_Buddy.Services
         //    return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
         //}
 
-        public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
+        //public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
+        //{
+        //    if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
+        //    {
+        //        char typedChar = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
+
+        //        if (typedChar == ' ' || typedChar == '\n')
+        //        {
+        //            var sql = EditorHelper.GetCurrentEditorText();
+
+        //            if (SqlAnalyzer.ShouldTrigger(sql))
+        //            {
+        //                var schema = SchemaCache.GetOrAdd(
+        //                    _connectionKey,
+        //                    () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+
+        //                var tables = SqlAnalyzer.ExtractTables(sql);
+
+        //                var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
+        //                var expanded = JoinGraphBuilder.Expand(tables, graph);
+
+        //                var json = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
+
+        //                // 👉 SEND json + prompt to Ollama
+        //            }
+        //        }
+        //    }
+
+        //        // Call next filter to not block normal typing
+        //        return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
+        //    }
+
+        public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt,
+                  IntPtr pvaIn, IntPtr pvaOut)
         {
-            if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
+            if (pguidCmdGroup == VSConstants.VSStd2K)
             {
-                char typedChar = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
-
-                if (typedChar == ' ' || typedChar == '\n')
+                // Typed character
+                if (nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
                 {
-                    var sql = EditorHelper.GetCurrentEditorText();
+                    char ch = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
 
-                    if (SqlAnalyzer.ShouldTrigger(sql))
+                    if (_isSuggesting && !char.IsWhiteSpace(ch))
                     {
-                        var schema = SchemaCache.GetOrAdd(
-                            _connectionKey,
-                            () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
-
-                        var tables = SqlAnalyzer.ExtractTables(sql);
-
-                        var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
-                        var expanded = JoinGraphBuilder.Expand(tables, graph);
-
-                        var json = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
-
-                        // 👉 SEND json + prompt to Ollama
+                        ClearSuggestion();
                     }
+
+                    if (ch == ' ')
+                    {
+                        var sql = EditorHelper.GetCurrentEditorText();
+
+                        if (sql.EndsWith(" from", StringComparison.OrdinalIgnoreCase))
+                        {
+                            _suggestionIndex = 0;
+                            RenderOrReplaceSuggestion();
+                            return VSConstants.S_OK;
+                        }
+                    }
+                }
+
+                // TAB → next suggestion
+                if (_isSuggesting && nCmdID == (uint)VSConstants.VSStd2KCmdID.TAB)
+                {
+                    _suggestionIndex = (_suggestionIndex + 1) % _suggestions.Count;
+                    RenderOrReplaceSuggestion();
+                    return VSConstants.S_OK; // swallow TAB
+                }
+
+
+                // ENTER → accept suggestion
+                if (_isSuggesting && nCmdID == (uint)VSConstants.VSStd2KCmdID.RETURN)
+                {
+                    // Stop suggestion mode
+                    _isSuggesting = false;
+                    _currentGhostText = null;
+
+                    // Let SSMS insert the newline
+                    return _nextFilter.Exec(
+                        ref pguidCmdGroup,
+                        nCmdID,
+                        nCmdexecopt,
+                        pvaIn,
+                        pvaOut);
+                }
+
+                // ESC → cancel
+                if (_isSuggesting && nCmdID == (uint)VSConstants.VSStd2KCmdID.CANCEL)
+                {
+                    ClearSuggestion();
+                    return VSConstants.S_OK;
                 }
             }
 
-                // Call next filter to not block normal typing
-                return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
-            }
-        
+            return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
+        }
+
 
         public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
         {
@@ -306,10 +390,71 @@ namespace SSMS_AI_Buddy.Services
                 RegexOptions.IgnoreCase);
         }
 
-    #endregion
+        #endregion
 
-    #region Interface IVsTextViewFilter Members
-    public int GetDataTipText(TextSpan[] pSpan, out string pbstrText)
+
+
+        private void RenderOrReplaceSuggestion()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            string newText =
+                _suggestions[_suggestionIndex] +
+                Environment.NewLine +
+                $"-- Suggestion {_suggestionIndex + 1} of {_suggestions.Count} (TAB to cycle)";
+
+            // FIRST render: capture caret ONCE
+            if (!_isSuggesting)
+            {
+                _textView.GetCaretPos(out _insertLine, out _insertColumn);
+            }
+            else
+            {
+                // REMOVE old ghost text using ORIGINAL position
+                _textView.ReplaceTextOnLine(
+                    _insertLine,
+                    _insertColumn,
+                    _currentGhostText.Length,
+                    string.Empty,
+                    0);
+            }
+
+            // INSERT new ghost text at SAME position
+            _textView.ReplaceTextOnLine(
+                _insertLine,
+                _insertColumn,
+                0,
+                newText,
+                newText.Length);
+
+            _currentGhostText = newText;
+            _isSuggesting = true;
+        }
+
+
+        private void ClearSuggestion()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (!_isSuggesting || string.IsNullOrEmpty(_currentGhostText))
+                return;
+
+            _textView.ReplaceTextOnLine(
+                _insertLine,
+                _insertColumn,
+                _currentGhostText.Length,
+                string.Empty,
+                0);
+
+            _isSuggesting = false;
+            _currentGhostText = null;
+        }
+
+
+
+
+        #region Interface IVsTextViewFilter Members
+        public int GetDataTipText(TextSpan[] pSpan, out string pbstrText)
         {
             var nextTextViewFilter = _nextFilter as IVsTextViewFilter;
             if (nextTextViewFilter != null)
