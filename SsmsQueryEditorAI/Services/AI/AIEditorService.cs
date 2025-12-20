@@ -19,6 +19,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Windows;
 
 namespace SSMS_AI_Buddy.Services
 {
@@ -79,6 +80,8 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
 
             if (_wpfTextView == null)
                 return;
+
+            EditorHelperv2.ActiveView = _wpfTextView; // ✔ always valid
 
             // hook into editor events
             _wpfTextView.GotAggregateFocus += OnEditorActivated;
@@ -181,74 +184,140 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
         //        }
         //    }
 
-        //        // Call next filter to not block normal typing
-        //        return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
-        //    }
+        //    // Call next filter to not block normal typing
+        //    return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
+        //}
 
-        public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt,
-                  IntPtr pvaIn, IntPtr pvaOut)
+        public int Exec(
+    ref Guid pguidCmdGroup,
+    uint nCmdID,
+    uint nCmdexecopt,
+    IntPtr pvaIn,
+    IntPtr pvaOut)
         {
-            if (pguidCmdGroup == VSConstants.VSStd2K)
+            // 🔥 HANDLE POPUP KEYS FIRST
+            if (SqlSuggestionPopup.IsOpen &&
+                pguidCmdGroup == VSConstants.VSStd2K)
             {
-                // Typed character
-                if (nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
+                switch ((VSConstants.VSStd2KCmdID)nCmdID)
                 {
-                    char ch = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
+                    case VSConstants.VSStd2KCmdID.TAB:
+                    case VSConstants.VSStd2KCmdID.RETURN:
+                        SqlSuggestionPopup.AcceptSelection();
+                        return VSConstants.S_OK;   // swallow
 
-                    if (_isSuggesting && !char.IsWhiteSpace(ch))
-                    {
-                        ClearSuggestion();
-                    }
+                    case VSConstants.VSStd2KCmdID.UP:
+                        SqlSuggestionPopup.SelectPrevious();
+                        return VSConstants.S_OK;
 
-                    if (ch == ' ')
-                    {
-                        var sql = EditorHelper.GetCurrentEditorText();
+                    case VSConstants.VSStd2KCmdID.DOWN:
+                        SqlSuggestionPopup.SelectNext();
+                        return VSConstants.S_OK;
 
-                        if (sql.EndsWith(" from", StringComparison.OrdinalIgnoreCase))
-                        {
-                            _suggestionIndex = 0;
-                            RenderOrReplaceSuggestion();
-                            return VSConstants.S_OK;
-                        }
-                    }
-                }
-
-                // TAB → next suggestion
-                if (_isSuggesting && nCmdID == (uint)VSConstants.VSStd2KCmdID.TAB)
-                {
-                    _suggestionIndex = (_suggestionIndex + 1) % _suggestions.Count;
-                    RenderOrReplaceSuggestion();
-                    return VSConstants.S_OK; // swallow TAB
-                }
-
-
-                // ENTER → accept suggestion
-                if (_isSuggesting && nCmdID == (uint)VSConstants.VSStd2KCmdID.RETURN)
-                {
-                    // Stop suggestion mode
-                    _isSuggesting = false;
-                    _currentGhostText = null;
-
-                    // Let SSMS insert the newline
-                    return _nextFilter.Exec(
-                        ref pguidCmdGroup,
-                        nCmdID,
-                        nCmdexecopt,
-                        pvaIn,
-                        pvaOut);
-                }
-
-                // ESC → cancel
-                if (_isSuggesting && nCmdID == (uint)VSConstants.VSStd2KCmdID.CANCEL)
-                {
-                    ClearSuggestion();
-                    return VSConstants.S_OK;
+                    case VSConstants.VSStd2KCmdID.CANCEL: // ESC
+                        SqlSuggestionPopup.Close();
+                        return VSConstants.S_OK;
                 }
             }
 
-            // Call next filter to not block normal typing
-            return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
+            // 🔽 NORMAL TYPING HANDLING
+            if (pguidCmdGroup == VSConstants.VSStd2K &&
+                nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
+            {
+                char typedChar = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
+
+                if (typedChar == ' ' || typedChar == '\n')
+                {
+                    var sql = EditorHelper.GetCurrentEditorText();
+
+                    if (SqlAnalyzer.ShouldTrigger(sql))
+                    {
+                        ShowSqlSuggestions(
+                            _wpfTextView,
+                            new[]
+                            {
+                        "INNER JOIN Orders o ON o.CustomerId = c.Id",
+                        "LEFT JOIN Orders o ON o.CustomerId = c.Id"
+                            });
+                    }
+                }
+            }
+
+            return _nextFilter.Exec(
+                ref pguidCmdGroup,
+                nCmdID,
+                nCmdexecopt,
+                pvaIn,
+                pvaOut);
         }
+
+
+
+
+        //public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt,
+        //          IntPtr pvaIn, IntPtr pvaOut)
+        //{
+        //    if (pguidCmdGroup == VSConstants.VSStd2K)
+        //    {
+        //        // Typed character
+        //        if (nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
+        //        {
+        //            char ch = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
+
+        //            if (_isSuggesting && !char.IsWhiteSpace(ch))
+        //            {
+        //                ClearSuggestion();
+        //            }
+
+        //            if (ch == ' ')
+        //            {
+        //                var sql = EditorHelper.GetCurrentEditorText();
+
+        //                if (sql.EndsWith(" from", StringComparison.OrdinalIgnoreCase))
+        //                {
+        //                    _suggestionIndex = 0;
+        //                    RenderOrReplaceSuggestion();
+        //                    return VSConstants.S_OK;
+        //                }
+        //            }
+        //        }
+
+        //        // TAB → next suggestion
+        //        if (_isSuggesting && nCmdID == (uint)VSConstants.VSStd2KCmdID.TAB)
+        //        {
+        //            _suggestionIndex = (_suggestionIndex + 1) % _suggestions.Count;
+        //            RenderOrReplaceSuggestion();
+        //            return VSConstants.S_OK; // swallow TAB
+        //        }
+
+
+        //        // ENTER → accept suggestion
+        //        if (_isSuggesting && nCmdID == (uint)VSConstants.VSStd2KCmdID.RETURN)
+        //        {
+        //            // Stop suggestion mode
+        //            _isSuggesting = false;
+        //            _currentGhostText = null;
+
+        //            // Let SSMS insert the newline
+        //            return _nextFilter.Exec(
+        //                ref pguidCmdGroup,
+        //                nCmdID,
+        //                nCmdexecopt,
+        //                pvaIn,
+        //                pvaOut);
+        //        }
+
+        //        // ESC → cancel
+        //        if (_isSuggesting && nCmdID == (uint)VSConstants.VSStd2KCmdID.CANCEL)
+        //        {
+        //            ClearSuggestion();
+        //            return VSConstants.S_OK;
+        //        }
+        //    }
+
+        //    // Call next filter to not block normal typing
+        //    return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
+        //}
 
 
 
@@ -394,10 +463,10 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
                 RegexOptions.IgnoreCase);
         }
 
-    #endregion
+        #endregion
 
-    #region Interface IVsTextViewFilter Members
-    public int GetDataTipText(TextSpan[] pSpan, out string pbstrText)
+        #region Interface IVsTextViewFilter Members
+        public int GetDataTipText(TextSpan[] pSpan, out string pbstrText)
         {
             var nextTextViewFilter = _nextFilter as IVsTextViewFilter;
             if (nextTextViewFilter != null)
@@ -426,7 +495,35 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
             return VSConstants.E_NOTIMPL;
         }
         #endregion
+
+        private void ShowSqlSuggestions(
+    IWpfTextView view,
+    IList<string> suggestions)
+        {
+            if (view == null || suggestions == null || suggestions.Count == 0)
+                return;
+
+            var caret = view.Caret.Position.BufferPosition;
+            var line = view.GetTextViewLineContainingBufferPosition(caret);
+            if (line == null) return;
+
+            var bounds = line.GetCharacterBounds(caret);
+
+            var location = new Point(
+                bounds.Left,
+                bounds.Bottom + 2);
+
+            SqlSuggestionPopup.Show(
+                view.VisualElement,
+                location,
+                suggestions,
+                selected =>
+                {
+                    EditorHelperv2.InsertText("\n" + selected);
+                });
+        }
+
     }
-
-
 }
+
+    
