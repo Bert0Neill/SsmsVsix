@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
- using global::SSMS_AI_Buddy.Models;
-    using Microsoft.VisualStudio.Language.Intellisense;
-    using Microsoft.VisualStudio.Text;
-    using System.Collections.Generic;
-    using System.Linq;
+using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.VisualStudio.Text;
+using SSMS_AI_Buddy.Models;
 namespace SSMS_AI_Buddy.Services.SSMS
 {
-   
-
     internal sealed class SqlCompletionSource : ICompletionSource
     {
         private readonly ITextBuffer _buffer;
@@ -67,6 +60,4 @@ namespace SSMS_AI_Buddy.Services.SSMS
             _disposed = true;
         }
     }
-
-
 }

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
- using Newtonsoft.Json;
-    using SSMS_AI_Buddy.Models;
-    using System.Collections.Generic;
-    using System.Linq;
+using Newtonsoft.Json;
+using SSMS_AI_Buddy.Models;
 namespace SSMS_AI_Buddy.Services.SSMS
 {
         public static class OllamaSchemaBuilder

@@ -1,31 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace SSMS_AI_Buddy.Services.SSMS
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Controls.Primitives;
-    using System.Windows.Media;
-
     public static class SqlSuggestionPopup
     {
         private static Popup _popup;
         private static ListBox _listBox;
         private static Action<string> _onSelected;
-
         public static bool IsOpen => _popup != null && _popup.IsOpen;
 
-        public static void Show(
-            FrameworkElement parent,
-            Point location,
-            IList<string> suggestions,
-            Action<string> onSelected)
+        public static void Show(FrameworkElement parent, Point location, IList<string> suggestions, Action<string> onSelected)
         {
             Close();
 
@@ -111,8 +100,4 @@ namespace SSMS_AI_Buddy.Services.SSMS
             }
         }
     }
-
-
-
-
 }

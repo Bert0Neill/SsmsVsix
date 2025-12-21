@@ -6,8 +6,7 @@ namespace SSMS_AI_Buddy.Services.SSMS
 {
     public static class SchemaCache
     {
-        private static readonly Dictionary<string, CachedSchema> _cache =
-            new Dictionary<string, CachedSchema>();
+        private static readonly Dictionary<string, CachedSchema> _cache = new Dictionary<string, CachedSchema>();
 
         public static CachedSchema GetOrAdd(string key, Func<CachedSchema> loader)
         {

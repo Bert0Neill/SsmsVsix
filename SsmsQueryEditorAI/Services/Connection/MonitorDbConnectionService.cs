@@ -205,61 +205,7 @@ namespace SSMS_AI_Buddy.Services.Connection
             }
         }
 
-        //private bool TryParseConnectionFromCaption(string caption, out string server, out string database)
-        //{
-        //    server = null;
-        //    database = null;
-
-        //    try
-        //    {
-        //        if (!caption.Contains(" - ")) return false;
-
-        //        var parts = caption.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
-        //        if (parts.Length < 2) return false;
-
-        //        var connectionPart = parts[1].Trim();
-
-        //        // Check if connecting
-        //        if (connectionPart.Equals("Connecting...", StringComparison.OrdinalIgnoreCase))
-        //            return false;
-
-        //        // Remove username if present
-        //        var parenIndex = connectionPart.IndexOf('(');
-        //        if (parenIndex > 0)
-        //        {
-        //            connectionPart = connectionPart.Substring(0, parenIndex).Trim();
-        //        }
-
-        //        // Check for server.database format
-        //        var dotIndex = connectionPart.IndexOf('.');
-        //        if (dotIndex > 0)
-        //        {
-        //            server = connectionPart.Substring(0, dotIndex);
-        //            database = connectionPart.Substring(dotIndex + 1);
-        //            return true;
-        //        }
-
-        //        // Check if it's just a server name
-        //        if (!connectionPart.Contains(" ") && !connectionPart.Contains("("))
-        //        {
-        //            server = connectionPart;
-        //            database = "master";
-        //            return true;
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-        //    }
-
-        //    return false;
-        //}
-
-        private bool TryParseConnectionFromCaption(
-    string caption,
-    out string server,
-    out string database,
-    out string userName)
+        private bool TryParseConnectionFromCaption(string caption, out string server, out string database, out string userName)
         {
             server = null;
             database = null;

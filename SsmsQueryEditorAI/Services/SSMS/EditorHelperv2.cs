@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.VisualStudio.Text.Editor;
 
 namespace SSMS_AI_Buddy.Services.SSMS
 {
-    using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.Text.Editor;
-
-    using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.Text.Editor;
-
     public static class EditorHelperv2
     {
         public static IWpfTextView ActiveView { get; set; }
@@ -32,6 +22,4 @@ namespace SSMS_AI_Buddy.Services.SSMS
             return ActiveView?.TextSnapshot.GetText() ?? string.Empty;
         }
     }
-
-
 }

@@ -1,24 +1,18 @@
-﻿using EnvDTE;
-using Microsoft.VisualStudio;
+﻿using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
-using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
-using SSMS_AI_Buddy.Models;
 using SSMS_AI_Buddy.Services.Connection;
 using SSMS_AI_Buddy.Services.SSMS;
 using SSMS_AI_Buddy.Services.SSMS.SSMS_AI_Buddy.Services.SSMS;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Windows;
 
 namespace SSMS_AI_Buddy.Services
@@ -37,25 +31,6 @@ namespace SSMS_AI_Buddy.Services
         private string _connectionKey;
         private string _username;
         #endregion
-
-        private bool _isSuggesting;
-        private int _suggestionIndex;
-
-        private int _insertLine;
-        private int _insertColumn;
-        private string _currentGhostText;
-
-        private readonly List<string> _suggestions = new List<string>()
-{
-@"Customers c
-JOIN Orders o ON c.CustomerID = o.CustomerID",
-
-@"Orders o
-JOIN OrderItems oi ON o.OrderID = oi.OrderID"
-};
-
-
-
 
         public AIEditorService(SsmsQueryEditorAIPackage package, IVsTextView textView)
         {
@@ -81,7 +56,7 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
             if (_wpfTextView == null)
                 return;
 
-            EditorHelperv2.ActiveView = _wpfTextView; // ✔ always valid
+            EditorHelper.ActiveView = _wpfTextView; // ✔ always valid
 
             // hook into editor events
             _wpfTextView.GotAggregateFocus += OnEditorActivated;
@@ -103,58 +78,6 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
         /// <param name="pvaIn"></param>
         /// <param name="pvaOut"></param>
         /// <returns></returns>
-        //public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
-        //{
-        //    // Only handle regular typing
-        //    if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
-        //    {
-        //        char typedChar = (char)(ushort)System.Runtime.InteropServices.Marshal.GetObjectForNativeVariant(pvaIn);
-
-        //        try
-        //        {
-        //            if (_wpfTextView != null)
-        //            {
-        //                var caretPosition = _wpfTextView.Caret.Position.BufferPosition;
-        //                var snapshot = _wpfTextView.TextSnapshot;
-
-        //                // Get the entire text from the start of the buffer up to the caret
-        //                string textUpToCaret = snapshot.GetText(0, caretPosition.Position);
-
-        //                // Split into statements if needed (optional)
-        //                // For simplicity, just work with the text up to caret
-        //                string currentStatement = textUpToCaret;
-
-        //                // Check if "FROM" keyword exists (case-insensitive)
-        //                bool fromExists = Regex.IsMatch(currentStatement, @"\bfrom\b", RegexOptions.IgnoreCase);
-
-        //                if (fromExists)
-        //                {
-        //                    Debug.WriteLine($"Typed char: {typedChar}, FROM exists: {fromExists}");
-
-        //                    // Example: take action if backtick typed and FROM exists
-        //                    if (typedChar == '`')
-        //                    {
-        //                        if (fromExists)
-        //                        {
-        //                            Debug.WriteLine("FROM already typed, do something...");
-        //                        }
-        //                        else
-        //                        {
-        //                            Debug.WriteLine("No FROM yet, do something else...");
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Debug.WriteLine($"Error in Exec: {ex.Message}");
-        //        }
-        //    }
-
-        //    // Call next filter to not block normal typing
-        //    return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
-        //}
 
         //public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         //{
@@ -188,16 +111,10 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
         //    return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
         //}
 
-        public int Exec(
-    ref Guid pguidCmdGroup,
-    uint nCmdID,
-    uint nCmdexecopt,
-    IntPtr pvaIn,
-    IntPtr pvaOut)
+        public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
             // 🔥 HANDLE POPUP KEYS FIRST
-            if (SqlSuggestionPopup.IsOpen &&
-                pguidCmdGroup == VSConstants.VSStd2K)
+            if (SqlSuggestionPopup.IsOpen &&                pguidCmdGroup == VSConstants.VSStd2K)
             {
                 switch ((VSConstants.VSStd2KCmdID)nCmdID)
                 {
@@ -221,8 +138,7 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
             }
 
             // 🔽 NORMAL TYPING HANDLING
-            if (pguidCmdGroup == VSConstants.VSStd2K &&
-                nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
+            if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
             {
                 char typedChar = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
 
@@ -232,9 +148,16 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
 
                     if (SqlAnalyzer.ShouldTrigger(sql))
                     {
-                        ShowSqlSuggestions(
-                            _wpfTextView,
-                            new[]
+                        var schema = SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+                        var tables = SqlAnalyzer.ExtractTables(sql);
+                        var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
+                        var expanded = JoinGraphBuilder.Expand(tables, graph);
+                        var json = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
+
+                        // 👉 SEND json + prompt to Ollama
+
+                        // AI response
+                        ShowSqlSuggestions(_wpfTextView, new[]
                             {
                         "INNER JOIN Orders o ON o.CustomerId = c.Id",
                         "LEFT JOIN Orders o ON o.CustomerId = c.Id"
@@ -243,88 +166,12 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
                 }
             }
 
-            return _nextFilter.Exec(
-                ref pguidCmdGroup,
-                nCmdID,
-                nCmdexecopt,
-                pvaIn,
-                pvaOut);
+            return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
         }
-
-
-
-
-        //public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt,
-        //          IntPtr pvaIn, IntPtr pvaOut)
-        //{
-        //    if (pguidCmdGroup == VSConstants.VSStd2K)
-        //    {
-        //        // Typed character
-        //        if (nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
-        //        {
-        //            char ch = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
-
-        //            if (_isSuggesting && !char.IsWhiteSpace(ch))
-        //            {
-        //                ClearSuggestion();
-        //            }
-
-        //            if (ch == ' ')
-        //            {
-        //                var sql = EditorHelper.GetCurrentEditorText();
-
-        //                if (sql.EndsWith(" from", StringComparison.OrdinalIgnoreCase))
-        //                {
-        //                    _suggestionIndex = 0;
-        //                    RenderOrReplaceSuggestion();
-        //                    return VSConstants.S_OK;
-        //                }
-        //            }
-        //        }
-
-        //        // TAB → next suggestion
-        //        if (_isSuggesting && nCmdID == (uint)VSConstants.VSStd2KCmdID.TAB)
-        //        {
-        //            _suggestionIndex = (_suggestionIndex + 1) % _suggestions.Count;
-        //            RenderOrReplaceSuggestion();
-        //            return VSConstants.S_OK; // swallow TAB
-        //        }
-
-
-        //        // ENTER → accept suggestion
-        //        if (_isSuggesting && nCmdID == (uint)VSConstants.VSStd2KCmdID.RETURN)
-        //        {
-        //            // Stop suggestion mode
-        //            _isSuggesting = false;
-        //            _currentGhostText = null;
-
-        //            // Let SSMS insert the newline
-        //            return _nextFilter.Exec(
-        //                ref pguidCmdGroup,
-        //                nCmdID,
-        //                nCmdexecopt,
-        //                pvaIn,
-        //                pvaOut);
-        //        }
-
-        //        // ESC → cancel
-        //        if (_isSuggesting && nCmdID == (uint)VSConstants.VSStd2KCmdID.CANCEL)
-        //        {
-        //            ClearSuggestion();
-        //            return VSConstants.S_OK;
-        //        }
-        //    }
-
-        //    // Call next filter to not block normal typing
-        //    return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
-        //}
-
-
 
         public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
         {
-            // Pass the query to the next filter in the chain
-            return _nextFilter.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText);
+            return _nextFilter.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText); // Pass the query to the next filter in the chain
         }
 
         #region Event Handlers
@@ -336,14 +183,6 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
         private void OnEditorActivated(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-
-            //// *** original code
-            //var view = sender as IWpfTextView;
-            //if (view == null)
-            //    return;
-            //ITextSnapshot snapshot = view.TextSnapshot;
-            //string fullText = snapshot.GetText();
-            //Debug.WriteLine("Editor text length: " + fullText);
 
             var view = sender as IWpfTextView;
             if (view == null) return;
@@ -362,7 +201,6 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
 
                 // Subscribe to events
                 _activeMonitor.ConnectionChanged += OnActiveConnectionChanged;
-                // _activeMonitor.SqlTypedWithConnection += OnActiveSqlTyped;
 
                 // Initialize
                 _activeMonitor.InitializeForView(view);
@@ -375,7 +213,6 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
                 ITextSnapshot snapshot = view.TextSnapshot;
                 string fullText = snapshot.GetText();
                 Debug.WriteLine($"Editor text length: {fullText.Length}");
-
             }
             catch (Exception ex)
             {
@@ -413,58 +250,6 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
         }
         #endregion
 
-        #region Schema Helpers
-        private void OnActiveSqlTyped(string sql, string server, string database)
-        {
-            // Process each typed character/word with connection context
-            var trimmedSql = sql.Trim();
-            if (!string.IsNullOrEmpty(trimmedSql))
-            {
-                Debug.WriteLine($"Typed on {server}.{database}: '{trimmedSql}'");
-
-                //// Example: Check for database-specific syntax
-                //if (database.Equals("master", StringComparison.OrdinalIgnoreCase))
-                //{
-                //    if (trimmedSql.Contains("sp_"))
-                //    {
-                //        Debug.WriteLine("⚠ Using system stored procedures in master database");
-                //    }
-                //}
-            }
-        }
-
-        private void SuggestTablesForDatabase(ConnectionInfo connection)
-        {
-            Debug.WriteLine($"Would suggest tables from {connection.Database} on {connection.Server}");
-
-            // Here you would:
-            // 1. Query the database for table names
-            // 2. Show Intellisense suggestions
-            // 3. Or do whatever you need with the connection info
-        }
-
-        private void SuggestSchemaObjects(ConnectionInfo connection, string textUpToCaret)
-        {
-            // Parse the text before the dot to understand context
-            // Example: "SELECT * FROM dbo." -> suggest table names in dbo schema
-            // Example: "SELECT Customer." -> suggest column names
-
-            Debug.WriteLine($"Schema suggestion for {connection}");
-        }
-
-        private bool ShouldTriggerAi(string sql)
-        {
-            if (sql.Length < 10)
-                return false;
-
-            return Regex.IsMatch(
-                sql,
-                @"\b(from|join)\b",
-                RegexOptions.IgnoreCase);
-        }
-
-        #endregion
-
         #region Interface IVsTextViewFilter Members
         public int GetDataTipText(TextSpan[] pSpan, out string pbstrText)
         {
@@ -496,9 +281,7 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
         }
         #endregion
 
-        private void ShowSqlSuggestions(
-    IWpfTextView view,
-    IList<string> suggestions)
+        private void ShowSqlSuggestions(IWpfTextView view, IList<string> suggestions)
         {
             if (view == null || suggestions == null || suggestions.Count == 0)
                 return;
@@ -509,21 +292,15 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID"
 
             var bounds = line.GetCharacterBounds(caret);
 
-            var location = new Point(
-                bounds.Left,
-                bounds.Bottom + 2);
+            var location = new Point(bounds.Left, bounds.Bottom + 2);
 
-            SqlSuggestionPopup.Show(
-                view.VisualElement,
-                location,
-                suggestions,
+            SqlSuggestionPopup.Show(view.VisualElement, location, suggestions,
                 selected =>
                 {
-                    EditorHelperv2.InsertText("\n" + selected);
+                    EditorHelper.InsertText("\n" + selected);
                 });
         }
-
     }
 }
 
-    
+
