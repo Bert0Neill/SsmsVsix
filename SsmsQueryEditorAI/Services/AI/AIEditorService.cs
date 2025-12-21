@@ -6,9 +6,10 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
+using Newtonsoft.Json;
+using SSMS_AI_Buddy.Models;
 using SSMS_AI_Buddy.Services.Connection;
 using SSMS_AI_Buddy.Services.SSMS;
-using SSMS_AI_Buddy.Services.SSMS.SSMS_AI_Buddy.Services.SSMS;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,7 +30,6 @@ namespace SSMS_AI_Buddy.Services
         private string _serverName;
         private string _databaseName;
         private string _connectionKey;
-        private string _username;
         #endregion
 
         public AIEditorService(SsmsQueryEditorAIPackage package, IVsTextView textView)
@@ -78,43 +78,10 @@ namespace SSMS_AI_Buddy.Services
         /// <param name="pvaIn"></param>
         /// <param name="pvaOut"></param>
         /// <returns></returns>
-
-        //public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
-        //{
-        //    if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
-        //    {
-        //        char typedChar = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
-
-        //        if (typedChar == ' ' || typedChar == '\n')
-        //        {
-        //            var sql = EditorHelper.GetCurrentEditorText();
-
-        //            if (SqlAnalyzer.ShouldTrigger(sql))
-        //            {
-        //                var schema = SchemaCache.GetOrAdd(
-        //                    _connectionKey,
-        //                    () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
-
-        //                var tables = SqlAnalyzer.ExtractTables(sql);
-
-        //                var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
-        //                var expanded = JoinGraphBuilder.Expand(tables, graph);
-
-        //                var json = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
-
-        //                // 👉 SEND json + prompt to Ollama
-        //            }
-        //        }
-        //    }
-
-        //    // Call next filter to not block normal typing
-        //    return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
-        //}
-
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
             // 🔥 HANDLE POPUP KEYS FIRST
-            if (SqlSuggestionPopup.IsOpen &&                pguidCmdGroup == VSConstants.VSStd2K)
+            if (SqlSuggestionPopup.IsOpen && pguidCmdGroup == VSConstants.VSStd2K)
             {
                 switch ((VSConstants.VSStd2KCmdID)nCmdID)
                 {
@@ -156,12 +123,15 @@ namespace SSMS_AI_Buddy.Services
 
                         // 👉 SEND json + prompt to Ollama
 
-                        // AI response
-                        ShowSqlSuggestions(_wpfTextView, new[]
-                            {
-                        "INNER JOIN Orders o ON o.CustomerId = c.Id",
-                        "LEFT JOIN Orders o ON o.CustomerId = c.Id"
-                            });
+                        var suggestions = MockAIResponse(); // replace with AI response
+                        ShowSqlSuggestions(_wpfTextView, suggestions);
+
+                        //// AI response
+                        //ShowSqlSuggestions(_wpfTextView, new[]
+                        //    {
+                        //"INNER JOIN Orders o ON o.CustomerId = c.Id",
+                        //"LEFT JOIN Orders o ON o.CustomerId = c.Id"
+                        //    });
                     }
                 }
             }
@@ -238,11 +208,8 @@ namespace SSMS_AI_Buddy.Services
 
             _serverName = server;
             _databaseName = database;
-            //var connectionInfo = _activeMonitor.GetCurrentConnection();
-            //_username = connectionInfo.Username;
             _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
             _connectionKey = $"{server}|{database}";
-            //_connectionKey = $"{server}|{database}|{connectionInfo.Username}";
 
             // get DB schema and cache it
             SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
@@ -280,7 +247,7 @@ namespace SSMS_AI_Buddy.Services
         }
         #endregion
 
-        private void ShowSqlSuggestions(IWpfTextView view, IList<string> suggestions)
+        private void ShowSqlSuggestions(IWpfTextView view, IList<SqlSuggestion> suggestions)
         {
             if (view == null || suggestions == null || suggestions.Count == 0)
                 return;
@@ -290,13 +257,77 @@ namespace SSMS_AI_Buddy.Services
             if (line == null) return;
 
             var bounds = line.GetCharacterBounds(caret);
-
             var location = new Point(bounds.Left, bounds.Bottom + 2);
 
             SqlSuggestionPopup.Show(view.VisualElement, location, suggestions, selected =>
                 {
-                    EditorHelper.InsertText(" " + selected);
+                    EditorHelper.InsertText(" " + selected.Suggestion); // insert only SQL text
                 });
+        }
+
+        private List<SqlSuggestion> MockAIResponse()
+        {
+            string json = @"[
+              {
+                ""type"": ""join"",
+                ""suggestion"": ""INNER JOIN SalesLT.CustomerAddress ca ON SalesLT.Address.AddressID = ca.AddressID"",
+                ""description"": ""Join Address to CustomerAddress using AddressID""
+              },
+              {
+                ""type"": ""join"",
+                ""suggestion"": ""LEFT JOIN SalesLT.SalesOrderHeader soh ON SalesLT.Address.AddressID = soh.ShipToAddressID"",
+                ""description"": ""Join Address to SalesOrderHeader using ShipToAddressID""
+              },
+              {
+                ""type"": ""join"",
+                ""suggestion"": ""LEFT JOIN SalesLT.SalesOrderHeader soh ON SalesLT.Address.AddressID = soh.BillToAddressID"",
+                ""description"": ""Join Address to SalesOrderHeader using BillToAddressID""
+              },
+              {
+                ""type"": ""where"",
+                ""suggestion"": ""WHERE SalesLT.Address.City = 'London'"",
+                ""description"": ""Filter addresses by city""
+              },
+              {
+                ""type"": ""where"",
+                ""suggestion"": ""WHERE SalesLT.Address.CountryRegion = 'United States'"",
+                ""description"": ""Filter addresses by country or region""
+              },
+              {
+                ""type"": ""where"",
+                ""suggestion"": ""WHERE SalesLT.Address.PostalCode = '98052'"",
+                ""description"": ""Filter addresses by postal code""
+              },
+              {
+                ""type"": ""groupby"",
+                ""suggestion"": ""GROUP BY SalesLT.Address.City"",
+                ""description"": ""Group addresses by city""
+              },
+              {
+                ""type"": ""groupby"",
+                ""suggestion"": ""GROUP BY SalesLT.Address.CountryRegion, SalesLT.Address.StateProvince"",
+                ""description"": ""Group addresses by country and state/province""
+              },
+              {
+                ""type"": ""having"",
+                ""suggestion"": ""HAVING COUNT(SalesLT.Address.AddressID) > 1"",
+                ""description"": ""Return only groups with more than one address""
+              },
+              {
+                ""type"": ""orderby"",
+                ""suggestion"": ""ORDER BY SalesLT.Address.City"",
+                ""description"": ""Sort results by city""
+              },
+              {
+                ""type"": ""orderby"",
+                ""suggestion"": ""ORDER BY SalesLT.Address.ModifiedDate DESC"",
+                ""description"": ""Sort results by most recently modified addresses""
+              }
+            ]";
+
+            List<SqlSuggestion> suggestions =
+                JsonConvert.DeserializeObject<List<SqlSuggestion>>(json);
+            return suggestions;
         }
     }
 }
