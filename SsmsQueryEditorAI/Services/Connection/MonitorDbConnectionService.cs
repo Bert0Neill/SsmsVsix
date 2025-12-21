@@ -254,6 +254,9 @@ namespace SSMS_AI_Buddy.Services.Connection
         }
 
 
+
+
+
         private void CheckForUseStatement(string typedText)
         {
             if (string.IsNullOrEmpty(typedText)) return;

@@ -80,5 +80,30 @@ namespace SSMS_AI_Buddy.Resources {
                 return ResourceManager.GetString("AI_Prompt", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are a SQL assistant. You have the following information:
+        ///
+        ///1. **Database schema in JSON format**:
+        ///
+        ///{0}
+        ///
+        ///2. **Current SQL query being typed**:
+        ///
+        ///{1}
+        ///
+        ///Your task is to suggest **valid next SQL tokens or snippets** that the user can type next. Focus on:
+        ///
+        ///- JOINs (INNER, LEFT, RIGHT) with correct tables and columns
+        ///- WHERE clauses using columns in the tables already in the FROM/JOIN
+        ///- GROUP BY / HAVING using existing columns
+        ///- ORDER BY using columns from selected tables
+        ///- Aliases should match t [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Full_Ai_Prompt {
+            get {
+                return ResourceManager.GetString("Full_Ai_Prompt", resourceCulture);
+            }
+        }
     }
 }

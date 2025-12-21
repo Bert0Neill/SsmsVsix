@@ -20,6 +20,17 @@ namespace SSMS_AI_Buddy.Services.SSMS
 
             _onSelected = onSelected;
 
+            //_listBox = new ListBox
+            //{
+            //    FontFamily = new FontFamily("Consolas"),
+            //    FontSize = 13,
+            //    Background = Brushes.White,
+            //    BorderBrush = Brushes.Gray,
+            //    BorderThickness = new Thickness(1),
+            //    MinWidth = 360,
+            //    MaxHeight = 200
+            //};
+
             _listBox = new ListBox
             {
                 FontFamily = new FontFamily("Consolas"),
@@ -28,8 +39,10 @@ namespace SSMS_AI_Buddy.Services.SSMS
                 BorderBrush = Brushes.Gray,
                 BorderThickness = new Thickness(1),
                 MinWidth = 360,
-                MaxHeight = 200
+                MaxHeight = 200,
+                ItemContainerStyle = CreateItemStyle()
             };
+
 
             foreach (var s in suggestions)
                 _listBox.Items.Add(s);
@@ -99,5 +112,39 @@ namespace SSMS_AI_Buddy.Services.SSMS
                 _onSelected = null;
             }
         }
+
+        private static Style CreateItemStyle()
+        {
+            var style = new Style(typeof(ListBoxItem));
+
+            style.Setters.Add(new Setter(Control.PaddingProperty, new Thickness(6, 3, 6, 3)));
+            style.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
+            style.Setters.Add(new Setter(Control.BackgroundProperty, Brushes.Transparent));
+            style.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(0)));
+            style.Setters.Add(new Setter(Control.ForegroundProperty, Brushes.Black));
+            style.Setters.Add(new Setter(UIElement.FocusableProperty, false));
+
+            // Hover (mouse over)
+            var hoverTrigger = new Trigger
+            {
+                Property = UIElement.IsMouseOverProperty,
+                Value = true
+            };
+            hoverTrigger.Setters.Add(new Setter(Control.BackgroundProperty, new SolidColorBrush(Color.FromRgb(230, 240, 255))));
+            style.Triggers.Add(hoverTrigger);
+
+            // Selected item (keyboard highlight)
+            var selectedTrigger = new Trigger
+            {
+                Property = ListBoxItem.IsSelectedProperty,
+                Value = true
+            };
+            selectedTrigger.Setters.Add(new Setter(Control.BackgroundProperty, new SolidColorBrush(Color.FromRgb(200, 225, 255))));
+            selectedTrigger.Setters.Add(new Setter(Control.ForegroundProperty, Brushes.Black));
+            style.Triggers.Add(selectedTrigger);
+
+            return style;
+        }
+
     }
 }

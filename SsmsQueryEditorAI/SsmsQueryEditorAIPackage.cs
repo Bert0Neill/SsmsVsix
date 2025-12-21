@@ -253,9 +253,7 @@ namespace SSMS_AI_Buddy
                             _textViewFilter = new AIEditorService(this, nativeTextView); // AIEditorService - hooks into editor events (monitoring of active SQL editors for connection string)
 
                             // Before you process commands (typing, paste, enter, shortcuts, etc.), let my object see them first (YourFilter → ExistingFilter → Editor → Default behavior)
-                            result = nativeTextView.AddCommandFilter(
-                                (IOleCommandTarget)_textViewFilter,
-                                out IOleCommandTarget nextCommandFilter);
+                            result = nativeTextView.AddCommandFilter((IOleCommandTarget)_textViewFilter, out IOleCommandTarget nextCommandFilter);
 
                             if (result == VSConstants.S_OK)
                             {
@@ -320,9 +318,6 @@ namespace SSMS_AI_Buddy
                     // unhook class level\static fields
                     _smoObjectExplorer?.Dispose();
                     _smoObjectExplorer = null;
-                    //_sqlShortcuts?.Clear();
-                    //_sqlShortcuts = null;
-                    //_fileService = null;
 
                     if (_textViewFilter is IDisposable disposableFilter)
                         disposableFilter.Dispose();

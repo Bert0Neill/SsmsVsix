@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell;
 using System;
-using Task = System.Threading.Tasks.Task;
 using SSMS_AI_Buddy.Resources;
 
 namespace SSMS_AI_Buddy.Services.SSMS
@@ -133,7 +132,7 @@ namespace SSMS_AI_Buddy.Services.SSMS
         /// <summary>
         /// Async method to update status bar text from background thread
         /// </summary>
-        public async Task UpdateTextAsync(string text)
+        public async System.Threading.Tasks.Task UpdateTextAsync(string text)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             UpdateText(text);
@@ -144,11 +143,10 @@ namespace SSMS_AI_Buddy.Services.SSMS
             ThreadHelper.ThrowIfNotOnUIThread();
 
             try
-            {
-                // Use our status bar service
-                StatusBarService.Instance.UpdateText(text);
+            {                
+                StatusBarService.Instance.UpdateText(text); // use status bar service
 
-                //SimpleLogger.Info($"{Resource.StatusBar_Status} {text}");
+                LoggerService.Info($"{Resource.StatusBar_Status} {text}");
             }
             catch (Exception ex)
             {

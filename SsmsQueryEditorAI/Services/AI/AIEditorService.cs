@@ -149,7 +149,7 @@ namespace SSMS_AI_Buddy.Services
                     if (SqlAnalyzer.ShouldTrigger(sql))
                     {
                         var schema = SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
-                        var tables = SqlAnalyzer.ExtractTables(sql);
+                        var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
                         var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
                         var expanded = JoinGraphBuilder.Expand(tables, graph);
                         var json = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
@@ -238,15 +238,14 @@ namespace SSMS_AI_Buddy.Services
 
             _serverName = server;
             _databaseName = database;
-            var connectionInfo = _activeMonitor.GetCurrentConnection();
-            _username = connectionInfo.Username;
+            //var connectionInfo = _activeMonitor.GetCurrentConnection();
+            //_username = connectionInfo.Username;
             _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
-            _connectionKey = $"{server}|{database}|{connectionInfo.Username}";
+            _connectionKey = $"{server}|{database}";
+            //_connectionKey = $"{server}|{database}|{connectionInfo.Username}";
 
             // get DB schema and cache it
-            SchemaCache.GetOrAdd(
-                          _connectionKey,
-                          () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+            SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
         }
         #endregion
 
@@ -294,10 +293,9 @@ namespace SSMS_AI_Buddy.Services
 
             var location = new Point(bounds.Left, bounds.Bottom + 2);
 
-            SqlSuggestionPopup.Show(view.VisualElement, location, suggestions,
-                selected =>
+            SqlSuggestionPopup.Show(view.VisualElement, location, suggestions, selected =>
                 {
-                    EditorHelper.InsertText("\n" + selected);
+                    EditorHelper.InsertText(" " + selected);
                 });
         }
     }
