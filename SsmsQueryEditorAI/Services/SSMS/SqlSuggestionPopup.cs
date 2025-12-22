@@ -125,6 +125,7 @@ namespace SSMS_AI_Buddy.Services.SSMS
             style.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(0)));
             style.Setters.Add(new Setter(Control.ForegroundProperty, Brushes.Black));
 
+            // Hover (light blue)
             style.Triggers.Add(new Trigger
             {
                 Property = UIElement.IsMouseOverProperty,
@@ -136,16 +137,35 @@ namespace SSMS_AI_Buddy.Services.SSMS
         }
             });
 
-            style.Triggers.Add(new Trigger
-            {
-                Property = ListBoxItem.IsSelectedProperty,
-                Value = true,
-                Setters =
-        {
-            new Setter(Control.BackgroundProperty,
-                new SolidColorBrush(Color.FromRgb(200, 225, 255)))
-        }
-            });
+            // Selected + focused (dark blue, white text)
+            var focusedSelectedTrigger = new MultiTrigger();
+            focusedSelectedTrigger.Conditions.Add(
+                new Condition(ListBoxItem.IsSelectedProperty, true));
+            focusedSelectedTrigger.Conditions.Add(
+                new Condition(UIElement.IsKeyboardFocusWithinProperty, true));
+
+            focusedSelectedTrigger.Setters.Add(
+                new Setter(Control.BackgroundProperty,
+                    new SolidColorBrush(Color.FromRgb(45, 110, 210))));
+            focusedSelectedTrigger.Setters.Add(
+                new Setter(Control.ForegroundProperty, Brushes.White));
+
+            style.Triggers.Add(focusedSelectedTrigger);
+
+            // Selected but NOT focused (inactive selection)
+            var inactiveSelectedTrigger = new MultiTrigger();
+            inactiveSelectedTrigger.Conditions.Add(
+                new Condition(ListBoxItem.IsSelectedProperty, true));
+            inactiveSelectedTrigger.Conditions.Add(
+                new Condition(UIElement.IsKeyboardFocusWithinProperty, false));
+
+            inactiveSelectedTrigger.Setters.Add(
+                new Setter(Control.BackgroundProperty,
+                    new SolidColorBrush(Color.FromRgb(210, 220, 235))));
+            inactiveSelectedTrigger.Setters.Add(
+                new Setter(Control.ForegroundProperty, Brushes.Black));
+
+            style.Triggers.Add(inactiveSelectedTrigger);
 
             return style;
         }

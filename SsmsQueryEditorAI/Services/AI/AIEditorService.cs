@@ -123,15 +123,15 @@ namespace SSMS_AI_Buddy.Services
                         var expanded = JoinGraphBuilder.Expand(tables, graph);
                         var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
 
-                        // 👉 SEND json + prompt to Ollama
-                        List<SqlSuggestion> suggestions = null;
-                        ThreadHelper.JoinableTaskFactory.Run(async () =>
-                        {
-                            suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql);
-                        });
+                        //// 👉 SEND json + prompt to Ollama
+                        //List<SqlSuggestion> suggestions = null;
+                        //ThreadHelper.JoinableTaskFactory.Run(async () =>
+                        //{
+                        //    suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql);
+                        //});
                         
 
-                        //var suggestions = MockAIResponse(); // replace with AI response
+                        var suggestions = MockAIResponse(); // replace with AI response
                         ShowSqlSuggestions(_wpfTextView, suggestions);
 
                         //// AI response

@@ -47,15 +47,14 @@ namespace SSMS_AI_Buddy.Services.SSMS
         }
 
         /*
-         *SqlTriggerHelper.ShouldTrigger("SELECT * FROM SalesLT.Address");        // true
-SqlTriggerHelper.ShouldTrigger("SELECT * FROM SalesLT.Address a");      // true
-SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address, Customer");      // true
-SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a, Customer c");  // true
-SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a WHERE");        // false
-SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a JOIN Customer"); // true
-SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a JOIN Customer c"); // true
-SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a JOIN Customer c WHERE"); // false
-
+        SqlTriggerHelper.ShouldTrigger("SELECT * FROM SalesLT.Address");        // true
+        SqlTriggerHelper.ShouldTrigger("SELECT * FROM SalesLT.Address a");      // true
+        SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address, Customer");      // true
+        SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a, Customer c");  // true
+        SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a WHERE");        // false
+        SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a JOIN Customer"); // true
+        SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a JOIN Customer c"); // true
+        SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a JOIN Customer c WHERE"); // false
          */
         public static bool ShouldTrigger(string sql)
         {
