@@ -46,23 +46,39 @@ namespace SSMS_AI_Buddy.Services.SSMS
             return set;
         }
 
+        /*
+         *SqlTriggerHelper.ShouldTrigger("SELECT * FROM SalesLT.Address");        // true
+SqlTriggerHelper.ShouldTrigger("SELECT * FROM SalesLT.Address a");      // true
+SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address, Customer");      // true
+SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a, Customer c");  // true
+SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a WHERE");        // false
+SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a JOIN Customer"); // true
+SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a JOIN Customer c"); // true
+SqlTriggerHelper.ShouldTrigger("SELECT * FROM Address a JOIN Customer c WHERE"); // false
+
+         */
         public static bool ShouldTrigger(string sql)
         {
             if (string.IsNullOrWhiteSpace(sql) || sql.Length < 10)
                 return false;
 
             // Normalize spaces and remove trailing semicolon
-            sql = sql.Trim().TrimEnd(';');
+            sql = Regex.Replace(sql.Trim().TrimEnd(';'), @"\s+", " ");
 
-            // Regex to detect FROM or JOIN followed by optional schema.table and optional alias at the end
-            // Examples matched:
-            // FROM Address
-            // FROM SalesLT.Address a
-            // JOIN Customer c
-            // JOIN SalesLT.Customer
-            var pattern = @"\b(FROM|JOIN)\s+([a-zA-Z0-9_]+\.)?[a-zA-Z0-9_]+(\s+[a-zA-Z0-9_]+)?$";
+            // Pattern matches:
+            // - FROM t1
+            // - FROM schema.t1
+            // - FROM t1 a
+            // - FROM t1 a, t2 b
+            // - JOIN t2
+            var pattern = @"
+            \b(FROM|JOIN)\s+                       # Match FROM or JOIN
+            (([a-zA-Z0-9_]+\.)?[a-zA-Z0-9_]+      # Optional schema + table
+            (\s+[a-zA-Z0-9_]+)?                    # Optional alias
+            (\s*,\s*([a-zA-Z0-9_]+\.)?[a-zA-Z0-9_]+(\s+[a-zA-Z0-9_]+)?)*)?$ # Optional comma-separated tables
+        ";
 
-            return Regex.IsMatch(sql, pattern, RegexOptions.IgnoreCase);
+            return Regex.IsMatch(sql, pattern, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
         }
     }
 }
