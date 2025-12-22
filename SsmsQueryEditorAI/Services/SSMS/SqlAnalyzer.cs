@@ -48,8 +48,21 @@ namespace SSMS_AI_Buddy.Services.SSMS
 
         public static bool ShouldTrigger(string sql)
         {
-            return sql.Length > 10 &&
-                   Regex.IsMatch(sql, @"\b(from|join)\b", RegexOptions.IgnoreCase);
+            if (string.IsNullOrWhiteSpace(sql) || sql.Length < 10)
+                return false;
+
+            // Normalize spaces and remove trailing semicolon
+            sql = sql.Trim().TrimEnd(';');
+
+            // Regex to detect FROM or JOIN followed by optional schema.table and optional alias at the end
+            // Examples matched:
+            // FROM Address
+            // FROM SalesLT.Address a
+            // JOIN Customer c
+            // JOIN SalesLT.Customer
+            var pattern = @"\b(FROM|JOIN)\s+([a-zA-Z0-9_]+\.)?[a-zA-Z0-9_]+(\s+[a-zA-Z0-9_]+)?$";
+
+            return Regex.IsMatch(sql, pattern, RegexOptions.IgnoreCase);
         }
     }
 }

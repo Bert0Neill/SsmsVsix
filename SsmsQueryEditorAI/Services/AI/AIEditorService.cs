@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Newtonsoft.Json;
 using SSMS_AI_Buddy.Models;
+using SSMS_AI_Buddy.Resources;
 using SSMS_AI_Buddy.Services.Connection;
 using SSMS_AI_Buddy.Services.SSMS;
 using System;
@@ -122,6 +123,8 @@ namespace SSMS_AI_Buddy.Services
                         var json = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
 
                         // 👉 SEND json + prompt to Ollama
+                        var aiPrompt = String.Format(AI_Resource.Full_Ai_Prompt, json, sql);
+                        Debug.WriteLine("AI Prompt:\n" + aiPrompt);
 
                         var suggestions = MockAIResponse(); // replace with AI response
                         ShowSqlSuggestions(_wpfTextView, suggestions);
