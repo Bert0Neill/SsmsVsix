@@ -13,3 +13,24 @@ ollama run qwen2.5-coder:32b-instruct-q4_0
 
 https://ollama.com/library/sqlcoder
 https://ollama.com/library/qwen2.5-coder:32b-instruct-q4_0
+
+---------------------
+How to Choose the Best Model for You
+
+1. SQL-Focused Tasks (Text-to-SQL / Code Generation):
+
+Start with sqlcoder:15b for dedicated SQL generation.
+
+For deeper integration with application logic (e.g., stored procedures + ORM code), consider a large general code model like DeepSeek-Coder or CodeLlama.
+
+2. General Coding Assistance (Including SQL):
+
+DeepSeek-Coder 33B — best mix of accuracy and breadth.
+
+CodeLlama 34B — excellent overall code understanding & completion.
+
+Qwen2.5-Coder 32B — versatile choice with multi-language support.
+
+3. Hardware Constraints:
+
+If you’re on ~8 GB RAM or CPU only, go for smaller versions like qwen2.5-coder ~7B or yi-coder ~9B. 
