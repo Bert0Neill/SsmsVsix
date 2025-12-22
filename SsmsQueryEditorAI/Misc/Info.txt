@@ -34,3 +34,5 @@ Qwen2.5-Coder 32B — versatile choice with multi-language support.
 3. Hardware Constraints:
 
 If you’re on ~8 GB RAM or CPU only, go for smaller versions like qwen2.5-coder ~7B or yi-coder ~9B. 
+
+deepseek-coder:6.7b

@@ -18,14 +18,33 @@ namespace SSMS_AI_Buddy.Services.AI
 
         public static async Task<List<SqlSuggestion>> GetSqlSuggestionsAsync(string schemaJson, string currentSql)
         {
-            var prompt = String.Format(AI_Resource.Full_Ai_Prompt, schemaJson, currentSql);
-            Debug.WriteLine("AI Prompt:\n" + prompt);
+            Debug.WriteLine($"Prompt Schema:{ schemaJson} - {currentSql}");
+            // var prompt = AI_Resource.Full_Ai_Prompt.Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
 
-            var request = new OllamaRequest
+            string prompt = $@"You are a SQL assistant.
+Schema (only tables directly joinable to current SQL tables): {{{{SCHEMA}}}}
+Current SQL: {{{{SQL}}}}
+Suggest next valid SQL tokens/snippets: JOIN, WHERE, GROUP BY, HAVING, ORDER BY.
+Respect table aliases if present. Only suggest columns/tables from schema.
+Return JSON array:
+[
+  {{ ""type"": ""..."", ""suggestion"": ""..."", ""description"": ""..."" }}
+]
+Do not include extra text.
+".Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
+
+            var request = new
             {
-                Model = "llama3.1",
-                Prompt = prompt
+                model = "qwen2.5-coder:7b",
+                prompt = prompt,
+                stream = false,
+                options = new
+                {
+                    temperature = 0.1,
+                    num_predict = 256
+                }
             };
+
 
             var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 

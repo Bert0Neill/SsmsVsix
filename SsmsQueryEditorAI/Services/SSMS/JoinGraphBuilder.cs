@@ -28,7 +28,7 @@ namespace SSMS_AI_Buddy.Services.SSMS
         }
 
         // Expand starting tables up to maxDepth to find all reachable tables
-        public static HashSet<string> Expand(IEnumerable<string> startTables, Dictionary<string, HashSet<string>> graph, int maxDepth = 2)
+        public static HashSet<string> Expand(IEnumerable<string> startTables, Dictionary<string, HashSet<string>> graph, int maxDepth = 1)
         {
             var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var queue = new Queue<(string Table, int Depth)>();
