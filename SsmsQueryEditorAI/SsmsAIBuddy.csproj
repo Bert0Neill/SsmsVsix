@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Commands\ConfigureAI_Cmd.cs" />
     <Compile Include="Misc\Extensions.cs" />
+    <Compile Include="Models\OllamaModels.cs" />
     <Compile Include="Models\SqlSuggestion.cs" />
     <Compile Include="Models\SqlCompletionContext.cs" />
     <Compile Include="Models\ConnectionInfo.cs" />
@@ -66,6 +67,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="Services\AI\OllamaService.cs" />
     <Compile Include="Services\Connection\MonitorDbConnectionService.cs" />
     <Compile Include="Services\Helper\LoggerService.cs" />
     <Compile Include="Services\AI\AIEditorService.cs" />

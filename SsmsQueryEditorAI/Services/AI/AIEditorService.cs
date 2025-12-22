@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TextManager.Interop;
 using Newtonsoft.Json;
 using SSMS_AI_Buddy.Models;
 using SSMS_AI_Buddy.Resources;
+using SSMS_AI_Buddy.Services.AI;
 using SSMS_AI_Buddy.Services.Connection;
 using SSMS_AI_Buddy.Services.SSMS;
 using System;
@@ -120,13 +121,17 @@ namespace SSMS_AI_Buddy.Services
                         var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
                         var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
                         var expanded = JoinGraphBuilder.Expand(tables, graph);
-                        var json = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
+                        var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
 
                         // 👉 SEND json + prompt to Ollama
-                        var aiPrompt = String.Format(AI_Resource.Full_Ai_Prompt, json, sql);
-                        Debug.WriteLine("AI Prompt:\n" + aiPrompt);
+                        List<SqlSuggestion> suggestions = null;
+                        ThreadHelper.JoinableTaskFactory.Run(async () =>
+                        {
+                            suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql);
+                        });
+                        
 
-                        var suggestions = MockAIResponse(); // replace with AI response
+                        //var suggestions = MockAIResponse(); // replace with AI response
                         ShowSqlSuggestions(_wpfTextView, suggestions);
 
                         //// AI response
