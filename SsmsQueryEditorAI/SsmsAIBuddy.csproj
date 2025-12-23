@@ -168,6 +168,7 @@
     <Content Include="Misc\20\SqlPackageBase.dll" />
     <Content Include="Misc\20\SqlWorkbench.Interfaces.dll" />
     <Content Include="Misc\21\SqlWorkbench.Interfaces.dll" />
+    <Content Include="Misc\Gemini AI.txt" />
     <Content Include="Misc\Info.txt" />
     <Content Include="Misc\Play.png" />
     <Content Include="Misc\QuestionMark.png" />

@@ -1,0 +1,82 @@
+﻿https://aistudio.google.com/app/api-keys
+apiKey = AIzaSyBBsZvWBKGQQae08ACDNIJx9hnlslDuadk
+
+var text = await GeminiClient.GenerateAsync(
+    apiKey,
+    "Suggest valid SQL JOIN clauses for SalesLT.Address"
+);
+
+-----------------------
+using System.Net.Http;
+using System.Text;
+using Newtonsoft.Json;
+
+public static class GeminiClient
+{
+    private static readonly HttpClient _http = new HttpClient();
+
+    public static async Task<string> GenerateAsync(string apiKey, string prompt)
+    {
+        var request = new GeminiRequest
+        {
+            Contents = new List<Content>
+            {
+                new Content
+                {
+                    Parts = new List<Part>
+                    {
+                        new Part { Text = prompt }
+                    }
+                }
+            }
+        };
+
+        var json = JsonConvert.SerializeObject(request);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var url =
+            $"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={apiKey}";
+
+        var response = await _http.PostAsync(url, content);
+        response.EnsureSuccessStatusCode();
+
+        var responseJson = await response.Content.ReadAsStringAsync();
+        var result = JsonConvert.DeserializeObject<GeminiResponse>(responseJson);
+
+        return result?
+            .Candidates?
+            .FirstOrDefault()?
+            .Content?
+            .Parts?
+            .FirstOrDefault()?
+            .Text;
+    }
+}
+
+
+public class GeminiResponse
+{
+    public List<Candidate> Candidates { get; set; }
+}
+
+public class Candidate
+{
+    public Content Content { get; set; }
+}
+
+
+public class GeminiRequest
+{
+    public List<Content> Contents { get; set; }
+}
+
+public class Content
+{
+    public string Role { get; set; } = "user";
+    public List<Part> Parts { get; set; }
+}
+
+public class Part
+{
+    public string Text { get; set; }
+}

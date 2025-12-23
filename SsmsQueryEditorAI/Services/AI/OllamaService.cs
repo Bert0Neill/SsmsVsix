@@ -36,6 +36,7 @@ Do not include extra text.
             var request = new
             {
                 model = "qwen2.5-coder:7b",
+                //model = "deepseek-coder:1.3b",
                 prompt = prompt,
                 stream = false,
                 options = new
