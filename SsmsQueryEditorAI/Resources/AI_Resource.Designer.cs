@@ -82,23 +82,25 @@ namespace SSMS_AI_Buddy.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are a SQL assistant. You have the following information:
+        ///   Looks up a localized string similar to INPUT DATA:
         ///
-        ///The following JSON schema contains only tables that can be directly joined
-        ///to the tables referenced in the current SQL statement.
-        ///
-        ///1. **Database schema in JSON format**:
-        ///
+        ///1. Database schema in JSON format.
+        ///Only tables that can be directly joined to the current SQL are included:
         ///{{SCHEMA}}
         ///
-        ///2. **Current SQL query being typed**:
-        ///
+        ///2. Current SQL query being typed:
         ///{{SQL}}
         ///
-        ///Your task is to suggest **valid next SQL tokens or snippets** that the user can type next. Focus on:
+        ///TASK:
         ///
-        ///- JOINs (INNER, LEFT, RIGHT) with correct tables and columns
-        ///- WHERE clauses using columns in the tab [rest of string was truncated]&quot;;.
+        ///Suggest valid NEXT SQL tokens or snippets that can be appended to the current SQL query.
+        ///
+        ///Focus ONLY on:
+        ///- JOIN clauses (INNER, LEFT, RIGHT) using valid tables and columns
+        ///- WHERE conditions using columns already in scope
+        ///- GROUP BY clauses using selected columns
+        ///- HAVING clauses using aggregated columns
+        ///- ORD [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Full_Ai_Prompt {
             get {
