@@ -107,10 +107,51 @@ namespace SSMS_AI_Buddy.Services.AI
             //var json = await response.Content.ReadAsStringAsync();
             //var ollamaResponse = JsonConvert.DeserializeObject<OllamaResponse>(json);
 
+            prompt = @"INPUT DATA:
+
+Database schema in JSON (only relevant tables included):
+{
+  ""tables"": [
+    {
+      ""name"": ""Address"",
+      ""schema"": ""SalesLT"",
+      ""columns"": [""AddressID"",""City"",""PostalCode""]
+    },
+    {
+      ""name"": ""CustomerAddress"",
+      ""schema"": ""SalesLT"",
+      ""columns"": [""CustomerID"",""AddressID""]
+    }
+  ]
+}
+
+Current SQL query:
+select * from SalesLT.Address
+
+TASK:
+
+Suggest valid NEXT SQL tokens that can be appended:
+- JOIN clauses (INNER, LEFT) using columns in scope
+- WHERE clauses on columns in scope
+- ORDER BY clauses on columns in scope
+
+RULES:
+- Use table aliases if needed
+- Only use tables/columns in schema
+- Return syntactically valid snippets
+
+OUTPUT FORMAT: JSON array of objects:
+- ""type"": ""join""|""where""|""orderby""
+- ""suggestion"": SQL snippet
+- ""description"": optional explanation
+
+Return ONLY the JSON array.
+";
+
             var payload = new
             {
                 prompt = prompt,
-                n_predict = 256,
+                n_predict = 128,
                 temperature = 0.2,
                 stop = new[] { "<|im_end|>" },
                 stream = false
@@ -132,7 +173,7 @@ namespace SSMS_AI_Buddy.Services.AI
 
             if (string.IsNullOrWhiteSpace(result)) return new List<SqlSuggestion>();
             return JsonConvert.DeserializeObject<List<SqlSuggestion>>(result);
-            
+
         }
     }
 
