@@ -46,8 +46,6 @@ llama-server \
   --port 8080 \
   -c 4096
 
-
-
 llama-server -hf reedmayhew/Llama-3.2-3B-claude-3.7-sonnet-reasoning-distilled.Q4_0.gguf --port 8080 -c 4096
 
 llama-server hf reedmayhew/Qwen2.5-Coder-3B-Instruct-Q4_K_M.gguf -c 4096 -t 8 --temp 0.2 --top-p 0.9 --repeat-penalty 1.05 --port 8080
@@ -55,6 +53,10 @@ llama-server hf reedmayhew/Qwen2.5-Coder-3B-Instruct-Q4_K_M.gguf -c 4096 -t 8 --
 Look at - 
 deepseek-ai/deepseek-coder-6.7b-instruct
 Qwen/Qwen2.5-Coder-3B-Instruct
+
+---------------------
+
+ollama run qwen2.5-coder:0.5b 
 
 
 
