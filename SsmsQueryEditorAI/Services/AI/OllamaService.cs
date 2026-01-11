@@ -52,61 +52,61 @@ namespace SSMS_AI_Buddy.Services.AI
 
             //-------- Ollama ---------------------
 
-            prompt = @"INPUT DATA:
+//            prompt = @"INPUT DATA:
 
-Database schema in JSON (only relevant tables included):
-{
-  ""tables"": [
-    {
-      ""name"": ""Address"",
-      ""schema"": ""SalesLT"",
-      ""columns"": [""AddressID"",""City"",""PostalCode""]
-    },
-    {
-      ""name"": ""CustomerAddress"",
-      ""schema"": ""SalesLT"",
-      ""columns"": [""CustomerID"",""AddressID""]
-    },
-    {
-      ""name"": ""Customer"",
-      ""schema"": ""SalesLT"",
-      ""columns"": [""CustomerID"",""FirstName"",""LastName"",""Email""]
-    }
-  ]
-}
+//Database schema in JSON (only relevant tables included):
+//{
+//  ""tables"": [
+//    {
+//      ""name"": ""Address"",
+//      ""schema"": ""SalesLT"",
+//      ""columns"": [""AddressID"",""City"",""PostalCode""]
+//    },
+//    {
+//      ""name"": ""CustomerAddress"",
+//      ""schema"": ""SalesLT"",
+//      ""columns"": [""CustomerID"",""AddressID""]
+//    },
+//    {
+//      ""name"": ""Customer"",
+//      ""schema"": ""SalesLT"",
+//      ""columns"": [""CustomerID"",""FirstName"",""LastName"",""Email""]
+//    }
+//  ]
+//}
 
-Current SQL query:
-SELECT AddressID, City FROM SalesLT.Address
+//Current SQL query:
+//SELECT AddressID, City FROM SalesLT.Address
 
-TASK:
+//TASK:
 
-Suggest valid NEXT SQL tokens or clauses that can be appended to the current query:
-- JOIN clauses (INNER, LEFT) using columns already in scope
-- WHERE clauses filtering by columns in scope
-- ORDER BY clauses using columns in scope
+//Suggest valid NEXT SQL tokens or clauses that can be appended to the current query:
+//- JOIN clauses (INNER, LEFT) using columns already in scope
+//- WHERE clauses filtering by columns in scope
+//- ORDER BY clauses using columns in scope
 
-RULES:
-- Use table aliases if needed
-- Only use tables and columns present in the schema
-- Do not invent tables or columns
-- Return syntactically valid SQL snippets
-- Always return at least one suggestion if possible
+//RULES:
+//- Use table aliases if needed
+//- Only use tables and columns present in the schema
+//- Do not invent tables or columns
+//- Return syntactically valid SQL snippets
+//- Always return at least one suggestion if possible
 
-OUTPUT FORMAT: JSON array of objects:
-- ""type"": ""join"" | ""where"" | ""orderby""
-- ""suggestion"": SQL snippet
-- ""description"": optional explanation
+//OUTPUT FORMAT: JSON array of objects:
+//- ""type"": ""join"" | ""where"" | ""orderby""
+//- ""suggestion"": SQL snippet
+//- ""description"": optional explanation
 
-IMPORTANT:
-- Return ONLY the JSON array
-- Do NOT include markdown, code fences, or any extra text
-- Do not include explanations outside of the JSON array
-- Example of valid output:
-[
-  { ""type"": ""join"", ""suggestion"": ""LEFT JOIN CustomerAddress AS ca ON Address.AddressID = ca.AddressID"", ""description"": ""Join Address to CustomerAddress"" },
-  { ""type"": ""where"", ""suggestion"": ""WHERE City LIKE 'New%'"" }
-]
-";
+//IMPORTANT:
+//- Return ONLY the JSON array
+//- Do NOT include markdown, code fences, or any extra text
+//- Do not include explanations outside of the JSON array
+//- Example of valid output:
+//[
+//  { ""type"": ""join"", ""suggestion"": ""LEFT JOIN CustomerAddress AS ca ON Address.AddressID = ca.AddressID"", ""description"": ""Join Address to CustomerAddress"" },
+//  { ""type"": ""where"", ""suggestion"": ""WHERE City LIKE 'New%'"" }
+//]
+//";
 
 
 
@@ -131,9 +131,20 @@ IMPORTANT:
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync();
             json = Regex.Replace(json, @"^```json\s*|\s*```$", "", RegexOptions.IgnoreCase);
-            Console.WriteLine(json);            
+            
+            // DEBUG: print the cleaned JSON to the console
+            Debug.WriteLine("=== Ollama raw JSON response ===");
+            Debug.WriteLine(json);
+            Debug.WriteLine("=== End of response ===");
+
             var outer = JsonConvert.DeserializeObject<ModelResponse>(json);
             string innerJson = Regex.Replace(outer.Response, @"^```json\s*|\s*```$", "", RegexOptions.IgnoreCase);
+
+            // DEBUG: print the inner JSON too
+            Debug.WriteLine("=== Inner JSON ===");
+            Debug.WriteLine(innerJson);
+            Debug.WriteLine("=== End of inner JSON ===");
+
             var suggestions = JsonConvert.DeserializeObject<List<SqlSuggestion>>(innerJson);
             return suggestions;
 
