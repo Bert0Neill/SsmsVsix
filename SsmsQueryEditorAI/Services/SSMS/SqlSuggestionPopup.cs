@@ -1,4 +1,4 @@
-﻿using SSMS_AI_Buddy.Models;
+using SSMS_AI_Buddy.Models;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -53,13 +53,15 @@ namespace SSMS_AI_Buddy.Services.SSMS
                 Placement = PlacementMode.Relative,
                 HorizontalOffset = location.X,
                 VerticalOffset = location.Y,
-                StaysOpen = false, // closes if user clicks elsewhere
-                AllowsTransparency = true
+                // VS keeps keyboard focus in the editor; ListBox.Focus() usually fails, so with
+                // StaysOpen=false the popup often closes immediately. ESC still closes via IOleCommandTarget.
+                StaysOpen = true,
+                AllowsTransparency = true,
+                PopupAnimation = PopupAnimation.None
             };
 
             _popup.IsOpen = true;
 
-            // Focus so that keyboard can navigate
             _listBox.Focus();
         }
 

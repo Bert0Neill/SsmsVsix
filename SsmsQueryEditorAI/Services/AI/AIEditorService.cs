@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.OLE.Interop;
@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace SSMS_AI_Buddy.Services
 {
@@ -124,22 +125,30 @@ namespace SSMS_AI_Buddy.Services
                         var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
 
                         // 👉 SEND json + prompt to Ollama
-                        List<SqlSuggestion> suggestions = null;
-                        ThreadHelper.JoinableTaskFactory.Run(async () =>
+                        var suggestions = new List<SqlSuggestion>();
+                        try
                         {
-                            suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql);
-                        });
+                            ThreadHelper.JoinableTaskFactory.Run(async () =>
+                            {
+                                suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql)
+                                    ?? new List<SqlSuggestion>();
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"Ollama GetSqlSuggestionsAsync failed: {ex}");
+                        }
 
-
-                        //var suggestions = MockAIResponse(); // replace with AI response
-                        ShowSqlSuggestions(_wpfTextView, suggestions);
-
-                        //// AI response
-                        //ShowSqlSuggestions(_wpfTextView, new[]
-                        //    {
-                        //"INNER JOIN Orders o ON o.CustomerId = c.Id",
-                        //"LEFT JOIN Orders o ON o.CustomerId = c.Id"
-                        //    });
+                        // Show after this command chain finishes so the trigger char is committed and caret/layout match the popup.
+                        var view = _wpfTextView;
+                        var dispatcher = view?.VisualElement?.Dispatcher;
+                        if (dispatcher != null)
+                        {
+                            dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                            {
+                                ShowSqlSuggestions(view, suggestions);
+                            }));
+                        }
                     }
                 }
             }

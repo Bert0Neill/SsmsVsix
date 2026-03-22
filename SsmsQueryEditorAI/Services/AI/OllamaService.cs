@@ -1,6 +1,7 @@
-ï»¿using Azure;
+using Azure;
 using Microsoft.SqlServer.Management.Smo;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SSMS_AI_Buddy.Models;
 using SSMS_AI_Buddy.Resources;
 using System;
@@ -17,6 +18,76 @@ namespace SSMS_AI_Buddy.Services.AI
 {
     public static class OllamaSqlSuggestionService
     {
+        /// <summary>
+        /// Strips markdown code fences (``` or ```json) whether they wrap the whole string or appear inline.
+        /// </summary>
+        public static string RemoveCodeFences(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return input ?? string.Empty;
+
+            input = input.Trim();
+
+            if (Regex.IsMatch(input, @"^```(?:json)?\s*", RegexOptions.IgnoreCase))
+            {
+                input = Regex.Replace(input, @"^```(?:json)?\s*", "", RegexOptions.IgnoreCase);
+                var close = input.LastIndexOf("```", StringComparison.Ordinal);
+                if (close >= 0)
+                    input = input.Substring(0, close);
+                return input.Trim();
+            }
+
+            var m = Regex.Match(input, @"```(?:json)?\s*\r?\n([\s\S]*?)\r?\n```", RegexOptions.IgnoreCase);
+            if (m.Success)
+                return m.Groups[1].Value.Trim();
+
+            return input;
+        }
+
+
+        /// <summary>
+        /// Parses the first complete JSON array from text (handles brackets inside string values).
+        /// </summary>
+        private static List<SqlSuggestion> DeserializeSuggestionArray(string text)
+        {
+            text = RemoveCodeFences(text ?? string.Empty).Trim();
+            text = Regex.Replace(text, "\u003Cthink\u003E[\\s\\S]*?\u003C/think\u003E", "", RegexOptions.IgnoreCase);
+            int start = text.IndexOf('[');
+            if (start < 0)
+                return new List<SqlSuggestion>();
+
+            using (var sr = new StringReader(text.Substring(start)))
+            using (var reader = new JsonTextReader(sr) { CloseInput = true })
+            {
+                var token = JToken.Load(reader);
+                return token.ToObject<List<SqlSuggestion>>() ?? new List<SqlSuggestion>();
+            }
+        }
+
+        /// <summary>
+        /// Parses Ollama <c>/api/generate</c> JSON body: read only <see cref="ModelResponse.Response"/>,
+        /// never the outer <c>context</c> array (regex from first '[' to last ']' would include it).
+        /// </summary>
+        private static List<SqlSuggestion> ParseSuggestionsFromOllamaHttpBody(string httpBody)
+        {
+            if (string.IsNullOrWhiteSpace(httpBody))
+                return new List<SqlSuggestion>();
+
+            try
+            {
+                var outer = JsonConvert.DeserializeObject<ModelResponse>(httpBody);
+                if (outer == null || string.IsNullOrWhiteSpace(outer.Response))
+                    return new List<SqlSuggestion>();
+
+                return DeserializeSuggestionArray(outer.Response);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ollama suggestion parse failed: {ex.Message}");
+                return new List<SqlSuggestion>();
+            }
+        }
+
         // Ollama endpoint
         private static readonly HttpClient _http = new HttpClient
         {
@@ -52,76 +123,109 @@ namespace SSMS_AI_Buddy.Services.AI
 
             //-------- Ollama ---------------------
 
-//            prompt = @"INPUT DATA:
+            //            prompt = @"INPUT DATA:
 
-//Database schema in JSON (only relevant tables included):
-//{
-//  ""tables"": [
-//    {
-//      ""name"": ""Address"",
-//      ""schema"": ""SalesLT"",
-//      ""columns"": [""AddressID"",""City"",""PostalCode""]
-//    },
-//    {
-//      ""name"": ""CustomerAddress"",
-//      ""schema"": ""SalesLT"",
-//      ""columns"": [""CustomerID"",""AddressID""]
-//    },
-//    {
-//      ""name"": ""Customer"",
-//      ""schema"": ""SalesLT"",
-//      ""columns"": [""CustomerID"",""FirstName"",""LastName"",""Email""]
-//    }
-//  ]
-//}
+            //Database schema in JSON (only relevant tables included):
+            //{
+            //  ""tables"": [
+            //    {
+            //      ""name"": ""Address"",
+            //      ""schema"": ""SalesLT"",
+            //      ""columns"": [""AddressID"",""City"",""PostalCode""]
+            //    },
+            //    {
+            //      ""name"": ""CustomerAddress"",
+            //      ""schema"": ""SalesLT"",
+            //      ""columns"": [""CustomerID"",""AddressID""]
+            //    },
+            //    {
+            //      ""name"": ""Customer"",
+            //      ""schema"": ""SalesLT"",
+            //      ""columns"": [""CustomerID"",""FirstName"",""LastName"",""Email""]
+            //    }
+            //  ]
+            //}
 
-//Current SQL query:
-//SELECT AddressID, City FROM SalesLT.Address
+            //Current SQL query:
+            //SELECT AddressID, City FROM SalesLT.Address
 
-//TASK:
+            //TASK:
 
-//Suggest valid NEXT SQL tokens or clauses that can be appended to the current query:
-//- JOIN clauses (INNER, LEFT) using columns already in scope
-//- WHERE clauses filtering by columns in scope
-//- ORDER BY clauses using columns in scope
+            //Suggest valid NEXT SQL tokens or clauses that can be appended to the current query:
+            //- JOIN clauses (INNER, LEFT) using columns already in scope
+            //- WHERE clauses filtering by columns in scope
+            //- ORDER BY clauses using columns in scope
 
-//RULES:
-//- Use table aliases if needed
-//- Only use tables and columns present in the schema
-//- Do not invent tables or columns
-//- Return syntactically valid SQL snippets
-//- Always return at least one suggestion if possible
+            //RULES:
+            //- Use table aliases if needed
+            //- Only use tables and columns present in the schema
+            //- Do not invent tables or columns
+            //- Return syntactically valid SQL snippets
+            //- Always return at least one suggestion if possible
 
-//OUTPUT FORMAT: JSON array of objects:
-//- ""type"": ""join"" | ""where"" | ""orderby""
-//- ""suggestion"": SQL snippet
-//- ""description"": optional explanation
+            //OUTPUT FORMAT: JSON array of objects:
+            //- ""type"": ""join"" | ""where"" | ""orderby""
+            //- ""suggestion"": SQL snippet
+            //- ""description"": optional explanation
 
-//IMPORTANT:
-//- Return ONLY the JSON array
-//- Do NOT include markdown, code fences, or any extra text
-//- Do not include explanations outside of the JSON array
-//- Example of valid output:
-//[
-//  { ""type"": ""join"", ""suggestion"": ""LEFT JOIN CustomerAddress AS ca ON Address.AddressID = ca.AddressID"", ""description"": ""Join Address to CustomerAddress"" },
-//  { ""type"": ""where"", ""suggestion"": ""WHERE City LIKE 'New%'"" }
-//]
-//";
+            //IMPORTANT:
+            //- Return ONLY the JSON array
+            //- Do NOT include markdown, code fences, or any extra text
+            //- Do not include explanations outside of the JSON array
+            //- Example of valid output:
+            //[
+            //  { ""type"": ""join"", ""suggestion"": ""LEFT JOIN CustomerAddress AS ca ON Address.AddressID = ca.AddressID"", ""description"": ""Join Address to CustomerAddress"" },
+            //  { ""type"": ""where"", ""suggestion"": ""WHERE City LIKE 'New%'"" }
+            //]
+            //";
 
+            var system = @"No thinking. You are a backend SQL completion engine.
+
+STRICT RULES:
+- Output ONLY valid JSON.
+- Output MUST be a COMPLETE JSON array.
+- Do NOT include markdown, code fences, comments, or extra text.
+- Do NOT include trailing commas.
+
+COMPLETION RULES:
+- You are completing an EXISTING SQL query.
+- DO NOT rewrite or replace the full query.
+- DO NOT repeat the original query.
+- Suggestions MUST be short continuations to append to the existing query.
+- Suggestions MUST start from the next valid SQL token (e.g. AS, INNER JOIN, WHERE, GROUP BY, ORDER BY).
+- Suggestions should be minimal (1–10 tokens), not full queries.
+- Each suggestion must be directly appendable to the end of the current query without modification.
+
+GOOD examples:
+- ""AS a""
+- ""INNER JOIN SalesLT.CustomerAddress ca ON ca.CustomerID = Address.CustomerID""
+- ""WHERE Address.City = 'London'""
+
+BAD examples:
+- ""SELECT * FROM ..."" (never allowed)
+- Full rewritten queries
+- Repeating existing text
+
+If no valid suggestions exist, return [].
+
+Invalid or incomplete JSON is a system failure.";
 
 
             var request = new
             {
-                model = "qwen2.5-coder:0.5b",
-                //model = "deepseek-coder:1.3b",
+                
+                //model = "qwen2.5-coder:1.5b", // more accurate but slower
+                model = "qwen2.5-coder:0.5b", // faster but less accurate
+                //model = "deepseek-r1:1.5b",
                 //model = "alibayram/smollm3:latest",
                 prompt = prompt,
-                system = "You are a backend SQL completion engine. Strict rules: Do NOT include <think> blocks, reasoning, or internal thoughts. Do NOT include markdown, code fences, or comments. Output ONLY valid, machine-parseable JSON. Output MUST be a single JSON array. Do NOT include trailing commas. Do NOT include any text outside the JSON array. If no valid suggestions exist, return an empty array []. Invalid JSON is considered a system failure.\r\n",
+                system = system,
+                //system = "No thinking, you are a backend SQL completion engine. Strict rules: Do NOT include <think> blocks, reasoning, or internal thoughts. Do NOT include markdown, code fences, or comments. Output ONLY valid, machine-parseable JSON. Output MUST be a single JSON array. Do NOT include trailing commas. Do NOT include any text outside the JSON array. If no valid suggestions exist, return an empty array []. Invalid JSON is considered a system failure.\r\n",
                 stream = false,
                 options = new
                 {
-                    temperature = 0.7,
-                    num_predict = 256
+                    temperature = 0.1,
+                    num_predict = 300 // token limit for suggestions - adjust as needed based on typical response length and model limits
                 }
             };
 
@@ -130,23 +234,12 @@ namespace SSMS_AI_Buddy.Services.AI
             var response = await _http.PostAsync("/api/generate", content); // Ollama
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync();
-            json = Regex.Replace(json, @"^```json\s*|\s*```$", "", RegexOptions.IgnoreCase);
-            
-            // DEBUG: print the cleaned JSON to the console
+
             Debug.WriteLine("=== Ollama raw JSON response ===");
             Debug.WriteLine(json);
             Debug.WriteLine("=== End of response ===");
 
-            var outer = JsonConvert.DeserializeObject<ModelResponse>(json);
-            string innerJson = Regex.Replace(outer.Response, @"^```json\s*|\s*```$", "", RegexOptions.IgnoreCase);
-
-            // DEBUG: print the inner JSON too
-            Debug.WriteLine("=== Inner JSON ===");
-            Debug.WriteLine(innerJson);
-            Debug.WriteLine("=== End of inner JSON ===");
-
-            var suggestions = JsonConvert.DeserializeObject<List<SqlSuggestion>>(innerJson);
-            return suggestions;
+            return ParseSuggestionsFromOllamaHttpBody(json);
 
             // ------------ LLama.cpp--------
             //            prompt = @"INPUT DATA:
