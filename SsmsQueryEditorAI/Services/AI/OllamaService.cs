@@ -79,13 +79,47 @@ namespace SSMS_AI_Buddy.Services.AI
                 if (outer == null || string.IsNullOrWhiteSpace(outer.Response))
                     return new List<SqlSuggestion>();
 
-                return DeserializeSuggestionArray(outer.Response);
+                var list = DeserializeSuggestionArray(outer.Response);
+                NormalizeContinuationSuggestions(list);
+                return list;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Ollama suggestion parse failed: {ex.Message}");
                 return new List<SqlSuggestion>();
             }
+        }
+
+        /// <summary>
+        /// Models often emit a full SELECT ? even when asked for continuations; trim to the first JOIN / WHERE / etc.
+        /// </summary>
+        private static void NormalizeContinuationSuggestions(List<SqlSuggestion> list)
+        {
+            if (list == null) return;
+            foreach (var s in list)
+            {
+                if (s == null || string.IsNullOrEmpty(s.Suggestion))
+                    continue;
+                s.Suggestion = TrimContinuationFromFullSelect(s.Suggestion);
+            }
+        }
+
+        private static string TrimContinuationFromFullSelect(string text)
+        {
+            text = text.Trim().TrimEnd(';');
+            if (text.Length == 0)
+                return text;
+            if (!text.StartsWith("SELECT", StringComparison.OrdinalIgnoreCase))
+                return text;
+
+            var match = Regex.Match(
+                text,
+                @"\b(?:(?:INNER|LEFT|RIGHT|FULL)\s+(?:OUTER\s+)?JOIN|CROSS\s+JOIN|JOIN|WHERE|GROUP\s+BY|ORDER\s+BY|HAVING)\b",
+                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            if (match.Success)
+                return text.Substring(match.Index).TrimStart();
+
+            return text;
         }
 
         // Ollama endpoint
@@ -188,23 +222,20 @@ STRICT RULES:
 - Do NOT include trailing commas.
 
 COMPLETION RULES:
-- You are completing an EXISTING SQL query.
-- DO NOT rewrite or replace the full query.
-- DO NOT repeat the original query.
-- Suggestions MUST be short continuations to append to the existing query.
-- Suggestions MUST start from the next valid SQL token (e.g. AS, INNER JOIN, WHERE, GROUP BY, ORDER BY).
-- Suggestions should be minimal (1–10 tokens), not full queries.
-- Each suggestion must be directly appendable to the end of the current query without modification.
+- You are completing an EXISTING query; the user keeps their SQL. Output ONLY the next fragment to append.
+- DO NOT rewrite the full query. DO NOT duplicate SELECT ... FROM ... for the whole statement.
+- The JSON ""suggestion"" field MUST NOT start with SELECT. Output from JOIN, WHERE, GROUP BY, ORDER BY, HAVING, or a comma + column.
+- When joins apply: include several join suggestions with different join kinds (INNER JOIN, LEFT JOIN, and when sensible RIGHT JOIN, FULL OUTER JOIN). Same aliases and ON clause where only the join kind differs. CROSS JOIN only if a cross product is appropriate.
 
 GOOD examples:
-- ""AS a""
-- ""INNER JOIN SalesLT.CustomerAddress ca ON ca.CustomerID = Address.CustomerID""
-- ""WHERE Address.City = 'London'""
+- ""INNER JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+- ""LEFT JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+- ""WHERE a.City = N'London'""
+- "", PostalCode""
 
 BAD examples:
-- ""SELECT * FROM ..."" (never allowed)
-- Full rewritten queries
-- Repeating existing text
+- Anything starting with SELECT, UPDATE, DELETE, INSERT.
+- Full standalone queries
 
 If no valid suggestions exist, return [].
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -144,14 +144,34 @@ Only tables that can be directly joined to the current SQL are included:
 
 TASK:
 
-Suggest valid NEXT SQL tokens or snippets that can be appended to the current SQL query.
+Suggest CONTINUATION snippets only: text the user can append after their CURRENT SQL to keep typing. You are NOT rewriting or replacing their query.
 
 Focus ONLY on:
-- JOIN clauses (INNER, LEFT, RIGHT) using valid tables and columns
-- WHERE conditions using columns already in scope
-- GROUP BY clauses using selected columns
-- HAVING clauses using aggregated columns
-- ORDER BY clauses using selected columns
+- JOIN fragments with ON … (see JOIN variety below)
+- WHERE … (extra predicates)
+- GROUP BY …, HAVING …, ORDER BY …
+
+JOIN variety (when a join is an applicable continuation):
+- Offer MULTIPLE distinct join suggestions for the same relationship where it makes sense: e.g. INNER JOIN, LEFT JOIN, and when applicable RIGHT JOIN, FULL OUTER JOIN.
+- Use CROSS JOIN only when a deliberate cross product is appropriate (rare); prefer INNER/LEFT/RIGHT/FULL for FK-based joins.
+- Each join suggestion must use "type": "join" and a different "suggestion" string (different join keyword or semantics).
+- Reuse the same table aliases and ON keys across variants; only the join kind changes unless semantics require different ON text.
+
+CRITICAL — what "suggestion" must contain:
+- ONLY the next clause or fragment to append (often starting with INNER JOIN, LEFT JOIN, WHERE, GROUP BY, ORDER BY, HAVING, or a comma + column).
+- NEVER a full query. NEVER start with SELECT. NEVER repeat FROM … for the whole query again.
+- Do NOT paste the user's query back. Minimum text: from the first keyword that continues their line (e.g. "LEFT JOIN SalesLT.CustomerAddress ca ON …").
+
+GOOD "suggestion" examples:
+- "INNER JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID"
+- "LEFT JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID"
+- "RIGHT JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID" (when useful)
+- "WHERE a.City = N'London'"
+- "ORDER BY a.City"
+
+BAD "suggestion" examples (forbidden):
+- "SELECT … FROM … INNER JOIN …" (full statement)
+- Any standalone SELECT or full rewritten query
 
 RULES:
 
@@ -160,7 +180,7 @@ RULES:
 - Use ONLY tables and columns present in the schema.
 - Use schema-qualified table names when required.
 - Do NOT suggest clauses already present in the SQL unless they can be meaningfully extended.
-- Suggestions must be syntactically valid if appended directly to the current SQL.
+- Each suggestion must paste directly after the caret position at the end of the current SQL (with a leading space if needed).
 
 OUTPUT FORMAT:
 
@@ -195,7 +215,7 @@ TASK:
 Suggest valid NEXT SQL tokens or snippets that can follow the current SQL query.
 
 Focus ONLY on:
-- JOIN clauses (INNER, LEFT, RIGHT) using valid tables and columns
+- JOIN clauses: when joins apply, suggest multiple kinds (INNER, LEFT, RIGHT, FULL OUTER where sensible; CROSS rarely)
 - WHERE conditions using columns already in scope
 - GROUP BY clauses using selected columns
 - HAVING clauses using aggregated columns
