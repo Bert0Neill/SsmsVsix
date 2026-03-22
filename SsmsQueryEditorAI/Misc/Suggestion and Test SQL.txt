@@ -1,0 +1,28 @@
+﻿Try LLm - Hrida-T2SQL-128k
+ollama pull HridaAI/hrida-t2sql-128k
+
+Select * From SalesT.Address
+
+Schema:
+Include Indexes, FKs, PKs, 
+
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100),
+    registration_date DATE
+);
+
+CREATE TABLE rentals (
+    rental_id INT PRIMARY KEY,
+    customer_id INT REFERENCES customers(customer_id),****
+    rental_date DATE,
+    amount DECIMAL(10,2)
+);
+
+CREATE TABLE payments (
+    payment_id INT PRIMARY KEY,
+    rental_id INT REFERENCES rentals(rental_id), ****
+    amount DECIMAL(10,2),
+    payment_date DATE
+);

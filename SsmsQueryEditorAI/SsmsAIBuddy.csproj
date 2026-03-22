@@ -176,6 +176,7 @@
     <Content Include="Misc\Play.png" />
     <Content Include="Misc\QuestionMark.png" />
     <Content Include="Misc\SQL AI Buddy.txt" />
+    <Content Include="Misc\Suggestion and Test SQL.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\AI_Resource.resx">
