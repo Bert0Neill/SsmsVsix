@@ -256,7 +256,7 @@ Invalid or incomplete JSON is a system failure.";
                 options = new
                 {
                     temperature = 0.1,
-                    num_predict = 300 // token limit for suggestions - adjust as needed based on typical response length and model limits
+                    num_predict = 500 // token limit for suggestions - adjust as needed based on typical response length and model limits
                 }
             };
 

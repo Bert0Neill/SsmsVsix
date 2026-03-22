@@ -1,4 +1,4 @@
-﻿// ==============================================
+// ==============================================
 // SsmsQueryEditorAIPackage Class
 //
 // Description:
@@ -113,6 +113,7 @@ namespace SSMS_AI_Buddy
             
             Debug.WriteLine("Initializing SSMS AI Service...");
             await SSMS_AI_Buddy.Commands.ConfigureAI_Cmd.InitializeAsync(this);
+            await SSMS_AI_Buddy.Commands.AIBuddySqlEditorCommands.InitializeAsync(this);
 
             _helperService = new SsmsHelper();
             await LoadSsmsStatusBarReference(); // allow ext to update SSMS statusbar

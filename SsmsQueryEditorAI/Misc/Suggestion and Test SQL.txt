@@ -1,5 +1,6 @@
 ﻿Try LLm - Hrida-T2SQL-128k
 ollama pull HridaAI/hrida-t2sql-128k
+ollama pull qwen2.5-coder:0.5b
 
 Select * From SalesT.Address
 
