@@ -33,7 +33,7 @@
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" />
 				<Icon guid="guidImagesTest" id="bmpPicTest"/>
 				<Strings>
-					<ButtonText>SQL continuation using Rules</ButtonText>
+					<ButtonText>Suggest SQL JOIns - Rules</ButtonText>
 				</Strings>
 			</Button>
 
@@ -41,7 +41,7 @@
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" />
 				<Icon guid="guidImagesCodeGen" id="bmpPicCodeGen"/>
 				<Strings>
-					<ButtonText>SQL continuation using AI</ButtonText>
+					<ButtonText>Suggest SQL JOIns - AI</ButtonText>
 				</Strings>
 			</Button>
 
@@ -49,7 +49,7 @@
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" />
 				<Icon guid="guidImagesImprove" id="bmpPicImprove"/>
 				<Strings>
-					<ButtonText>Correct SQL errors using AI</ButtonText>
+					<ButtonText>Suggest SQL WHERE Clause - AI</ButtonText>
 				</Strings>
 			</Button>
 
@@ -60,6 +60,23 @@
 					<ButtonText>AI prompt for current SQL</ButtonText>
 				</Strings>
 			</Button>
+		
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SuggestGroupHavingCmdId" type="Button" priority="0x0105">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" />
+				<Icon guid="guidImagesImprove" id="bmpPicImprove"/>
+				<Strings>
+					<ButtonText>Suggest SQL GROUP\HAVING Clause - AI</ButtonText>
+				</Strings>
+			</Button>
+		
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SuggestSqlContinuationCmdId" type="Button" priority="0x0106">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" />
+				<Icon guid="guidImagesImprove" id="bmpPicImprove"/>
+				<Strings>
+					<ButtonText>Suggest SQL Continuation - AI</ButtonText>
+				</Strings>
+			</Button>
+		
 		</Buttons>
 
 		<Bitmaps>
@@ -85,6 +102,8 @@
 			<IDSymbol name="SqlContinuationAiCmdId" value="0x0102" />
 			<IDSymbol name="CorrectSqlErrorsCmdId" value="0x0103" />
 			<IDSymbol name="DisplayPromptCmdId" value="0x0104" />
+			<IDSymbol name="SuggestGroupHavingCmdId" value="0x0105" />
+			<IDSymbol name="SuggestSqlContinuationCmdId" value="0x0106" />
 		</GuidSymbol>
 
 		<GuidSymbol name="queryWindowContextCommandSet" value="{33F13AC3-80BB-4ECB-85BC-225435603A5E}">

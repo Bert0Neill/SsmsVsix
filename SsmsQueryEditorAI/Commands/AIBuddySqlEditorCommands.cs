@@ -19,6 +19,8 @@ namespace SSMS_AI_Buddy.Commands
         public const int SqlContinuationAiId = 0x0102;
         public const int CorrectSqlErrorsId = 0x0103;
         public const int DisplayPromptId = 0x0104;
+        public const int SuggestGroupHavingId = 0x0105;
+        public const int SuggestSqlContinuationId = 0x0106;
 
         public static readonly Guid CommandSet = new Guid("d5cfa9e8-a7de-4eb4-b34f-0ab39f9e31a3");
 
@@ -35,12 +37,27 @@ namespace SSMS_AI_Buddy.Commands
             Add(package, commandService, SqlContinuationAiId, ExecuteSqlContinuationAi);
             Add(package, commandService, CorrectSqlErrorsId, ExecuteCorrectSqlErrors);
             Add(package, commandService, DisplayPromptId, ExecuteDisplayPrompt);
+            Add(package, commandService, SuggestGroupHavingId, ExecuteSuggestGroupHaving);
+            Add(package, commandService, SuggestSqlContinuationId, ExecuteSuggestSqlContinuation);
         }
 
         private static void Add(AsyncPackage package, OleMenuCommandService commandService, int commandId, EventHandler execute)
         {
             var id = new CommandID(CommandSet, commandId);
             commandService.AddCommand(new MenuCommand(execute, id));
+        }
+
+        private static void ExecuteSuggestSqlContinuation(object sender, EventArgs e)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            ShowStub(nameof(ExecuteSqlContinuationRules), "SQL suggestion continuation Using AI");
+        }
+
+
+        private static void ExecuteSuggestGroupHaving(object sender, EventArgs e)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            ShowStub(nameof(ExecuteSqlContinuationRules), "SQL suggestion Group Having clause Using AI");
         }
 
         private static void ExecuteSqlContinuationRules(object sender, EventArgs e)
