@@ -117,12 +117,12 @@ PSEUDOCODE / PLAN (detailed):
 
 		<!-- ================= BITMAPS ================= -->
 		<Bitmaps>
-			<Bitmap guid="guidImagesSettings" href="Resources\Images\Gartoon-Team-Gartoon-Categories-Preferences-autocompletion.16.png" usedList="bmpPicSettings" />
-			<Bitmap guid="guidImagesTest" href="Resources\Images\Gartoon-Team-Gartoon-Categories-Applications-science.16.png" usedList="bmpPicTest" />
-			<Bitmap guid="guidImagesImprove" href="Resources\Images\Custom-Icon-Design-Pretty-Office-9-Comment-edit.16.png" usedList="bmpPicImprove" />
-			<Bitmap guid="guidImagesCodeGen" href="Resources\Images\Thalita-Torres-Office-Documents.16.png" usedList="bmpPicCodeGen" />
-			<Bitmap guid="guidImagesPrompt" href="Resources\Images\Double-J-Design-Ravenna-3d-Comments.16.png" usedList="bmpPicPrompt" />
-			<Bitmap guid="guidAIImages" href="Resources\Images\Social-balloon-friends.16.png" usedList="bmpPicAIPrompt" />
+			<Bitmap guid="guidImagesSettings" href="Resources\Images\16\Gartoon-Team-Gartoon-Categories-Preferences-autocompletion.16.png" usedList="bmpPicSettings" />
+			<Bitmap guid="guidImagesTest" href="Resources\Images\16\Gartoon-Team-Gartoon-Categories-Applications-science.16.png" usedList="bmpPicTest" />
+			<Bitmap guid="guidImagesImprove" href="Resources\Images\16\Custom-Icon-Design-Pretty-Office-9-Comment-edit.16.png" usedList="bmpPicImprove" />
+			<Bitmap guid="guidImagesCodeGen" href="Resources\Images\16\Thalita-Torres-Office-Documents.16.png" usedList="bmpPicCodeGen" />
+			<Bitmap guid="guidImagesPrompt" href="Resources\Images\16\Double-J-Design-Ravenna-3d-Comments.16.png" usedList="bmpPicPrompt" />
+			<Bitmap guid="guidAIImages" href="Resources\Images\16\Social-balloon-friends.16.png" usedList="bmpPicAIPrompt" />
 		</Bitmaps>
 
 	</Commands>
