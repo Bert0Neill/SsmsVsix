@@ -10,16 +10,14 @@
 				<Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
 			</Group>
 
+			<!-- Group parent for context menu items-->
 			<Group guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" priority="0x0201">
-				<!-- Parent the group into the query window context menu -->
 				<Parent guid="queryWindowContextCommandSet" id="queryWindowContextMenus"/>
 			</Group>
 		</Groups>
 
-		<!-- Removed submenu 'AIBuddyMenu' to revert to flat menu items -->
-
 		<Buttons>
-			<!-- Configure AI (kept in Tools menu group) -->
+			<!-- Configure AI (Tools menu group) -->
 			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="ConfigureAI_CmdId" type="Button" priority="0x0100">
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="MyMenuGroup"/>
 				<Icon guid="guidImagesSettings" id="bmpPicSettings" />
@@ -33,7 +31,7 @@
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" />
 				<Icon guid="guidImagesTest" id="bmpPicTest"/>
 				<Strings>
-					<ButtonText>Suggest SQL JOIns - Rules</ButtonText>
+					<ButtonText>Suggest SQL JOINs - Rules</ButtonText>
 				</Strings>
 			</Button>
 
@@ -41,7 +39,7 @@
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" />
 				<Icon guid="guidImagesCodeGen" id="bmpPicCodeGen"/>
 				<Strings>
-					<ButtonText>Suggest SQL JOIns - AI</ButtonText>
+					<ButtonText>Suggest SQL JOINs - AI</ButtonText>
 				</Strings>
 			</Button>
 
@@ -49,26 +47,19 @@
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" />
 				<Icon guid="guidImagesImprove" id="bmpPicImprove"/>
 				<Strings>
-					<ButtonText>Suggest SQL WHERE Clause - AI</ButtonText>
+					<ButtonText>Suggest SQL WHERE clause - AI</ButtonText>
 				</Strings>
 			</Button>
 
-			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="DisplayPromptCmdId" type="Button" priority="0x0104">
-				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" />
-				<Icon guid="guidImagesPrompt" id="bmpPicPrompt"/>
-				<Strings>
-					<ButtonText>AI prompt for current SQL</ButtonText>
-				</Strings>
-			</Button>
-		
 			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SuggestGroupHavingCmdId" type="Button" priority="0x0105">
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" />
 				<Icon guid="guidImagesImprove" id="bmpPicImprove"/>
 				<Strings>
-					<ButtonText>Suggest SQL GROUP\HAVING Clause - AI</ButtonText>
+					<ButtonText>Suggest SQL GROUP\HAVING clause - AI</ButtonText>
 				</Strings>
 			</Button>
-		
+
+
 			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SuggestSqlContinuationCmdId" type="Button" priority="0x0106">
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" />
 				<Icon guid="guidImagesImprove" id="bmpPicImprove"/>
@@ -76,7 +67,14 @@
 					<ButtonText>Suggest SQL Continuation - AI</ButtonText>
 				</Strings>
 			</Button>
-		
+
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="DisplayPromptCmdId" type="Button" priority="0x0104">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" />
+				<Icon guid="guidImagesPrompt" id="bmpPicPrompt"/>
+				<Strings>
+					<ButtonText>Display prompt for highlighted SQL - AI</ButtonText>
+				</Strings>
+			</Button>
 		</Buttons>
 
 		<Bitmaps>
