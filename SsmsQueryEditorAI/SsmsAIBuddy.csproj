@@ -177,6 +177,7 @@
     <Content Include="Misc\Play.png" />
     <Content Include="Misc\QuestionMark.png" />
     <Content Include="Misc\SQL AI Buddy.txt" />
+    <Content Include="Misc\SsmsQueryEditorAIPackage.txt" />
     <Content Include="Misc\Suggestion and Test SQL.txt" />
     <Content Include="Commands\Resources\Images\AIHealthCheckCmd.png" />
     <Content Include="Commands\Resources\Images\Custom-Icon-Design-Pretty-Office-9-Comment-edit.16.png" />
