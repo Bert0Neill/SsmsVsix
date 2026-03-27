@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+PSEUDOCODE / PLAN (detailed):
+1. Locate the Button element with id="SqlContinuationAiCmdId".
+2. Add a tooltip string for that button so Visual Studio shows help text on hover.
+3. In VSCT files tooltips are provided inside the <Strings> element for a Button.
+4. Keep the existing <ButtonText> value and add a <ToolTip> sibling with the tooltip content.
+5. Preserve all other file contents and formatting; only modify the target Button's <Strings> block.
+6. Output the full VSCT file with the added <ToolTip> element to ensure the file remains valid and self-contained.
+-->
 <CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 	<Extern href="stdidcmd.h"/>
@@ -40,8 +49,6 @@
 			</Menu>
 		</Menus>
 
-		
-
 		<!-- ================= BUTTONS ================= -->
 		<Buttons>
 
@@ -60,7 +67,7 @@
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
 				<Icon guid="guidImagesTest" id="bmpPicTest"/>
 				<Strings>
-					<ButtonText>Suggest SQL JOINs - SSMS</ButtonText>
+					<ButtonText>Suggest SQL JOINs - RealTime</ButtonText>
 				</Strings>
 			</Button>
 
@@ -69,6 +76,8 @@
 				<Icon guid="guidImagesCodeGen" id="bmpPicCodeGen"/>
 				<Strings>
 					<ButtonText>Suggest SQL JOINs - AI</ButtonText>
+					<!-- Tooltip shown on hover in Visual Studio -->
+					<ToolTip>Analyze the current query and schema to propose SQL JOIN clauses and suggest optimizations using AI.</ToolTip>
 				</Strings>
 			</Button>
 
@@ -77,14 +86,6 @@
 				<Icon guid="guidImagesImprove" id="bmpPicImprove"/>
 				<Strings>
 					<ButtonText>Suggest SQL WHERE clause - AI</ButtonText>
-				</Strings>
-			</Button>
-
-			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="DisplayPromptCmdId" type="Button" priority="0x0104">
-				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
-				<Icon guid="guidImagesPrompt" id="bmpPicPrompt"/>
-				<Strings>
-					<ButtonText>Display prompt for highlighted SQL - AI</ButtonText>
 				</Strings>
 			</Button>
 
@@ -101,6 +102,14 @@
 				<Icon guid="guidImagesImprove" id="bmpPicImprove"/>
 				<Strings>
 					<ButtonText>Suggest SQL Continuation - AI</ButtonText>
+				</Strings>
+			</Button>
+
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="DisplayPromptCmdId" type="Button" priority="0x0104">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
+				<Icon guid="guidImagesPrompt" id="bmpPicPrompt"/>
+				<Strings>
+					<ButtonText>Display prompt for highlighted SQL - AI</ButtonText>
 				</Strings>
 			</Button>
 

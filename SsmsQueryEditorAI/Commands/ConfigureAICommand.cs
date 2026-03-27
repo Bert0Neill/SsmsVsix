@@ -12,7 +12,7 @@ namespace SSMS_AI_Buddy.Commands
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class ConfigureAI_Cmd
+    internal sealed class ConfigureAICommand
     {
         /// <summary>
         /// Command ID.
@@ -30,12 +30,12 @@ namespace SSMS_AI_Buddy.Commands
         private readonly AsyncPackage package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConfigureAI_Cmd"/> class.
+        /// Initializes a new instance of the <see cref="ConfigureAICommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private ConfigureAI_Cmd(AsyncPackage package, OleMenuCommandService commandService)
+        private ConfigureAICommand(AsyncPackage package, OleMenuCommandService commandService)
         {
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
@@ -48,7 +48,7 @@ namespace SSMS_AI_Buddy.Commands
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static ConfigureAI_Cmd Instance
+        public static ConfigureAICommand Instance
         {
             get;
             private set;
@@ -76,7 +76,7 @@ namespace SSMS_AI_Buddy.Commands
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new ConfigureAI_Cmd(package, commandService);
+            Instance = new ConfigureAICommand(package, commandService);
         }
 
         /// <summary>

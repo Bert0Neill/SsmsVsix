@@ -112,7 +112,7 @@ namespace SSMS_AI_Buddy
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             
             Debug.WriteLine("Initializing SSMS AI Service...");
-            await SSMS_AI_Buddy.Commands.ConfigureAI_Cmd.InitializeAsync(this);
+            await SSMS_AI_Buddy.Commands.ConfigureAICommand.InitializeAsync(this);
             await SSMS_AI_Buddy.Commands.AIBuddySqlEditorCommands.InitializeAsync(this);
 
             _helperService = new SsmsHelper();
