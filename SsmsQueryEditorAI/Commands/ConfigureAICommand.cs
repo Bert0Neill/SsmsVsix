@@ -1,4 +1,4 @@
-﻿using AI_Buddy.Forms;
+﻿using SSMS_AI_Buddy.Forms;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;

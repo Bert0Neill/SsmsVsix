@@ -1,10 +1,10 @@
-﻿using AI_Buddy.Models;
-using AI_Buddy.Services;
+﻿using SSMS_AI_Buddy.Models;
+using SSMS_AI_Buddy.Services;
 using System;
 using System.IO;
 using System.Windows.Forms;
 
-namespace AI_Buddy.Forms
+namespace SSMS_AI_Buddy.Forms
 {
     public partial class PropertiesFrm : Form
     {

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AI_Buddy.Services
+namespace SSMS_AI_Buddy.Services
 {
     internal class FileService
     {

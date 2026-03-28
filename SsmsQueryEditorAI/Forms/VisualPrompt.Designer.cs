@@ -1,4 +1,4 @@
-﻿namespace AI_Buddy.Forms
+﻿namespace SSMS_AI_Buddy.Forms
 {
     partial class VisualPrompt
     {

@@ -1,18 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AI_Buddy.Forms
+namespace SSMS_AI_Buddy.Forms
 {
     public partial class VisualPrompt : Form
     {
