@@ -45,6 +45,11 @@ namespace AI_Buddy.Models
         [Description("Which testing framework to use in prompts (for e.g. NUnit, MSTest, XUnit etc.)")]
         public string TestFramework { get; set; } = "MSTest";
 
+        [Category("Coding")]
+        [DisplayName("Realtime SQL Suggestion")]
+        [Description("Use existing schema instead of AI to generate suggestions for JOINs when typing in editor")]
+        public bool IsRealTime { get; set; } = false;
+
         [Category("General Info")]
         [DisplayName("Last Modified")]
         [Description("Whan you last updated the properties.")]
@@ -61,7 +66,14 @@ namespace AI_Buddy.Models
         [DisplayName("Settings Filename")]
         [Description("The file where these settings are saved to (readonly).")]
         [ReadOnly(true)]
-        public string SettingsFilename { get; set; } = "AI_Buddy_Settings.json";
+        public string SettingsFilename { get; set; } = "AI_Buddy_SSMS_Settings.json";
+
+        [Browsable(false)]
+        [Category("General Info")]
+        [DisplayName("Reset Filename")]
+        [Description("The file holds the previous settings (readonly).")]
+        [ReadOnly(true)]
+        public string ResetFilename { get; set; } = "AI_Buddy_SSMS_Settings_Reset.json";
 
     }
 }
