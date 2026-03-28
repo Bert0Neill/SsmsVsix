@@ -37,7 +37,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CopyVsixExtensionFiles>True</CopyVsixExtensionFiles>
-    <CopyVsixExtensionLocation>d:\Program Files %28x86%29\Microsoft SQL Server Management Studio 19\Common7\IDE\Extensions\SsmsAIBuddy</CopyVsixExtensionLocation>
+    <CopyVsixExtensionLocation>c:\Program Files %28x86%29\Microsoft SQL Server Management Studio 19\Common7\IDE\Extensions\SsmsAIBuddy</CopyVsixExtensionLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -195,16 +195,32 @@
     <Content Include="Commands\Resources\Images\16\arrow.png" />
     <Content Include="Commands\Resources\Images\16\big-data_12122327.png" />
     <Content Include="Commands\Resources\Images\16\big-data_12122363 %281%29.png" />
+    <Content Include="Commands\Resources\Images\16\chat.png" />
+    <Content Include="Commands\Resources\Images\16\chat1.png" />
+    <Content Include="Commands\Resources\Images\16\chat2.png" />
     <Content Include="Commands\Resources\Images\16\cloud-hosting.png" />
     <Content Include="Commands\Resources\Images\16\command.png" />
+    <Content Include="Commands\Resources\Images\16\communications.png" />
+    <Content Include="Commands\Resources\Images\16\connection.png" />
     <Content Include="Commands\Resources\Images\16\database %281%29.png" />
     <Content Include="Commands\Resources\Images\16\database.png" />
+    <Content Include="Commands\Resources\Images\16\effects.png" />
     <Content Include="Commands\Resources\Images\16\emergency_health_healthcare.png" />
     <Content Include="Commands\Resources\Images\16\exit %281%29.png" />
     <Content Include="Commands\Resources\Images\16\exit.png" />
+    <Content Include="Commands\Resources\Images\16\file.png" />
+    <Content Include="Commands\Resources\Images\16\filter.png" />
+    <Content Include="Commands\Resources\Images\16\intersection.png" />
     <Content Include="Commands\Resources\Images\16\paper.png" />
+    <Content Include="Commands\Resources\Images\16\project.png" />
+    <Content Include="Commands\Resources\Images\16\prompt.png" />
     <Content Include="Commands\Resources\Images\16\rejected.png" />
     <Content Include="Commands\Resources\Images\16\server-report.png" />
+    <Content Include="Commands\Resources\Images\16\setting.png" />
+    <Content Include="Commands\Resources\Images\16\settings.png" />
+    <Content Include="Commands\Resources\Images\16\signpost.png" />
+    <Content Include="Commands\Resources\Images\16\signs.png" />
+    <Content Include="Commands\Resources\Images\16\speech-bubble.png" />
     <Content Include="Commands\Resources\Images\16\sql %281%29.png" />
     <Content Include="Commands\Resources\Images\16\sql %282%29.png" />
     <Content Include="Commands\Resources\Images\16\sql-file.png" />

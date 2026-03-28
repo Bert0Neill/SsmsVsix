@@ -65,7 +65,7 @@ PSEUDOCODE / PLAN (detailed):
 
 			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SqlContinuationRulesCmdId" type="Button" priority="0x0101">
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
-				<Icon guid="guidImagesTest" id="bmpPicTest"/>
+				<Icon guid="guidImagesJoins" id="bmpPicTest"/>
 				<Strings>
 					<ButtonText>Suggest SQL JOINs - RealTime</ButtonText>
 				</Strings>
@@ -73,11 +73,10 @@ PSEUDOCODE / PLAN (detailed):
 
 			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SqlContinuationAiCmdId" type="Button" priority="0x0102">
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
-				<Icon guid="guidImagesCodeGen" id="bmpPicCodeGen"/>
+				<Icon guid="guidImagesJoinsAI" id="bmpPicJoinsAI"/>
+				
 				<Strings>
 					<ButtonText>Suggest SQL JOINs - AI</ButtonText>
-					<!-- Tooltip shown on hover in Visual Studio -->
-					<ToolTip>Analyze the current query and schema to propose SQL JOIN clauses and suggest optimizations using AI.</ToolTip>
 				</Strings>
 			</Button>
 
@@ -89,23 +88,23 @@ PSEUDOCODE / PLAN (detailed):
 				</Strings>
 			</Button>
 
-			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SuggestGroupHavingCmdId" type="Button" priority="0x0105">
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SuggestGroupHavingCmdId" type="Button" priority="0x0104">
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
-				<Icon guid="guidImagesImprove" id="bmpPicImprove"/>
+				<Icon guid="guidImagesCodeGen" id="bmpPicCodeGen"/>
 				<Strings>
 					<ButtonText>Suggest SQL GROUP\HAVING clause - AI</ButtonText>
 				</Strings>
 			</Button>
 
-			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SuggestSqlContinuationCmdId" type="Button" priority="0x0106">
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SuggestSqlContinuationCmdId" type="Button" priority="0x0105">
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
-				<Icon guid="guidImagesImprove" id="bmpPicImprove"/>
+				<Icon guid="guidAIImages" id="bmpPicAIPrompt"/>
 				<Strings>
 					<ButtonText>Suggest SQL Continuation - AI</ButtonText>
 				</Strings>
 			</Button>
 
-			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="DisplayPromptCmdId" type="Button" priority="0x0104">
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="DisplayPromptCmdId" type="Button" priority="0x0106">
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
 				<Icon guid="guidImagesPrompt" id="bmpPicPrompt"/>
 				<Strings>
@@ -117,12 +116,13 @@ PSEUDOCODE / PLAN (detailed):
 
 		<!-- ================= BITMAPS ================= -->
 		<Bitmaps>
-			<Bitmap guid="guidImagesSettings" href="Resources\Images\16\Gartoon-Team-Gartoon-Categories-Preferences-autocompletion.16.png" usedList="bmpPicSettings" />
-			<Bitmap guid="guidImagesTest" href="Resources\Images\16\Gartoon-Team-Gartoon-Categories-Applications-science.16.png" usedList="bmpPicTest" />
-			<Bitmap guid="guidImagesImprove" href="Resources\Images\16\Custom-Icon-Design-Pretty-Office-9-Comment-edit.16.png" usedList="bmpPicImprove" />
-			<Bitmap guid="guidImagesCodeGen" href="Resources\Images\16\Thalita-Torres-Office-Documents.16.png" usedList="bmpPicCodeGen" />
-			<Bitmap guid="guidImagesPrompt" href="Resources\Images\16\Double-J-Design-Ravenna-3d-Comments.16.png" usedList="bmpPicPrompt" />
-			<Bitmap guid="guidAIImages" href="Resources\Images\16\Social-balloon-friends.16.png" usedList="bmpPicAIPrompt" />
+			<Bitmap guid="guidImagesSettings" href="Resources\Images\16\project.png" usedList="bmpPicSettings" />
+			<Bitmap guid="guidImagesJoins" href="Resources\Images\16\intersection.png" usedList="bmpPicTest" />
+			<Bitmap guid="guidImagesJoinsAI" href="Resources\Images\16\effects.png" usedList="bmpPicJoinsAI" />
+			<Bitmap guid="guidImagesImprove" href="Resources\Images\16\filter.png" usedList="bmpPicImprove" />
+			<Bitmap guid="guidImagesCodeGen" href="Resources\Images\16\setting.png" usedList="bmpPicCodeGen" />
+			<Bitmap guid="guidImagesPrompt" href="Resources\Images\16\chat.png" usedList="bmpPicPrompt" />
+			<Bitmap guid="guidAIImages" href="Resources\Images\16\signpost.png" usedList="bmpPicAIPrompt" />
 		</Bitmaps>
 
 	</Commands>
@@ -155,9 +155,14 @@ PSEUDOCODE / PLAN (detailed):
 			<IDSymbol name="bmpPicSettings" value="1" />
 		</GuidSymbol>
 
-		<GuidSymbol name="guidImagesTest" value="{9fd8af83-a0da-41ca-aea1-0479aaa141e7}">
+		<GuidSymbol name="guidImagesJoins" value="{9fd8af83-a0da-41ca-aea1-0479aaa141e7}">
 			<IDSymbol name="bmpPicTest" value="1" />
 		</GuidSymbol>
+
+		<GuidSymbol name="guidImagesJoinsAI" value="{9fd8af83-a0da-41ca-aea1-0479aaa141e8}">
+			<IDSymbol name="bmpPicJoinsAI" value="1" />
+		</GuidSymbol>
+		
 
 		<GuidSymbol name="guidImagesImprove" value="{b4e9e6a2-7c9f-4d8e-9e3a-1f8a7d3e5b2c}">
 			<IDSymbol name="bmpPicImprove" value="1" />
