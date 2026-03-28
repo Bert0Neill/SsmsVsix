@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AI_Buddy.Models
+namespace SSMS_AI_Buddy.Models
 {
     internal class AIProperties
     {
