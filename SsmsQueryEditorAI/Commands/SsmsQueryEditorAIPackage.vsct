@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-PSEUDOCODE / PLAN (detailed):
-1. Locate the Button element with id="SqlContinuationAiCmdId".
-2. Add a tooltip string for that button so Visual Studio shows help text on hover.
-3. In VSCT files tooltips are provided inside the <Strings> element for a Button.
-4. Keep the existing <ButtonText> value and add a <ToolTip> sibling with the tooltip content.
-5. Preserve all other file contents and formatting; only modify the target Button's <Strings> block.
-6. Output the full VSCT file with the added <ToolTip> element to ensure the file remains valid and self-contained.
--->
 <CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 	<Extern href="stdidcmd.h"/>
