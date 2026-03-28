@@ -36,17 +36,17 @@ namespace AI_Buddy.Models
         public bool IsPromptResponseStreaming { get; set; } = false;
 
         [Category("Coding")]
-        [DisplayName("Software language")]
-        [Description("Coding Language that you want AI prompt to respond in (for e.g. Java, .Net4.8, .Net9 etc.)")]
-        public string CodingLanguage { get; set; } = "C#";
+        [DisplayName("SSMS Version")]
+        [Description("What version of SSMS you are requesting answers from AI prompt to execute on")]
+        public string SsmsVersion { get; set; } = "SSMS 19+";
 
         [Category("Coding")]
-        [DisplayName("Testing Framework")]
-        [Description("Which testing framework to use in prompts (for e.g. NUnit, MSTest, XUnit etc.)")]
-        public string TestFramework { get; set; } = "MSTest";
+        [DisplayName("SQL")]
+        [Description("What version of SQL you are requesting answers from AI prompt to execute against")]
+        public string SqlVersion { get; set; } = "TSQL";
 
         [Category("Coding")]
-        [DisplayName("Realtime SQL Suggestion")]
+        [DisplayName("Realtime SQL Suggestion (Joins)")]
         [Description("Use existing schema instead of AI to generate suggestions for JOINs when typing in editor")]
         public bool IsRealTime { get; set; } = false;
 
