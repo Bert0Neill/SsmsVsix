@@ -19,8 +19,13 @@
 				<Parent guid="queryWindowContextCommandSet" id="queryWindowContextMenus"/>
 			</Group>
 
-			<!-- Submenu group -->
+			<!-- Submenu group 1 -->
 			<Group guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" priority="0x0100">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenu"/>
+			</Group>
+
+			<!-- ✅ Submenu group 2 (creates separator) -->
+			<Group guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup2" priority="0x0101">
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenu"/>
 			</Group>
 
@@ -54,6 +59,7 @@
 
 			<!-- ===== SUBMENU ITEMS ===== -->
 
+			<!-- FIRST ITEM (group 1) -->
 			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SqlContinuationRulesCmdId" type="Button" priority="0x0101">
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
 				<Icon guid="guidImagesJoins" id="bmpPicTest"/>
@@ -63,16 +69,15 @@
 			</Button>
 
 			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SqlContinuationAiCmdId" type="Button" priority="0x0102">
-				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup2" />
 				<Icon guid="guidImagesJoinsAI" id="bmpPicJoinsAI"/>
-				
 				<Strings>
 					<ButtonText>Suggest SQL JOINs - AI</ButtonText>
 				</Strings>
 			</Button>
 
 			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="CorrectSqlErrorsCmdId" type="Button" priority="0x0103">
-				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup2" />
 				<Icon guid="guidImagesImprove" id="bmpPicImprove"/>
 				<Strings>
 					<ButtonText>Suggest SQL WHERE clause - AI</ButtonText>
@@ -80,7 +85,7 @@
 			</Button>
 
 			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SuggestGroupHavingCmdId" type="Button" priority="0x0104">
-				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup2" />
 				<Icon guid="guidImagesCodeGen" id="bmpPicCodeGen"/>
 				<Strings>
 					<ButtonText>Suggest SQL GROUP\HAVING clause - AI</ButtonText>
@@ -88,7 +93,7 @@
 			</Button>
 
 			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SuggestSqlContinuationCmdId" type="Button" priority="0x0105">
-				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup2" />
 				<Icon guid="guidAIImages" id="bmpPicAIPrompt"/>
 				<Strings>
 					<ButtonText>Suggest SQL Continuation - AI</ButtonText>
@@ -96,7 +101,7 @@
 			</Button>
 
 			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="DisplayPromptCmdId" type="Button" priority="0x0106">
-				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup2" />
 				<Icon guid="guidImagesPrompt" id="bmpPicPrompt"/>
 				<Strings>
 					<ButtonText>Display prompt for highlighted SQL - AI</ButtonText>
@@ -128,14 +133,15 @@
 			<IDSymbol name="AIBuddyEditorGroup" value="0x1030" />
 			<IDSymbol name="AIBuddySubMenu" value="0x1040" />
 			<IDSymbol name="AIBuddySubMenuGroup" value="0x1041" />
+			<IDSymbol name="AIBuddySubMenuGroup2" value="0x1042" />
 
 			<IDSymbol name="ConfigureAI_CmdId" value="0x0100" />
 			<IDSymbol name="SqlContinuationRulesCmdId" value="0x0101" />
 			<IDSymbol name="SqlContinuationAiCmdId" value="0x0102" />
 			<IDSymbol name="CorrectSqlErrorsCmdId" value="0x0103" />
-			<IDSymbol name="DisplayPromptCmdId" value="0x0104" />
-			<IDSymbol name="SuggestGroupHavingCmdId" value="0x0105" />
-			<IDSymbol name="SuggestSqlContinuationCmdId" value="0x0106" />
+			<IDSymbol name="DisplayPromptCmdId" value="0x0106" />
+			<IDSymbol name="SuggestGroupHavingCmdId" value="0x0104" />
+			<IDSymbol name="SuggestSqlContinuationCmdId" value="0x0105" />
 		</GuidSymbol>
 
 		<GuidSymbol name="queryWindowContextCommandSet" value="{33F13AC3-80BB-4ECB-85BC-225435603A5E}">
@@ -153,7 +159,6 @@
 		<GuidSymbol name="guidImagesJoinsAI" value="{9fd8af83-a0da-41ca-aea1-0479aaa141e8}">
 			<IDSymbol name="bmpPicJoinsAI" value="1" />
 		</GuidSymbol>
-		
 
 		<GuidSymbol name="guidImagesImprove" value="{b4e9e6a2-7c9f-4d8e-9e3a-1f8a7d3e5b2c}">
 			<IDSymbol name="bmpPicImprove" value="1" />

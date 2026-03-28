@@ -3,7 +3,6 @@ using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.ComponentModel.Design;
 using System.Globalization;
-using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 
 namespace SSMS_AI_Buddy.Commands
@@ -15,12 +14,12 @@ namespace SSMS_AI_Buddy.Commands
     {
         private static AsyncPackage _package;
 
-        public const int SqlContinuationRulesId = 0x0101;
-        public const int SqlContinuationAiId = 0x0102;
-        public const int CorrectSqlErrorsId = 0x0103;
-        public const int DisplayPromptId = 0x0104;
-        public const int SuggestGroupHavingId = 0x0105;
-        public const int SuggestSqlContinuationId = 0x0106;
+        public const int SqlJoinsRealtimeId = 0x0101;
+        public const int SqlJoinsAiId = 0x0102;
+        public const int WhereClauseId = 0x0103;
+        public const int SuggestGroupHavingId = 0x0104;
+        public const int SuggestSqlContinuationId = 0x0105;
+        public const int DisplayPromptId = 0x0106;
 
         public static readonly Guid CommandSet = new Guid("d5cfa9e8-a7de-4eb4-b34f-0ab39f9e31a3");
 
@@ -33,9 +32,9 @@ namespace SSMS_AI_Buddy.Commands
             if (commandService == null)
                 return;
 
-            Add(package, commandService, SqlContinuationRulesId, ExecuteSqlContinuationRules);
-            Add(package, commandService, SqlContinuationAiId, ExecuteSqlContinuationAi);
-            Add(package, commandService, CorrectSqlErrorsId, ExecuteCorrectSqlErrors);
+            Add(package, commandService, SqlJoinsRealtimeId, ExecuteSqlJoinsRealtimeRules);
+            Add(package, commandService, SqlJoinsAiId, ExecuteSqlJoinsAi);
+            Add(package, commandService, WhereClauseId, ExecuteWhereClauseAi);
             Add(package, commandService, DisplayPromptId, ExecuteDisplayPrompt);
             Add(package, commandService, SuggestGroupHavingId, ExecuteSuggestGroupHaving);
             Add(package, commandService, SuggestSqlContinuationId, ExecuteSuggestSqlContinuation);
@@ -47,41 +46,41 @@ namespace SSMS_AI_Buddy.Commands
             commandService.AddCommand(new MenuCommand(execute, id));
         }
 
-        private static void ExecuteSuggestSqlContinuation(object sender, EventArgs e)
+        private static void ExecuteSqlJoinsRealtimeRules(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            ShowStub(nameof(ExecuteSqlContinuationRules), "SQL suggestion continuation Using AI");
+            ShowStub(nameof(ExecuteSqlJoinsRealtimeRules), "SQL Joins Realtime...");
         }
 
 
         private static void ExecuteSuggestGroupHaving(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            ShowStub(nameof(ExecuteSqlContinuationRules), "SQL suggestion Group Having clause Using AI");
+            ShowStub(nameof(ExecuteSqlJoinsRealtimeRules), "SQL suggestion Group Having clause Using AI");
         }
 
-        private static void ExecuteSqlContinuationRules(object sender, EventArgs e)
+        private static void ExecuteSqlJoinsAi(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            ShowStub(nameof(ExecuteSqlContinuationRules), "SQL Continuation Using Rules");
+            ShowStub(nameof(ExecuteSqlJoinsAi), "SQL Joins AI...");
         }
 
-        private static void ExecuteSqlContinuationAi(object sender, EventArgs e)
+        private static void ExecuteSuggestSqlContinuation(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            ShowStub(nameof(ExecuteSqlContinuationAi), "SQL Continuation Using AI");
+            ShowStub(nameof(ExecuteSuggestSqlContinuation), "SQL Continuation AI...");
         }
 
-        private static void ExecuteCorrectSqlErrors(object sender, EventArgs e)
+        private static void ExecuteWhereClauseAi(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            ShowStub(nameof(ExecuteCorrectSqlErrors), "Correct SQL errors");
+            ShowStub(nameof(ExecuteWhereClauseAi), "SQL Where Clause AI...");
         }
 
         private static void ExecuteDisplayPrompt(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            ShowStub(nameof(ExecuteDisplayPrompt), "Display Prompt");
+            ShowStub(nameof(ExecuteDisplayPrompt), "Display Prompt AI...");
         }
 
         private static void ShowStub(string callbackName, string title)
