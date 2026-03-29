@@ -1,6 +1,192 @@
 ﻿<UserControl x:Class="SSMS_AI_Buddy.Components.PromptWindowControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
+             Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
+             Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
+             MinWidth="320"
+             Name="PromptWindow">
+
+    <UserControl.Resources>
+
+        <!-- Prompt textbox style with watermark -->
+        <Style x:Key="PromptTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+
+                            <Border CornerRadius="6"
+                                    BorderThickness="1"
+                                    Padding="4"
+                                    BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ActiveBorderKey}}"
+                                    Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}">
+
+                                <ScrollViewer x:Name="PART_ContentHost"
+                                              VerticalScrollBarVisibility="Auto"/>
+                            </Border>
+
+                            <!-- Watermark -->
+                            <TextBlock x:Name="Watermark"
+                                       Text="Ask AI about your SQL..."
+                                       Margin="10,6"
+                                       Foreground="Gray"
+                                       IsHitTestVisible="False"
+                                       Visibility="Collapsed"/>
+
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="Watermark"
+                                        Property="Visibility"
+                                        Value="Visible"/>
+                            </Trigger>
+
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Watermark"
+                                        Property="Visibility"
+                                        Value="Collapsed"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+
+
+    <Grid Margin="6">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+
+        <!-- Chat Conversation Panel -->
+        <ScrollViewer Grid.Row="0"
+                      VerticalScrollBarVisibility="Auto">
+
+            <StackPanel x:Name="ChatPanel"
+                        Margin="4">
+
+                <!-- AI Message Example -->
+                <Border Background="#F3F3F3"
+                        CornerRadius="10"
+                        Padding="10"
+                        Margin="0,6"
+                        HorizontalAlignment="Left"
+                        MaxWidth="420">
+
+                    <TextBlock TextWrapping="Wrap"
+                               FontSize="13"
+                               Text="AI responses will appear here."/>
+                </Border>
+
+                <!-- User Message Example -->
+                <Border Background="#0078D4"
+                        CornerRadius="10"
+                        Padding="10"
+                        Margin="0,6"
+                        HorizontalAlignment="Right"
+                        MaxWidth="420">
+
+                    <TextBlock TextWrapping="Wrap"
+                               Foreground="White"
+                               FontSize="13"
+                               Text="Your prompt will appear here."/>
+                </Border>
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+
+        <!-- Prompt Input Area -->
+        <Border Grid.Row="1"
+                CornerRadius="10"
+                BorderThickness="1"
+                Margin="0,6,0,0"
+                Padding="6"
+                BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ActiveBorderKey}}">
+
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+
+                <!-- Prompt Input -->
+                <TextBox x:Name="txtPrompt"
+                         Style="{StaticResource PromptTextBoxStyle}"
+                         AcceptsReturn="True"
+                         Height="60"
+                         VerticalScrollBarVisibility="Auto"
+                         TextWrapping="Wrap"
+                         FontSize="13"/>
+
+
+                <!-- Send Button -->
+                <Button Grid.Column="1"
+                        Width="70"
+                        Margin="8,0,0,0"
+                        Content="Send"
+                        Click="SubmitClickAsync">
+
+                    <Button.Style>
+
+                        <Style TargetType="Button">
+
+                            <Setter Property="Background" Value="#0078D4"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="BorderBrush" Value="#0078D4"/>
+                            <Setter Property="Padding" Value="10,4"/>
+
+                            <Setter Property="Template">
+
+                                <Setter.Value>
+
+                                    <ControlTemplate TargetType="Button">
+
+                                        <Border CornerRadius="8"
+                                                Background="{TemplateBinding Background}">
+
+                                            <ContentPresenter
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"/>
+
+                                        </Border>
+
+                                    </ControlTemplate>
+
+                                </Setter.Value>
+
+                            </Setter>
+
+                        </Style>
+
+                    </Button.Style>
+
+                </Button>
+
+            </Grid>
+
+        </Border>
+
+    </Grid>
+
+</UserControl>
+    
+    <!--<UserControl x:Class="SSMS_AI_Buddy.Components.PromptWindowControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
@@ -142,4 +328,4 @@
             </Button>
         </Grid>
     </Border>
-</UserControl>
+</UserControl>-->

@@ -14,6 +14,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Controls;
 
 
 namespace SSMS_AI_Buddy.Components
@@ -50,7 +51,7 @@ namespace SSMS_AI_Buddy.Components
                 _aiProperties = _fileService.LoadFromJson<AIProperties>(filePath);
             }
             
-            rtbResults.Document.Blocks.Clear();
+            //rtbResults.Document.Blocks.Clear();
         }
 
         private void PromptWindowControl_Unloaded(object sender, RoutedEventArgs e)
@@ -60,71 +61,107 @@ namespace SSMS_AI_Buddy.Components
 
         public void AppendResult(string text, bool isError = false)
         {
-            rtbResults.Dispatcher.Invoke(() =>
-            {
-                Paragraph paragraph = null;
+            //rtbResults.Dispatcher.Invoke(() =>
+            //{
+            //    Paragraph paragraph = null;
 
-                if (!isError && rtbResults.Document.Blocks.LastBlock is Paragraph lastParagraph)
-                {
-                    paragraph = lastParagraph;
-                }
-                else
-                {
-                    paragraph = new Paragraph();
-                    rtbResults.Document.Blocks.Add(paragraph);
-                }
-                paragraph.Foreground = System.Windows.Media.Brushes.Black; // default
+            //    if (!isError && rtbResults.Document.Blocks.LastBlock is Paragraph lastParagraph)
+            //    {
+            //        paragraph = lastParagraph;
+            //    }
+            //    else
+            //    {
+            //        paragraph = new Paragraph();
+            //        rtbResults.Document.Blocks.Add(paragraph);
+            //    }
+            //    paragraph.Foreground = System.Windows.Media.Brushes.Black; // default
 
-                if (isError)
-                {
-                    // If error, prepend error label in bold (you might want to start a new paragraph for clarity)
-                    paragraph.Foreground = System.Windows.Media.Brushes.OrangeRed;
-                    paragraph.Inlines.Add(new Bold(new Run("ERROR: ")));
-                }
+            //    if (isError)
+            //    {
+            //        // If error, prepend error label in bold (you might want to start a new paragraph for clarity)
+            //        paragraph.Foreground = System.Windows.Media.Brushes.OrangeRed;
+            //        paragraph.Inlines.Add(new Bold(new Run("ERROR: ")));
+            //    }
 
-                // Append the new text (you might want to add a space if necessary)
-                paragraph.Inlines.Add(new Run(text + " "));
+            //    // Append the new text (you might want to add a space if necessary)
+            //    paragraph.Inlines.Add(new Run(text + " "));
 
-                // Ensure scrolling works correctly
-                rtbResults.CaretPosition = rtbResults.Document.ContentEnd;
-                rtbResults.ScrollToEnd();
-                rtbResults.Focus(); // Optional: Ensures UI refresh
-            });
+            //    // Ensure scrolling works correctly
+            //    rtbResults.CaretPosition = rtbResults.Document.ContentEnd;
+            //    rtbResults.ScrollToEnd();
+            //    rtbResults.Focus(); // Optional: Ensures UI refresh
+            //});
         }
 
         private async void SubmitClickAsync(object sender, RoutedEventArgs e)
         {
             try
             {
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-
-                _isImagesAttached = false;
-                _imageFilename = new List<string>();
+                Mouse.OverrideCursor = Cursors.Wait;
 
                 var prompt = ExtractRichTextBoxContent();
 
-                if (prompt == _placeholderTextPrompt) return; // nothing to enter
+                if (string.IsNullOrWhiteSpace(prompt))
+                    return;
 
-                // Insert the paragraph into the RichTextBox's document
-                this.rtbResults.Document.Blocks.Add(_richTextBoxParagraphGenerator.GenerateSubmitPromptParagraph(prompt, _richTextBoxParagraphGenerator.IsRichTextBoxEmpty(this.rtbResults)));
+                AddUserMessage(prompt);
 
-                // Clear the rtbPrompt content
-                this.rtbPrompt.Document = new FlowDocument();
+                txtPrompt.Text = "";
+
+                StartAiMessage();
 
                 await GetOllamaResponseStreamAsync(prompt, chunk =>
                 {
-                    AppendResult(chunk); // Display each chunk as it arrives (cater for streaming)
+                    AppendAiChunk(chunk);
                 });
             }
             catch (Exception ex)
             {
-                AppendResult(ex.Message, isError: true);
+                AddAiMessage("ERROR: " + ex.Message);
             }
             finally
             {
                 Mouse.OverrideCursor = null;
             }
         }
+
+        //private async void SubmitClickAsync(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+        //        _isImagesAttached = false;
+        //        _imageFilename = new List<string>();
+
+
+
+        //        var prompt = ExtractRichTextBoxContent();
+
+        //        if (prompt == _placeholderTextPrompt) return; // nothing to enter
+
+        //        // Insert the paragraph into the RichTextBox's document
+        //        this.rtbResults.Document.Blocks.Add(_richTextBoxParagraphGenerator.GenerateSubmitPromptParagraph(prompt, _richTextBoxParagraphGenerator.IsRichTextBoxEmpty(this.rtbResults)));
+
+        //        // Clear the rtbPrompt content
+        //        this.rtbPrompt.Document = new FlowDocument();
+
+        //        await GetOllamaResponseStreamAsync(prompt, chunk =>
+        //        {
+        //            AppendResult(chunk); // Display each chunk as it arrives (cater for streaming)
+        //        });
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        AppendResult(ex.Message, isError: true);
+        //    }
+        //    finally
+        //    {
+        //        Mouse.OverrideCursor = null;
+        //    }
+        //}
 
         #region RTB
         private void rtbPrompt_Pasting(object sender, DataObjectPastingEventArgs e)
@@ -148,25 +185,25 @@ namespace SSMS_AI_Buddy.Components
 
                     var container = new InlineUIContainer(image);
 
-                    // Get current paragraph or create a new one
-                    TextPointer caretPos = rtbPrompt.CaretPosition;
-                    Paragraph currentParagraph = caretPos.Paragraph ?? new Paragraph();
+                    //// Get current paragraph or create a new one
+                    //TextPointer caretPos = rtbPrompt.CaretPosition;
+                    //Paragraph currentParagraph = caretPos.Paragraph ?? new Paragraph();
 
-                    // Add the image to the paragraph's inlines
-                    currentParagraph.Inlines.Add(container);
+                    //// Add the image to the paragraph's inlines
+                    //currentParagraph.Inlines.Add(container);
 
-                    // If new paragraph, add to document
-                    if (caretPos.Paragraph == null)
-                    {
-                        rtbPrompt.Document.Blocks.Add(currentParagraph);
-                    }
+                    //// If new paragraph, add to document
+                    //if (caretPos.Paragraph == null)
+                    //{
+                    //    rtbPrompt.Document.Blocks.Add(currentParagraph);
+                    //}
 
-                    // Insert a new empty paragraph after the image
-                    Paragraph newParagraph = new Paragraph();
-                    rtbPrompt.Document.Blocks.Add(newParagraph);
+                    //// Insert a new empty paragraph after the image
+                    //Paragraph newParagraph = new Paragraph();
+                    //rtbPrompt.Document.Blocks.Add(newParagraph);
 
-                    // Move the caret to the new paragraph
-                    rtbPrompt.CaretPosition = newParagraph.ContentStart;
+                    //// Move the caret to the new paragraph
+                    //rtbPrompt.CaretPosition = newParagraph.ContentStart;
                 }
             }
         }
@@ -329,36 +366,36 @@ namespace SSMS_AI_Buddy.Components
             StringBuilder extractedText = new StringBuilder();
             List<BitmapSource> images = new List<BitmapSource>();
 
-            foreach (Block block in rtbPrompt.Document.Blocks)
-            {
-                if (block is Paragraph paragraph)
-                {
-                    foreach (Inline inline in paragraph.Inlines)
-                    {
-                        if (inline is Run run)
-                        {
-                            // Extract text
-                            extractedText.Append(run.Text);
-                        }
-                        else if (inline is InlineUIContainer container && container.Child is System.Windows.Controls.Image image)
-                        {
-                            // Extract image
-                            BitmapSource bitmapSource = image.Source as BitmapSource;
-                            if (bitmapSource != null)
-                            {
-                                _isImagesAttached = true;
-                                images.Add(bitmapSource);
-                                extractedText.Append(" (Image attached) "); // Placeholder for image in text
+            //foreach (Block block in rtbPrompt.Document.Blocks)
+            //{
+            //    if (block is Paragraph paragraph)
+            //    {
+            //        foreach (Inline inline in paragraph.Inlines)
+            //        {
+            //            if (inline is Run run)
+            //            {
+            //                // Extract text
+            //                extractedText.Append(run.Text);
+            //            }
+            //            else if (inline is InlineUIContainer container && container.Child is System.Windows.Controls.Image image)
+            //            {
+            //                // Extract image
+            //                BitmapSource bitmapSource = image.Source as BitmapSource;
+            //                if (bitmapSource != null)
+            //                {
+            //                    _isImagesAttached = true;
+            //                    images.Add(bitmapSource);
+            //                    extractedText.Append(" (Image attached) "); // Placeholder for image in text
 
-                                // attach to results pane - just for show!
-                                BitmapSource resizedBitmapSource = ResizeBitmapSource(bitmapSource, 100, 100);
-                                Clipboard.SetImage(resizedBitmapSource);
-                                rtbResults.Paste(); // Paste the image into the second RichTextBox
-                            }
-                        }
-                    }
-                }
-            }
+            //                    // attach to results pane - just for show!
+            //                    BitmapSource resizedBitmapSource = ResizeBitmapSource(bitmapSource, 100, 100);
+            //                    Clipboard.SetImage(resizedBitmapSource);
+            //                    rtbResults.Paste(); // Paste the image into the second RichTextBox
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
 
             // Process extracted images
             int count = 1;
@@ -386,8 +423,8 @@ namespace SSMS_AI_Buddy.Components
             // If the placeholder is visible, clear it when user starts typing
             if (IsPlaceholderActive())
             {
-                rtbPrompt.Document.Blocks.Clear();
-                rtbPrompt.Foreground = System.Windows.Media.Brushes.Black; // Change text color to black
+                //rtbPrompt.Document.Blocks.Clear();
+                //rtbPrompt.Foreground = System.Windows.Media.Brushes.Black; // Change text color to black
             }
         }
 
@@ -399,19 +436,21 @@ namespace SSMS_AI_Buddy.Components
 
         private void SetPlaceholderIfNeeded()
         {
-            // Check if the document is empty or contains only the placeholder text
-            if (rtbPrompt.Document.Blocks.Count == 0 || string.IsNullOrWhiteSpace(new TextRange(rtbPrompt.Document.ContentStart, rtbPrompt.Document.ContentEnd).Text.Trim()))
-            {
-                rtbPrompt.Foreground = System.Windows.Media.Brushes.Gray; // Set text color to gray for placeholder
-                rtbPrompt.Document.Blocks.Clear();
-                rtbPrompt.Document.Blocks.Add(new Paragraph(new Run(_placeholderTextPrompt)));
-            }
+            //// Check if the document is empty or contains only the placeholder text
+            //if (rtbPrompt.Document.Blocks.Count == 0 || string.IsNullOrWhiteSpace(new TextRange(rtbPrompt.Document.ContentStart, rtbPrompt.Document.ContentEnd).Text.Trim()))
+            //{
+            //    rtbPrompt.Foreground = System.Windows.Media.Brushes.Gray; // Set text color to gray for placeholder
+            //    rtbPrompt.Document.Blocks.Clear();
+            //    rtbPrompt.Document.Blocks.Add(new Paragraph(new Run(_placeholderTextPrompt)));
+            //}
         }
 
         private bool IsPlaceholderActive()
         {
+            return true;
+
             // Check if the placeholder text is currently active
-            return new TextRange(rtbPrompt.Document.ContentStart, rtbPrompt.Document.ContentEnd).Text.Trim() == _placeholderTextPrompt;
+            //return new TextRange(rtbPrompt.Document.ContentStart, rtbPrompt.Document.ContentEnd).Text.Trim() == _placeholderTextPrompt;
         }
 
         internal void UpdatePromptResponse(string value)
@@ -421,15 +460,15 @@ namespace SSMS_AI_Buddy.Components
 
         internal void UpdateResultPrompt(Paragraph[] value)
         {
-            foreach (var item in value)
-            {
-                this.rtbResults.Document.Blocks.Add(item);
-            }
+            //foreach (var item in value)
+            //{
+            //    this.rtbResults.Document.Blocks.Add(item);
+            //}
 
-            // Ensure scrolling works correctly
-            rtbResults.CaretPosition = rtbResults.Document.ContentEnd;
-            rtbResults.ScrollToEnd();
-            rtbResults.Focus(); // Optional: Ensures UI refresh
+            //// Ensure scrolling works correctly
+            //rtbResults.CaretPosition = rtbResults.Document.ContentEnd;
+            //rtbResults.ScrollToEnd();
+            //rtbResults.Focus(); // Optional: Ensures UI refresh
         }
 
         private void SaveImage(BitmapSource image, string filePath)
@@ -532,7 +571,82 @@ namespace SSMS_AI_Buddy.Components
             }
         }
 
+        private void AddUserMessage(string text)
+        {
+            var border = new Border
+            {
+                Background = new SolidColorBrush(Color.FromRgb(0, 120, 212)),
+                CornerRadius = new CornerRadius(10),
+                Padding = new Thickness(10),
+                Margin = new Thickness(0, 6, 0, 6),
+                HorizontalAlignment = HorizontalAlignment.Right,
+                MaxWidth = 420
+            };
 
+            border.Child = new TextBlock
+            {
+                Text = text,
+                Foreground = Brushes.White,
+                TextWrapping = TextWrapping.Wrap
+            };
 
+            ChatPanel.Children.Add(border);
+        }
+
+        private void AddAiMessage(string text)
+        {
+            var border = new Border
+            {
+                Background = Brushes.LightGray,
+                CornerRadius = new CornerRadius(10),
+                Padding = new Thickness(10),
+                Margin = new Thickness(0, 6, 0, 6),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                MaxWidth = 420
+            };
+
+            border.Child = new TextBlock
+            {
+                Text = text,
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            ChatPanel.Children.Add(border);
+        }
+
+        private TextBlock _currentAiResponseBlock;
+
+        private void StartAiMessage()
+        {
+            var border = new Border
+            {
+                Background = Brushes.LightGray,
+                CornerRadius = new CornerRadius(10),
+                Padding = new Thickness(10),
+                Margin = new Thickness(0, 6, 0, 6),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                MaxWidth = 420
+            };
+
+            _currentAiResponseBlock = new TextBlock
+            {
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            border.Child = _currentAiResponseBlock;
+
+            ChatPanel.Children.Add(border);
+        }
+
+        private void AppendAiChunk(string text)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (_currentAiResponseBlock != null)
+                {
+                    _currentAiResponseBlock.Text += text;
+                }
+            });
+        }
     }
 }
