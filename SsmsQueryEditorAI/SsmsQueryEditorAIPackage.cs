@@ -94,6 +94,10 @@ namespace SSMS_AI_Buddy
 
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
+    [ProvideToolWindow(typeof(SSMS_AI_Buddy.Components.PromptWindow),
+                   Style = VsDockStyle.Float,
+                   Orientation = ToolWindowOrientation.Right,
+                   Window = null)]
     public sealed class SsmsQueryEditorAIPackage : AsyncPackage
     {
         public const string PackageGuidString = "f79b07ee-abe6-4e30-bb4f-c6808f451d62";

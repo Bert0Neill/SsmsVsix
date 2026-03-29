@@ -1,8 +1,13 @@
+using Microsoft.Identity.Client;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using SSMS_AI_Buddy.Components;
+using SSMS_AI_Buddy.Models;
+using SSMS_AI_Buddy.Services;
 using System;
 using System.ComponentModel.Design;
 using System.Globalization;
+using static System.Net.Mime.MediaTypeNames;
 using Task = System.Threading.Tasks.Task;
 
 namespace SSMS_AI_Buddy.Commands
@@ -80,7 +85,25 @@ namespace SSMS_AI_Buddy.Commands
         private static void ExecuteDisplayPrompt(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            ShowStub(nameof(ExecuteDisplayPrompt), "Display Prompt AI...");
+
+            //string text = await _editorService.GetSelectedTextAsync(this._package);
+
+
+
+            var promptWindow = _package.FindToolWindow(typeof(PromptWindow), 0, true) as PromptWindow;
+
+            if (promptWindow?.Frame == null)
+            {
+                throw new NotSupportedException("Cannot create Prompt Window.");
+            }
+
+            //promptWindow.FormattedPrompt = _richTextBoxParagraphGenerator.GenerateCodeFromHintParagraph(prompt, text, _aiProperties); // update window panel control
+
+            var windowFrame = (IVsWindowFrame)promptWindow.Frame;
+            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+
+
+            // ShowStub(nameof(ExecuteDisplayPrompt), "Display Prompt AI...");
         }
 
         private static void ShowStub(string callbackName, string title)

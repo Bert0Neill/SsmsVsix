@@ -17,6 +17,7 @@
     <RootNamespace>SSMS_AI_Buddy</RootNamespace>
     <AssemblyName>SSMS_AI_Buddy</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <UseWPF>true</UseWPF>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <UseCodebase>true</UseCodebase>
     <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
@@ -37,7 +38,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CopyVsixExtensionFiles>True</CopyVsixExtensionFiles>
-    <CopyVsixExtensionLocation>c:\Program Files %28x86%29\Microsoft SQL Server Management Studio 19\Common7\IDE\Extensions\SsmsAIBuddy</CopyVsixExtensionLocation>
+    <CopyVsixExtensionLocation>d:\Program Files %28x86%29\Microsoft SQL Server Management Studio 19\Common7\IDE\Extensions\SsmsAIBuddy</CopyVsixExtensionLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,6 +51,10 @@
   <ItemGroup>
     <Compile Include="Commands\AIBuddySqlEditorCommands.cs" />
     <Compile Include="Commands\ConfigureAICommand.cs" />
+    <Compile Include="Components\PromptWindow.cs" />
+    <Compile Include="Components\PromptWindowControl.xaml.cs">
+      <DependentUpon>PromptWindowControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Forms\PropertiesFrm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,9 +94,11 @@
     </Compile>
     <Compile Include="Services\AI\OllamaService.cs" />
     <Compile Include="Services\Connection\MonitorDbConnectionService.cs" />
+    <Compile Include="Services\Converter\StringToVisibilityConverter.cs" />
     <Compile Include="Services\Helper\FileService.cs" />
     <Compile Include="Services\Helper\LoggerService.cs" />
     <Compile Include="Services\AI\AIEditorService.cs" />
+    <Compile Include="Services\Helper\RichTextBoxParagraphGenerator.cs" />
     <Compile Include="Services\Helper\SsmsHelper.cs" />
     <Compile Include="Services\SSMS\SqlSuggestionPopup.cs" />
     <Compile Include="Services\SSMS\EditorHelper.cs" />
@@ -128,10 +135,14 @@
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="HtmlToXamlConverter">
+      <Version>1.0.5727.24510</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Build.Framework">
       <Version>16.5.0</Version>
     </PackageReference>
@@ -246,6 +257,7 @@
     <Content Include="Commands\Resources\Images\32\maintenance.png" />
     <Content Include="Commands\Resources\Images\32\software-as-service.png" />
     <Content Include="Commands\Resources\Images\32\wrench.png" />
+    <Content Include="Components\Resources\ToolWindow1Command.png" />
     <Content Include="Misc\18 Issues\SqlWorkbench.Interfaces.dll" />
     <Content Include="Misc\19\SqlPackageBase.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -308,7 +320,14 @@
   <ItemGroup>
     <Folder Include="File\" />
   </ItemGroup>
+  <ItemGroup>
+    <Page Include="Components\PromptWindowControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.WinFX.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
