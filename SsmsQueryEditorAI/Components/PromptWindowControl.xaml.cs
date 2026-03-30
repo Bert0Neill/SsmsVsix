@@ -379,26 +379,26 @@ namespace SSMS_AI_Buddy.Components
             return plainText;
         }
 
-        private void rtbPrompt_Loaded(object sender, RoutedEventArgs e)
-        {
-            SetPlaceholderIfNeeded();
-        }
+        //private void rtbPrompt_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    SetPlaceholderIfNeeded();
+        //}
 
-        private void rtbPrompt_GotFocus(object sender, RoutedEventArgs e)
-        {
-            // If the placeholder is visible, clear it when user starts typing
-            if (IsPlaceholderActive())
-            {
-                rtbPrompt.Document.Blocks.Clear();
-                rtbPrompt.Foreground = System.Windows.Media.Brushes.Black; // Change text color to black
-            }
-        }
+        //private void rtbPrompt_GotFocus(object sender, RoutedEventArgs e)
+        //{
+        //    // If the placeholder is visible, clear it when user starts typing
+        //    if (IsPlaceholderActive())
+        //    {
+        //        rtbPrompt.Document.Blocks.Clear();
+        //        rtbPrompt.Foreground = System.Windows.Media.Brushes.Black; // Change text color to black
+        //    }
+        //}
 
-        private void rtbPrompt_LostFocus(object sender, RoutedEventArgs e)
-        {
-            // Restore the placeholder if the content is empty
-            //SetPlaceholderIfNeeded();
-        }
+        //private void rtbPrompt_LostFocus(object sender, RoutedEventArgs e)
+        //{
+        //    // Restore the placeholder if the content is empty
+        //    //SetPlaceholderIfNeeded();
+        //}
 
         private void SetPlaceholderIfNeeded()
         {
@@ -535,8 +535,45 @@ namespace SSMS_AI_Buddy.Components
             }
         }
 
-       
 
-        
+        // Show placeholder initially
+        private void rtbPrompt_Loaded(object sender, RoutedEventArgs e)
+        {
+            TogglePlaceholder();
+        }
+
+        // Remove placeholder when focused
+        private void rtbPrompt_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TogglePlaceholder();
+        }
+
+        // Restore placeholder if empty on lost focus
+        private void rtbPrompt_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TogglePlaceholder();
+        }
+
+        // Hide placeholder when text is entered
+        private void rtbPrompt_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TogglePlaceholder();
+        }
+
+        // Toggle placeholder visibility
+        private void TogglePlaceholder()
+        {
+            var text = new TextRange(rtbPrompt.Document.ContentStart, rtbPrompt.Document.ContentEnd).Text.Trim();
+
+            if (string.IsNullOrEmpty(text))
+            {
+                txtPromptPlaceholder.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                txtPromptPlaceholder.Visibility = Visibility.Collapsed;
+            }
+        }
+
     }
 }
