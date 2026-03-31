@@ -1,7 +1,8 @@
-﻿using SSMS_AI_Buddy.Models;
-using SSMS_AI_Buddy.Services;
-using HTMLConverter;
+﻿using HTMLConverter;
 using Newtonsoft.Json;
+using SSMS_AI_Buddy.Models;
+using SSMS_AI_Buddy.Services;
+using SSMS_AI_Buddy.Services.Helper;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,11 +11,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Controls;
 
 
 namespace SSMS_AI_Buddy.Components
@@ -57,67 +58,109 @@ namespace SSMS_AI_Buddy.Components
             Mouse.OverrideCursor = null;
         }
 
+        //public void AppendResult(string text, bool isError = false)
+        //{
+        //    rtbResults.Dispatcher.Invoke(() =>
+        //    {
+        //        Paragraph paragraph = null;
+
+        //        if (!isError && rtbResults.Document.Blocks.LastBlock is Paragraph lastParagraph)
+        //        {
+        //            paragraph = lastParagraph;
+        //        }
+        //        else
+        //        {
+        //            paragraph = new Paragraph();
+        //            rtbResults.Document.Blocks.Add(paragraph);
+        //        }
+        //        paragraph.Foreground = System.Windows.Media.Brushes.Black; // default
+
+        //        if (isError)
+        //        {
+        //            // If error, prepend error label in bold (you might want to start a new paragraph for clarity)
+        //            paragraph.Foreground = System.Windows.Media.Brushes.OrangeRed;
+        //            paragraph.Inlines.Add(new Bold(new Run("ERROR: ")));
+        //        }
+
+        //        // Append the new text (you might want to add a space if necessary)
+        //        paragraph.Inlines.Add(new Run(text + " "));
+
+        //        // Ensure scrolling works correctly
+        //        rtbResults.CaretPosition = rtbResults.Document.ContentEnd;
+        //        rtbResults.ScrollToEnd();
+        //        rtbResults.Focus(); // Optional: Ensures UI refresh
+        //    });
+        //}
+
         public void AppendResult(string text, bool isError = false)
         {
             rtbResults.Dispatcher.Invoke(() =>
             {
-                Paragraph paragraph = null;
-
-                if (!isError && rtbResults.Document.Blocks.LastBlock is Paragraph lastParagraph)
+                if (isError)
                 {
-                    paragraph = lastParagraph;
+                    var errorParagraph = new Paragraph();
+                    errorParagraph.Foreground = Brushes.OrangeRed;
+                    errorParagraph.Inlines.Add(new Bold(new Run("ERROR: ")));
+                    errorParagraph.Inlines.Add(new Run(text));
+
+                    rtbResults.Document.Blocks.Add(errorParagraph);
                 }
                 else
                 {
-                    paragraph = new Paragraph();
-                    rtbResults.Document.Blocks.Add(paragraph);
-                }
-                paragraph.Foreground = System.Windows.Media.Brushes.Black; // default
+                    var blocks = MarkdownRenderer.Parse(text);
 
-                if (isError)
-                {
-                    // If error, prepend error label in bold (you might want to start a new paragraph for clarity)
-                    paragraph.Foreground = System.Windows.Media.Brushes.OrangeRed;
-                    paragraph.Inlines.Add(new Bold(new Run("ERROR: ")));
+                    foreach (var block in blocks)
+                    {
+                        rtbResults.Document.Blocks.Add(block);
+                    }
                 }
 
-                // Append the new text (you might want to add a space if necessary)
-                paragraph.Inlines.Add(new Run(text + " "));
-
-                // Ensure scrolling works correctly
                 rtbResults.CaretPosition = rtbResults.Document.ContentEnd;
                 rtbResults.ScrollToEnd();
-                rtbResults.Focus(); // Optional: Ensures UI refresh
             });
         }
+
+        private StringBuilder _responseBuffer = new StringBuilder();
 
         private async void SubmitClickAsync(object sender, RoutedEventArgs e)
         {
             try
             {
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                Mouse.OverrideCursor = Cursors.Wait;
 
                 _isImagesAttached = false;
                 _imageFilename = new List<string>();
 
-
+                // Clear previous buffer
+                _responseBuffer.Clear();
 
                 var prompt = ExtractRichTextBoxContent();
 
-                if (prompt == _placeholderTextPrompt) return; // nothing to enter
+                if (string.IsNullOrWhiteSpace(prompt) || prompt == _placeholderTextPrompt)
+                    return;
 
-                // Insert the paragraph into the RichTextBox's document
-                this.rtbResults.Document.Blocks.Add(_richTextBoxParagraphGenerator.GenerateSubmitPromptParagraph(prompt, _richTextBoxParagraphGenerator.IsRichTextBoxEmpty(this.rtbResults)));
+                // Add user prompt to UI (your existing method)
+                this.rtbResults.Document.Blocks.Add(
+                    _richTextBoxParagraphGenerator.GenerateSubmitPromptParagraph(
+                        prompt,
+                        _richTextBoxParagraphGenerator.IsRichTextBoxEmpty(this.rtbResults)
+                    )
+                );
 
-                // Clear the rtbPrompt content
+                // Clear prompt input
                 this.rtbPrompt.Document = new FlowDocument();
 
+                // 🔥 STREAM + BUFFER (DO NOT RENDER HERE)
                 await GetOllamaResponseStreamAsync(prompt, chunk =>
                 {
-                    AppendResult(chunk); // Display each chunk as it arrives (cater for streaming)
+                    _responseBuffer.Append(chunk);
                 });
 
+                // ✅ RENDER ONCE AFTER STREAM COMPLETES
+                AppendResult(_responseBuffer.ToString());
 
+                // Clear buffer for next request
+                _responseBuffer.Clear();
             }
             catch (Exception ex)
             {
@@ -128,6 +171,44 @@ namespace SSMS_AI_Buddy.Components
                 Mouse.OverrideCursor = null;
             }
         }
+
+        //private async void SubmitClickAsync(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+        //        _isImagesAttached = false;
+        //        _imageFilename = new List<string>();
+
+
+
+        //        var prompt = ExtractRichTextBoxContent();
+
+        //        if (prompt == _placeholderTextPrompt) return; // nothing to enter
+
+        //        // Insert the paragraph into the RichTextBox's document
+        //        this.rtbResults.Document.Blocks.Add(_richTextBoxParagraphGenerator.GenerateSubmitPromptParagraph(prompt, _richTextBoxParagraphGenerator.IsRichTextBoxEmpty(this.rtbResults)));
+
+        //        // Clear the rtbPrompt content
+        //        this.rtbPrompt.Document = new FlowDocument();
+
+        //        await GetOllamaResponseStreamAsync(prompt, chunk =>
+        //        {
+        //            AppendResult(chunk); // Display each chunk as it arrives (cater for streaming)
+        //        });
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        AppendResult(ex.Message, isError: true);
+        //    }
+        //    finally
+        //    {
+        //        Mouse.OverrideCursor = null;
+        //    }
+        //}
 
         #region RTB
         private void rtbPrompt_Pasting(object sender, DataObjectPastingEventArgs e)
