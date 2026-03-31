@@ -186,48 +186,101 @@ namespace SSMS_AI_Buddy.Services.Helper
             }
         }
 
-        private static Block CreateCodeBlock(string code, string language = "sql")
+        public static Block CreateCodeBlock(string code, string language = "sql")
         {
-            // Use RichTextBox to allow selection and copy
+            // Create a RichTextBox for selectable code
             var richTextBox = new RichTextBox
             {
-                Background = CodeBackground,
-                Foreground = CodeForeground,
+                Background = new SolidColorBrush(Color.FromRgb(37, 37, 38)),   // dark background
+                Foreground = new SolidColorBrush(Color.FromRgb(212, 212, 212)), // light text
                 FontFamily = new FontFamily("Consolas"),
                 FontSize = 12,
-                IsReadOnly = true,
+                IsReadOnly = true,            // prevent editing
                 BorderThickness = new Thickness(0),
                 Padding = new Thickness(4),
+                Cursor = Cursors.IBeam,       // text selection cursor
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                IsDocumentEnabled = true,
-                Cursor = Cursors.IBeam
-               
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
             };
 
-            // Split code into lines and optionally highlight
-            var doc = new FlowDocument { PagePadding = new Thickness(0) };
+            // Create a FlowDocument for RichTextBox content
+            var doc = new FlowDocument
+            {
+                PagePadding = new Thickness(0),
+                TextAlignment = TextAlignment.Left
+            };
+
+            // Add each line of code as a Paragraph
             foreach (var line in code.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None))
             {
-                var paragraph = new Paragraph { Margin = new Thickness(0) };
-                if (!string.IsNullOrWhiteSpace(language))
-                    AddHighlightedLine(paragraph, line, language);
-                else
-                    paragraph.Inlines.Add(new Run(line));
+                var paragraph = new Paragraph
+                {
+                    Margin = new Thickness(0)
+                };
+
+                // Highlight SQL/C# keywords if language is provided
+                AddHighlightedLine(paragraph, line, language);
+
+                // Prevent wrapping: long lines will trigger horizontal scroll
+                paragraph.TextAlignment = TextAlignment.Left;
 
                 doc.Blocks.Add(paragraph);
             }
 
             richTextBox.Document = doc;
 
-            // Optional: limit max height so it scrolls
+            // Limit height to allow vertical scrolling
             richTextBox.MaxHeight = 400;
 
+            // Wrap in BlockUIContainer to return as FlowDocument Block
             return new BlockUIContainer(richTextBox)
             {
                 Margin = new Thickness(4, 4, 4, 4)
             };
         }
+
+        //private static Block CreateCodeBlock(string code, string language = "sql")
+        //{
+        //    // Use RichTextBox to allow selection and copy
+        //    var richTextBox = new RichTextBox
+        //    {
+        //        Background = CodeBackground,
+        //        Foreground = CodeForeground,
+        //        FontFamily = new FontFamily("Consolas"),
+        //        FontSize = 12,
+        //        IsReadOnly = true,
+        //        BorderThickness = new Thickness(0),
+        //        Padding = new Thickness(4),
+        //        HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+        //        VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+        //        IsDocumentEnabled = true,
+        //        Cursor = Cursors.IBeam
+
+        //    };
+
+        //    // Split code into lines and optionally highlight
+        //    var doc = new FlowDocument { PagePadding = new Thickness(0) };
+        //    foreach (var line in code.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None))
+        //    {
+        //        var paragraph = new Paragraph { Margin = new Thickness(0) };
+        //        if (!string.IsNullOrWhiteSpace(language))
+        //            AddHighlightedLine(paragraph, line, language);
+        //        else
+        //            paragraph.Inlines.Add(new Run(line));
+
+        //        doc.Blocks.Add(paragraph);
+        //    }
+
+        //    richTextBox.Document = doc;
+
+        //    // Optional: limit max height so it scrolls
+        //    richTextBox.MaxHeight = 400;
+
+        //    return new BlockUIContainer(richTextBox)
+        //    {
+        //        Margin = new Thickness(4, 4, 4, 4)
+        //    };
+        //}
 
     }
 }
