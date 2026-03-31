@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace SSMS_AI_Buddy.Services.Helper
@@ -37,7 +40,7 @@ namespace SSMS_AI_Buddy.Services.Helper
 
             bool inCodeBlock = false;
             string codeLanguage = "";
-            Paragraph codeParagraph = null;
+            StringBuilder codeBuffer = new StringBuilder();
 
             var lines = markdown.Split('\n');
 
@@ -53,97 +56,98 @@ namespace SSMS_AI_Buddy.Services.Helper
                     {
                         inCodeBlock = true;
                         codeLanguage = trimmed.Replace("```", "").Trim().ToLower();
-
-                        codeParagraph = new Paragraph
-                        {
-                            Margin = new Thickness(6),
-                            Padding = new Thickness(10),
-                            Background = CodeBackground,
-                            FontFamily = new FontFamily("Consolas"),
-                            Foreground = CodeForeground
-                        };
+                        codeBuffer.Clear();
                     }
                     else
                     {
                         inCodeBlock = false;
-
-                        // Create FlowDocument to control wrapping
-                        var doc = new FlowDocument(codeParagraph)
-                        {
-                            PagePadding = new Thickness(0),
-                            TextAlignment = TextAlignment.Left,
-                            PageWidth = 2000 // Prevent wrapping
-                        };
-
-                        var viewer = new ScrollViewer
-                        {
-                            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-                            VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
-                            Content = new RichTextBox
-                            {
-                                Document = doc,
-                                Background = CodeBackground,
-                                Foreground = CodeForeground,
-                                BorderThickness = new Thickness(0),
-                                IsReadOnly = true,
-                                FontFamily = new FontFamily("Consolas")
-                            }
-                        };
-
-                        blocks.Add(new BlockUIContainer(viewer));
-                        codeParagraph = null;
+                        // Add the code block as a selectable TextBox
+                        blocks.Add(CreateCodeBlock(codeBuffer.ToString()));
+                        codeBuffer.Clear();
                     }
-
                     continue;
                 }
 
                 // CODE BLOCK CONTENT
                 if (inCodeBlock)
                 {
-                    AddHighlightedLine(codeParagraph, line, codeLanguage);
-                    codeParagraph.Inlines.Add(new LineBreak());
+                    codeBuffer.AppendLine(line);
                     continue;
                 }
 
-                // HEADINGS (# ## ### ####)
+                // HEADINGS (#, ##, ###, etc.)
                 var headingMatch = Regex.Match(trimmed, @"^(#{1,6})\s+(.*)");
                 if (headingMatch.Success)
                 {
                     int level = headingMatch.Groups[1].Value.Length;
                     string content = headingMatch.Groups[2].Value;
 
-                    blocks.Add(new Paragraph(new Bold(new Run(content)))
+                    var paragraph = new Paragraph
                     {
-                        FontSize = 20 - (level * 2),
-                        Margin = new Thickness(4, 10, 4, 4)
-                    });
+                        Margin = new Thickness(4, 8, 4, 4)
+                    };
 
+                    // Bold for heading text
+                    paragraph.Inlines.Add(new Bold(new Run(content)));
+
+                    // Adjust font size based on heading level
+                    paragraph.FontSize = 24 - (level * 2);
+                    blocks.Add(paragraph);
                     continue;
                 }
 
                 // BULLET LIST
-                if (trimmed.StartsWith("- "))
+                // BULLET LIST
+                if (trimmed.StartsWith("- ") || trimmed.StartsWith("• "))
                 {
-                    blocks.Add(new Paragraph(new Run("• " + trimmed.Substring(2)))
+                    var paragraph = new Paragraph
                     {
                         Margin = new Thickness(20, 2, 2, 2)
-                    });
+                    };
 
+                    string bulletText = trimmed.StartsWith("- ") ? trimmed.Substring(2) : trimmed.Substring(1).TrimStart();
+
+                    // Add the bullet symbol
+                    paragraph.Inlines.Add(new Run("• "));
+
+                    // Parse inline markdown in the bullet text
+                    ParseInline(paragraph, bulletText);
+
+                    blocks.Add(paragraph);
                     continue;
                 }
 
-                // NORMAL TEXT
-                var paragraph = new Paragraph
+                // NORMAL TEXT (with inline markdown)
+                var normalParagraph = new Paragraph
                 {
                     Margin = new Thickness(4)
                 };
-
-                ParseInline(paragraph, trimmed);
-
-                blocks.Add(paragraph);
+                ParseInline(normalParagraph, trimmed);
+                blocks.Add(normalParagraph);
             }
 
             return blocks;
+        }
+
+        private static void ParseInline(Paragraph paragraph, string text)
+        {
+            var tokens = Regex.Split(text, @"(\*\*.*?\*\*|\*.*?\*)");
+
+            foreach (var token in tokens)
+            {
+                if (token.StartsWith("**") && token.EndsWith("**"))
+                {
+                    paragraph.Inlines.Add(new Bold(new Run(token.Trim('*'))));
+                }
+                else if (token.StartsWith("*") && token.EndsWith("*"))
+                {
+                    paragraph.Inlines.Add(new Italic(new Run(token.Trim('*'))));
+                }
+                else
+                {
+                    paragraph.Inlines.Add(new Run(token));
+                }
+            }
         }
 
         private static void AddHighlightedLine(Paragraph paragraph, string line, string language)
@@ -182,25 +186,48 @@ namespace SSMS_AI_Buddy.Services.Helper
             }
         }
 
-        private static void ParseInline(Paragraph paragraph, string text)
+        private static Block CreateCodeBlock(string code, string language = "sql")
         {
-            var tokens = Regex.Split(text, @"(\*\*.*?\*\*|\*.*?\*)");
-
-            foreach (var token in tokens)
+            // Use RichTextBox to allow selection and copy
+            var richTextBox = new RichTextBox
             {
-                if (token.StartsWith("**") && token.EndsWith("**"))
-                {
-                    paragraph.Inlines.Add(new Bold(new Run(token.Trim('*'))));
-                }
-                else if (token.StartsWith("*") && token.EndsWith("*"))
-                {
-                    paragraph.Inlines.Add(new Italic(new Run(token.Trim('*'))));
-                }
+                Background = CodeBackground,
+                Foreground = CodeForeground,
+                FontFamily = new FontFamily("Consolas"),
+                FontSize = 12,
+                IsReadOnly = true,
+                BorderThickness = new Thickness(0),
+                Padding = new Thickness(4),
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                IsDocumentEnabled = true,
+                Cursor = Cursors.IBeam
+               
+            };
+
+            // Split code into lines and optionally highlight
+            var doc = new FlowDocument { PagePadding = new Thickness(0) };
+            foreach (var line in code.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None))
+            {
+                var paragraph = new Paragraph { Margin = new Thickness(0) };
+                if (!string.IsNullOrWhiteSpace(language))
+                    AddHighlightedLine(paragraph, line, language);
                 else
-                {
-                    paragraph.Inlines.Add(new Run(token));
-                }
+                    paragraph.Inlines.Add(new Run(line));
+
+                doc.Blocks.Add(paragraph);
             }
+
+            richTextBox.Document = doc;
+
+            // Optional: limit max height so it scrolls
+            richTextBox.MaxHeight = 400;
+
+            return new BlockUIContainer(richTextBox)
+            {
+                Margin = new Thickness(4, 4, 4, 4)
+            };
         }
+
     }
 }

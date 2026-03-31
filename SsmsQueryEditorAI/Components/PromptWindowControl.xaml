@@ -14,8 +14,6 @@
 
     <UserControl.Resources>
         <local:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
-
-        <!-- ScrollViewer style -->
         <Style TargetType="ScrollViewer" x:Key="ResultsScrollStyle">
             <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -23,29 +21,19 @@
         </Style>
     </UserControl.Resources>
 
-    <!-- Outer Border -->
     <Border BorderBrush="#0078D4" BorderThickness="1" CornerRadius="8" Padding="4">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <!-- AI Response -->
                 <RowDefinition Height="Auto"/>
-                <!-- User Prompt -->
                 <RowDefinition Height="Auto"/>
-                <!-- Submit Button -->
             </Grid.RowDefinitions>
 
             <!-- AI Response -->
             <ScrollViewer Grid.Row="0" Style="{StaticResource ResultsScrollStyle}" Margin="0,0,0,4">
-                <Border Background="White"
-                        CornerRadius="6"
-                        BorderThickness="1"
-                        BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ActiveBorderKey}}"
-                        Padding="6">
-                    <RichTextBox x:Name="rtbResults"
-                                 Background="White"
-                                 BorderThickness="0"
-                                 IsReadOnly="True"
+                <Border Background="White" CornerRadius="6" BorderThickness="1"
+                        BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ActiveBorderKey}}" Padding="6">
+                    <RichTextBox x:Name="rtbResults" Background="White" BorderThickness="0" IsReadOnly="True"
                                  VerticalScrollBarVisibility="Auto"
                                  FontSize="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontSizeKey}}"
                                  FontFamily="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontFamilyKey}}">
@@ -58,69 +46,22 @@
                 </Border>
             </ScrollViewer>
 
-            <!-- User Prompt Input -->
-            <!--<Border Grid.Row="1"
-                    CornerRadius="6"
-                    Background="#F3F3F3"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ActiveBorderKey}}"
-                    Padding="4"
-                    Margin="0,0,0,4">
-                <RichTextBox x:Name="rtbPrompt"
-                             Height="80"
-                             AcceptsReturn="True"
-                             VerticalScrollBarVisibility="Auto"
-                             FontSize="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontSizeKey}}"
-                             FontFamily="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontFamilyKey}}"
-                             Background="#F3F3F3"
-                             BorderThickness="0"
-                             Foreground="Black"/>
-            </Border>-->
-
-            <!-- User Prompt Input -->
-            <Border Grid.Row="1"
-        CornerRadius="6"
-        Background="#F3F3F3"
-        BorderThickness="1"
-        BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ActiveBorderKey}}"
-        Padding="4"
-        Margin="0,0,0,4">
+            <!-- User Prompt -->
+            <Border Grid.Row="1" CornerRadius="6" Background="#F3F3F3" BorderThickness="1"
+                    BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ActiveBorderKey}}" Padding="4" Margin="0,0,0,4">
                 <Grid>
-                    <!-- Actual RichTextBox -->
-                    <RichTextBox x:Name="rtbPrompt"
-                     Height="80"
-                     AcceptsReturn="True"
-                     VerticalScrollBarVisibility="Auto"
-                     FontSize="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontSizeKey}}"
-                     FontFamily="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontFamilyKey}}"
-                     Background="#F3F3F3"
-                     BorderThickness="0"
-                     Foreground="Black"
-                     Loaded="rtbPrompt_Loaded"
-                     GotFocus="rtbPrompt_GotFocus"
-                     LostFocus="rtbPrompt_LostFocus"
-                     TextChanged="rtbPrompt_TextChanged"/>
-
-                    <!-- Placeholder Text -->
-                    <TextBlock x:Name="txtPromptPlaceholder"
-                   Text="Enter your SQL AI question..."
-                   Foreground="Gray"
-                   IsHitTestVisible="False"
-                   Margin="4,2,0,0"
-                   VerticalAlignment="Top"
-                   FontSize="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontSizeKey}}"
-                   FontFamily="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontFamilyKey}}"/>
+                    <RichTextBox x:Name="rtbPrompt" Height="80" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                                 FontSize="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontSizeKey}}"
+                                 FontFamily="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontFamilyKey}}"
+                                 Background="#F3F3F3" BorderThickness="0" Foreground="Black"
+                                 Loaded="rtbPrompt_Loaded" GotFocus="rtbPrompt_GotFocus" LostFocus="rtbPrompt_LostFocus"
+                                 DataObject.Pasting="rtbPrompt_Pasting"/>
                 </Grid>
             </Border>
 
             <!-- Submit Button -->
-            <Button x:Name="btnSubmit"
-                    Grid.Row="2"
-                    Content="Submit Prompt"
-                    Height="30"
-                    Margin="0"
-                    HorizontalAlignment="Stretch"
-                    Click="SubmitClickAsync">
+            <Button x:Name="btnSubmit" Grid.Row="2" Content="Submit Prompt" Height="30" Margin="0"
+                    HorizontalAlignment="Stretch" Click="SubmitClickAsync">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Background" Value="#0078D4"/>
@@ -132,13 +73,10 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
-                                    <Border x:Name="border"
-                                            Background="{TemplateBinding Background}"
+                                    <Border x:Name="border" Background="{TemplateBinding Background}"
                                             BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            CornerRadius="6">
-                                        <ContentPresenter HorizontalAlignment="Center"
-                                                          VerticalAlignment="Center"/>
+                                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
@@ -154,153 +92,6 @@
                     </Style>
                 </Button.Style>
             </Button>
-
         </Grid>
     </Border>
 </UserControl>
-
-<!--<UserControl x:Class="SSMS_AI_Buddy.Components.PromptWindowControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
-             xmlns:local="clr-namespace:SSMS_AI_Buddy.Converter"         
-             Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
-             Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
-             mc:Ignorable="d"
-             MinWidth="300"
-             Height="Auto"
-             Name="PromptWindow">
-    
-    <UserControl.Resources>
-        <local:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
-        <Style TargetType="ScrollViewer" x:Key="ResultsScrollStyle">
-            <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
-        </Style>
-    </UserControl.Resources>
-
-    <Border BorderBrush="Blue" BorderThickness="1" CornerRadius="8">
-
-        <Grid Margin="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-            <ScrollViewer Grid.Row="0" Style="{StaticResource ResultsScrollStyle}">
-                <Border CornerRadius="8" Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}" BorderThickness="1" BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ActiveBorderKey}}" Margin="0" Padding="2">
-                    <RichTextBox x:Name="rtbResults"
-                        Background="White"
-                        BorderThickness="0"
-                        IsReadOnly="True"
-                        VerticalScrollBarVisibility="Auto">
-                        <RichTextBox.Resources>
-                            <Style TargetType="{x:Type Paragraph}">
-                                <Setter Property="Margin" Value="0"/>
-                                <Setter Property="FontFamily" Value="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontFamilyKey}}"/>
-                                <Setter Property="FontSize" Value="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontSizeKey}}"/>
-                            </Style>
-                        </RichTextBox.Resources>
-                    </RichTextBox>
-                </Border>
-            </ScrollViewer>
-
-            <Grid Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="0,1,0,0">
-                <Border CornerRadius="8" Background="Gray"
-        BorderThickness="1" BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ActiveBorderKey}}"
-        Margin="0" Padding="2">
-                    <RichTextBox x:Name="rtbPrompt"
-            DataObject.Pasting="rtbPrompt_Pasting"
-            Height="80"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Stretch"
-            Background="Gray"
-            Foreground="Black"
-            primitives:TextBoxBase.CaretBrush="Black"
-            AcceptsReturn="True"
-            GotFocus="rtbPrompt_GotFocus"
-            LostFocus="rtbPrompt_LostFocus"
-            Loaded="rtbPrompt_Loaded"
-            BorderThickness="0"
-            xmlns:primitives="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework">
-                        <RichTextBox.Resources>
-                            <Style TargetType="{x:Type Paragraph}">
-                                <Setter Property="Margin" Value="0"/>
-                                <Setter Property="Foreground" Value="Black"/>
-                            </Style>
-                            <Style TargetType="{x:Type Run}">
-                                <Setter Property="Foreground" Value="Black"/>
-                            </Style>
-                        </RichTextBox.Resources>
-                        <RichTextBox.Style>
-                            <Style TargetType="RichTextBox">
-                                <Setter Property="Background" Value="LightGray"/>
-                                <Setter Property="Foreground" Value="Black"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="RichTextBox">
-                                            <Border CornerRadius="8"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}">
-                                                <ScrollViewer x:Name="PART_ContentHost"
-                                        Padding="{TemplateBinding Padding}"
-                                        VerticalScrollBarVisibility="Auto"/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </RichTextBox.Style>
-                    </RichTextBox>
-                </Border>
-            </Grid>
-
-
-            <Button x:Name="btnSubmit"
-        Grid.Row="3"
-        Height="30"
-        Content="Submit Prompt"
-        VerticalAlignment="Center"
-        HorizontalAlignment="Stretch"
-        Margin="2"
-        Click="SubmitClickAsync">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Background" Value="#DDDDDD"/>
-                        <Setter Property="BorderBrush" Value="#666666"/>
-                        <Setter Property="Foreground" Value="Black"/>
-                        <Setter Property="BorderThickness" Value="1"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-                                    <Border x:Name="border" 
-                            CornerRadius="5"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                                        <ContentPresenter HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"/>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="border" Property="Background" Value="#CCCCCC"/>
-                                        </Trigger>
-                                        <Trigger Property="IsPressed" Value="True">
-                                            <Setter TargetName="border" Property="Background" Value="#AAAAAA"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Button.Style>
-            </Button>
-        </Grid>
-    </Border>
-</UserControl>-->
