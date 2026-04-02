@@ -1,3 +1,5 @@
+using EnvDTE;
+using EnvDTE80;
 using Microsoft.Identity.Client;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -87,7 +89,12 @@ namespace SSMS_AI_Buddy.Commands
             ThreadHelper.ThrowIfNotOnUIThread();
 
             //string text = await _editorService.GetSelectedTextAsync(this._package);
+            string selectedText = GetSelectedSqlText();
 
+            if (!string.IsNullOrWhiteSpace(selectedText))
+            {
+                System.Windows.Forms.MessageBox.Show(selectedText);
+            }
 
 
             var promptWindow = _package.FindToolWindow(typeof(PromptWindow), 0, true) as PromptWindow;
@@ -119,6 +126,17 @@ namespace SSMS_AI_Buddy.Commands
                 OLEMSGICON.OLEMSGICON_INFO,
                 OLEMSGBUTTON.OLEMSGBUTTON_OK,
                 OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+        }
+
+        public static string GetSelectedSqlText()
+        {
+            var dte = (DTE2)Package.GetGlobalService(typeof(DTE));
+            if (dte?.ActiveDocument == null)
+                return string.Empty;
+
+            TextSelection selection = (TextSelection)dte.ActiveDocument.Selection;
+
+            return selection?.Text ?? string.Empty;
         }
     }
 }
