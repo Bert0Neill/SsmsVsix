@@ -49,6 +49,9 @@ namespace SSMS_AI_Buddy.Components
 
         private void PromptWindowControl_Unloaded(object sender, RoutedEventArgs e)
         {
+            // Clear existing text
+            rtbPrompt.Document.Blocks.Clear();
+
             Mouse.OverrideCursor = null;
         }
 
@@ -160,7 +163,7 @@ namespace SSMS_AI_Buddy.Components
             }
             finally
             {
-               
+
                 Mouse.OverrideCursor = null;
             }
         }
@@ -320,25 +323,17 @@ namespace SSMS_AI_Buddy.Components
             // Clear existing text
             rtbPrompt.Document.Blocks.Clear();
 
-            if (!string.IsNullOrWhiteSpace(text))
-            {
-                // Add a blank paragraph first
-                var blankParagraph = new Paragraph();
-                rtbPrompt.Document.Blocks.Add(blankParagraph);
+            // Add a blank paragraph first
+            var blankParagraph = new Paragraph();
+            rtbPrompt.Document.Blocks.Add(blankParagraph);
 
-                // Add the highlighted SQL below
-                var sqlParagraph = new Paragraph();
-                sqlParagraph.Inlines.Add(new Run(text));
-                rtbPrompt.Document.Blocks.Add(sqlParagraph);
+            // Add the highlighted SQL below
+            var sqlParagraph = new Paragraph();
+            sqlParagraph.Inlines.Add(new Run(text));
+            rtbPrompt.Document.Blocks.Add(sqlParagraph);
 
-                // Move caret to start of the blank line
-                rtbPrompt.CaretPosition = blankParagraph.ContentStart;
-            }
-            else
-            {
-                // If no text, just keep placeholder behavior
-                SetPlaceholderIfNeeded();
-            }
+            // Move caret to start of the blank line
+            rtbPrompt.CaretPosition = blankParagraph.ContentStart;
 
             rtbPrompt.Focus();
         }

@@ -103,9 +103,12 @@ namespace SSMS_AI_Buddy.Commands
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
 
             // Pass the highlighted SQL to the prompt
-            if (promptWindow.Content is PromptWindowControl control)
+            if (!String.IsNullOrEmpty(highlightedSql))
             {
-                control.SetPromptText(highlightedSql);
+                if (promptWindow.Content is PromptWindowControl control)
+                {
+                    control.SetPromptText(highlightedSql);
+                }
             }
         }
 
