@@ -62,7 +62,7 @@ namespace SSMS_AI_Buddy.Services.Helper
                     {
                         inCodeBlock = false;
                         // Add the code block as a selectable TextBox
-                        blocks.Add(CreateCodeBlock(codeBuffer.ToString()));
+                        blocks.Add(CreateCodeBlock(codeBuffer.ToString(), codeLanguage));
                         codeBuffer.Clear();
                     }
                     continue;
@@ -188,99 +188,34 @@ namespace SSMS_AI_Buddy.Services.Helper
 
         public static Block CreateCodeBlock(string code, string language = "sql")
         {
-            // Create a RichTextBox for selectable code
-            var richTextBox = new RichTextBox
+            var paragraph = new Paragraph
             {
                 Background = new SolidColorBrush(Color.FromRgb(37, 37, 38)),   // dark background
                 Foreground = new SolidColorBrush(Color.FromRgb(212, 212, 212)), // light text
                 FontFamily = new FontFamily("Consolas"),
                 FontSize = 12,
-                IsReadOnly = true,            // prevent editing
-                BorderThickness = new Thickness(0),
-                Padding = new Thickness(4),
-                Cursor = Cursors.IBeam,       // text selection cursor
-                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+                Margin = new Thickness(4),
+                Padding = new Thickness(6),
+                LineHeight = 16,
+                LineStackingStrategy = LineStackingStrategy.BlockLineHeight
             };
 
-            // Create a FlowDocument for RichTextBox content
-            var doc = new FlowDocument
-            {
-                PagePadding = new Thickness(0),
-                TextAlignment = TextAlignment.Left
-            };
+            // Split the code into lines
+            var lines = code.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-            // Add each line of code as a Paragraph
-            foreach (var line in code.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None))
+            for (int i = 0; i < lines.Length; i++)
             {
-                var paragraph = new Paragraph
+                // Apply syntax highlighting
+                AddHighlightedLine(paragraph, lines[i], language);
+
+                // Only add a line break if it's NOT the last line
+                if (i < lines.Length - 1)
                 {
-                    Margin = new Thickness(0)
-                };
-
-                // Highlight SQL/C# keywords if language is provided
-                AddHighlightedLine(paragraph, line, language);
-
-                // Prevent wrapping: long lines will trigger horizontal scroll
-                paragraph.TextAlignment = TextAlignment.Left;
-
-                doc.Blocks.Add(paragraph);
+                    paragraph.Inlines.Add(new LineBreak());
+                }
             }
 
-            richTextBox.Document = doc;
-
-            // Limit height to allow vertical scrolling
-            richTextBox.MaxHeight = 400;
-
-            // Wrap in BlockUIContainer to return as FlowDocument Block
-            return new BlockUIContainer(richTextBox)
-            {
-                Margin = new Thickness(4, 4, 4, 4)
-            };
+            return paragraph;
         }
-
-        //private static Block CreateCodeBlock(string code, string language = "sql")
-        //{
-        //    // Use RichTextBox to allow selection and copy
-        //    var richTextBox = new RichTextBox
-        //    {
-        //        Background = CodeBackground,
-        //        Foreground = CodeForeground,
-        //        FontFamily = new FontFamily("Consolas"),
-        //        FontSize = 12,
-        //        IsReadOnly = true,
-        //        BorderThickness = new Thickness(0),
-        //        Padding = new Thickness(4),
-        //        HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-        //        VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-        //        IsDocumentEnabled = true,
-        //        Cursor = Cursors.IBeam
-
-        //    };
-
-        //    // Split code into lines and optionally highlight
-        //    var doc = new FlowDocument { PagePadding = new Thickness(0) };
-        //    foreach (var line in code.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None))
-        //    {
-        //        var paragraph = new Paragraph { Margin = new Thickness(0) };
-        //        if (!string.IsNullOrWhiteSpace(language))
-        //            AddHighlightedLine(paragraph, line, language);
-        //        else
-        //            paragraph.Inlines.Add(new Run(line));
-
-        //        doc.Blocks.Add(paragraph);
-        //    }
-
-        //    richTextBox.Document = doc;
-
-        //    // Optional: limit max height so it scrolls
-        //    richTextBox.MaxHeight = 400;
-
-        //    return new BlockUIContainer(richTextBox)
-        //    {
-        //        Margin = new Thickness(4, 4, 4, 4)
-        //    };
-        //}
-
     }
 }

@@ -128,6 +128,9 @@ namespace SSMS_AI_Buddy.Components
                 _imageFilename = new List<string>();
                 _responseBuffer.Clear();
 
+                // disable submit button to prevent multiple clicks
+                btnSubmit.IsEnabled = false;
+
                 var prompt = ExtractRichTextBoxContent();
                 if (string.IsNullOrWhiteSpace(prompt) || prompt == _placeholderTextPrompt)
                     return;
@@ -148,13 +151,16 @@ namespace SSMS_AI_Buddy.Components
                 await GetOllamaResponseStreamAsync(prompt, chunk => _responseBuffer.Append(chunk));
                 AppendResult(_responseBuffer.ToString());
                 _responseBuffer.Clear();
+                btnSubmit.IsEnabled = true;
             }
             catch (Exception ex)
             {
+                btnSubmit.IsEnabled = true;
                 AppendResult(ex.Message, isError: true);
             }
             finally
             {
+               
                 Mouse.OverrideCursor = null;
             }
         }
@@ -186,41 +192,62 @@ namespace SSMS_AI_Buddy.Components
             StringBuilder extractedText = new StringBuilder();
             List<BitmapSource> images = new List<BitmapSource>();
 
-            foreach (Block block in rtbPrompt.Document.Blocks)
+            TextRange range;
+
+            if (!rtbPrompt.Selection.IsEmpty)
             {
-                if (block is Paragraph paragraph)
-                {
-                    foreach (Inline inline in paragraph.Inlines)
-                    {
-                        if (inline is Run run)
-                            extractedText.Append(run.Text);
-                        else if (inline is InlineUIContainer container && container.Child is System.Windows.Controls.Image image)
-                        {
-                            BitmapSource bitmapSource = image.Source as BitmapSource;
-                            if (bitmapSource != null)
-                            {
-                                _isImagesAttached = true;
-                                images.Add(bitmapSource);
-                                extractedText.Append(" (Image attached) ");
-                                BitmapSource resized = ResizeBitmapSource(bitmapSource, 100, 100);
-                                Clipboard.SetImage(resized);
-                                rtbResults.Paste();
-                            }
-                        }
-                    }
-                }
+                range = new TextRange(rtbPrompt.Selection.Start, rtbPrompt.Selection.End);
+            }
+            else
+            {
+                range = new TextRange(rtbPrompt.Document.ContentStart, rtbPrompt.Document.ContentEnd);
             }
 
-            int count = 1;
-            foreach (var img in images)
-            {
-                _imageFilename.Add($"ExtractedImage_{count}.jpeg");
-                SaveImage(img, $"ExtractedImage_{count}.jpeg");
-                count++;
-            }
+            extractedText.Append(range.Text);
 
             return extractedText.ToString();
         }
+
+        //private string ExtractRichTextBoxContent()
+        //{
+        //    StringBuilder extractedText = new StringBuilder();
+        //    List<BitmapSource> images = new List<BitmapSource>();
+
+        //    foreach (Block block in rtbPrompt.Document.Blocks)
+        //    {
+        //        if (block is Paragraph paragraph)
+        //        {
+        //            foreach (Inline inline in paragraph.Inlines)
+        //            {
+        //                if (inline is Run run)
+        //                    extractedText.Append(run.Text);
+        //                else if (inline is InlineUIContainer container && container.Child is System.Windows.Controls.Image image)
+        //                {
+        //                    BitmapSource bitmapSource = image.Source as BitmapSource;
+        //                    if (bitmapSource != null)
+        //                    {
+        //                        _isImagesAttached = true;
+        //                        images.Add(bitmapSource);
+        //                        extractedText.Append(" (Image attached) ");
+        //                        BitmapSource resized = ResizeBitmapSource(bitmapSource, 100, 100);
+        //                        Clipboard.SetImage(resized);
+        //                        rtbResults.Paste();
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    int count = 1;
+        //    foreach (var img in images)
+        //    {
+        //        _imageFilename.Add($"ExtractedImage_{count}.jpeg");
+        //        SaveImage(img, $"ExtractedImage_{count}.jpeg");
+        //        count++;
+        //    }
+
+        //    return extractedText.ToString();
+        //}
 
         private BitmapSource ResizeBitmapSource(BitmapSource source, int width, int height)
         {
@@ -287,5 +314,33 @@ namespace SSMS_AI_Buddy.Components
         }
 
         #endregion
+
+        public void SetPromptText(string text)
+        {
+            // Clear existing text
+            rtbPrompt.Document.Blocks.Clear();
+
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                // Add a blank paragraph first
+                var blankParagraph = new Paragraph();
+                rtbPrompt.Document.Blocks.Add(blankParagraph);
+
+                // Add the highlighted SQL below
+                var sqlParagraph = new Paragraph();
+                sqlParagraph.Inlines.Add(new Run(text));
+                rtbPrompt.Document.Blocks.Add(sqlParagraph);
+
+                // Move caret to start of the blank line
+                rtbPrompt.CaretPosition = blankParagraph.ContentStart;
+            }
+            else
+            {
+                // If no text, just keep placeholder behavior
+                SetPlaceholderIfNeeded();
+            }
+
+            rtbPrompt.Focus();
+        }
     }
 }

@@ -88,29 +88,25 @@ namespace SSMS_AI_Buddy.Commands
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            //string text = await _editorService.GetSelectedTextAsync(this._package);
-            string selectedText = GetSelectedSqlText();
+            // Get selected SQL from the editor
+            string highlightedSql = GetSelectedSqlText();
 
-            if (!string.IsNullOrWhiteSpace(selectedText))
-            {
-                System.Windows.Forms.MessageBox.Show(selectedText);
-            }
-
-
+            // Find or create the PromptWindow
             var promptWindow = _package.FindToolWindow(typeof(PromptWindow), 0, true) as PromptWindow;
-
             if (promptWindow?.Frame == null)
             {
                 throw new NotSupportedException("Cannot create Prompt Window.");
             }
 
-            //promptWindow.FormattedPrompt = _richTextBoxParagraphGenerator.GenerateCodeFromHintParagraph(prompt, text, _aiProperties); // update window panel control
-
+            // Show the window
             var windowFrame = (IVsWindowFrame)promptWindow.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
 
-
-            // ShowStub(nameof(ExecuteDisplayPrompt), "Display Prompt AI...");
+            // Pass the highlighted SQL to the prompt
+            if (promptWindow.Content is PromptWindowControl control)
+            {
+                control.SetPromptText(highlightedSql);
+            }
         }
 
         private static void ShowStub(string callbackName, string title)

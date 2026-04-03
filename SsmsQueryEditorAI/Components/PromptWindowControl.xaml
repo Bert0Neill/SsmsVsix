@@ -34,10 +34,10 @@
                 <Border Background="White" CornerRadius="6" BorderThickness="1"
                         BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ActiveBorderKey}}" Padding="6">
                     <RichTextBox x:Name="rtbResults" Background="White" BorderThickness="0" IsReadOnly="True"
-                                 VerticalScrollBarVisibility="Auto"
+                                 VerticalScrollBarVisibility="Disabled"
                                  FontSize="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontSizeKey}}"
                                  FontFamily="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontFamilyKey}}">
-                        <RichTextBox.Resources>
+                    <RichTextBox.Resources>
                             <Style TargetType="{x:Type Paragraph}">
                                 <Setter Property="Margin" Value="0"/>
                             </Style>
@@ -50,7 +50,8 @@
             <Border Grid.Row="1" CornerRadius="6" Background="#F3F3F3" BorderThickness="1"
                     BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.ActiveBorderKey}}" Padding="4" Margin="0,0,0,4">
                 <Grid>
-                    <RichTextBox x:Name="rtbPrompt" Height="80" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                    <RichTextBox x:Name="rtbPrompt" Height="80" 
+                                 AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
                                  FontSize="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontSizeKey}}"
                                  FontFamily="{DynamicResource {x:Static vsshell:VsFonts.EnvironmentFontFamilyKey}}"
                                  Background="#F3F3F3" BorderThickness="0" Foreground="Black"
