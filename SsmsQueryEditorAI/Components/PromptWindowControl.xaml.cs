@@ -211,47 +211,6 @@ namespace SSMS_AI_Buddy.Components
             return extractedText.ToString();
         }
 
-        //private string ExtractRichTextBoxContent()
-        //{
-        //    StringBuilder extractedText = new StringBuilder();
-        //    List<BitmapSource> images = new List<BitmapSource>();
-
-        //    foreach (Block block in rtbPrompt.Document.Blocks)
-        //    {
-        //        if (block is Paragraph paragraph)
-        //        {
-        //            foreach (Inline inline in paragraph.Inlines)
-        //            {
-        //                if (inline is Run run)
-        //                    extractedText.Append(run.Text);
-        //                else if (inline is InlineUIContainer container && container.Child is System.Windows.Controls.Image image)
-        //                {
-        //                    BitmapSource bitmapSource = image.Source as BitmapSource;
-        //                    if (bitmapSource != null)
-        //                    {
-        //                        _isImagesAttached = true;
-        //                        images.Add(bitmapSource);
-        //                        extractedText.Append(" (Image attached) ");
-        //                        BitmapSource resized = ResizeBitmapSource(bitmapSource, 100, 100);
-        //                        Clipboard.SetImage(resized);
-        //                        rtbResults.Paste();
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    int count = 1;
-        //    foreach (var img in images)
-        //    {
-        //        _imageFilename.Add($"ExtractedImage_{count}.jpeg");
-        //        SaveImage(img, $"ExtractedImage_{count}.jpeg");
-        //        count++;
-        //    }
-
-        //    return extractedText.ToString();
-        //}
-
         private BitmapSource ResizeBitmapSource(BitmapSource source, int width, int height)
         {
             var scaleX = (double)width / source.PixelWidth;

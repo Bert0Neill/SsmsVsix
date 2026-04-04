@@ -63,8 +63,6 @@ namespace SSMS_AI_Buddy.Models
         [ReadOnly(true)]
         public string SettingsFilename { get; set; } = "AI_Buddy_SSMS_Settings.json";
 
-       
-
         /******************************************
          * Hidden Properties
          ******************************************/
@@ -81,39 +79,42 @@ namespace SSMS_AI_Buddy.Models
         [Description("Use existing schema instead of AI to generate suggestions for JOINs when typing in editor")]
         public bool IsRealTime { get; set; } = false;
 
+        /******************************************
+         * RaedOnly Prompts
+         ******************************************/
         [Browsable(false)]
         [Category("Prompts")]
         [DisplayName("Where Prompt")]
         [Description("The 'Where' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
-        [ReadOnly(false)]
-        public string WherePrompt { get; set; } = @"Your long winded Where clause";
+        [ReadOnly(true)]
+        public string WherePrompt { get; set; }
 
         [Browsable(false)]
         [Category("Prompts")]
         [DisplayName(@"Group\Having Prompt")]
         [Description(@"The 'Group\Having' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
-        [ReadOnly(false)]
-        public string GroupHavingPrompt { get; set; } = @"Your long winded Where clause";
+        [ReadOnly(true)]
+        public string GroupHavingPrompt { get; set; }
 
         [Browsable(false)]
         [Category("Prompts")]
         [DisplayName(@"Join Prompt")]
         [Description(@"The 'Join' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
-        [ReadOnly(false)]
-        public string JoinPrompt { get; set; } = @"Your long winded Where clause";
+        [ReadOnly(true)]
+        public string JoinPrompt { get; set; }
 
         [Browsable(false)]
         [Category("Prompts")]
         [DisplayName(@"Continuation Prompt")]
         [Description(@"The 'Continuation' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
-        [ReadOnly(false)]
-        public string ContinuationPrompt { get; set; } = @"Your long winded Where clause";
+        [ReadOnly(true)]
+        public string ContinuationPrompt { get; set; }
 
         [Browsable(false)]
         [Category("Prompts")]
         [DisplayName(@"RealTime Prompt")]
         [Description(@"The 'RealTime' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
-        [ReadOnly(false)]
-        public string RealTimePrompt { get; set; } = @"Your long winded RealTime clause";
+        [ReadOnly(true)]
+        public string RealTimePrompt { get; set; }
     }
 }

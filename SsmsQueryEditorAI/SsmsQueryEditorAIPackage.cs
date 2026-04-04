@@ -50,7 +50,6 @@ extern alias ssms18;
 extern alias ssms19;
 extern alias ssms20;
 extern alias ssms21;
-
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
@@ -59,15 +58,18 @@ using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
-using SSMS_SqlAdjust_Interfaces;
+using Newtonsoft.Json;
+using SSMS_AI_Buddy.Models;
 using SSMS_AI_Buddy.Resources;
 using SSMS_AI_Buddy.Services;
+using SSMS_AI_Buddy.Services.SSMS;
+using SSMS_SqlAdjust_Interfaces;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Task = System.Threading.Tasks.Task;
-using SSMS_AI_Buddy.Services.SSMS;
 
 namespace SSMS_AI_Buddy
 {
@@ -94,10 +96,7 @@ namespace SSMS_AI_Buddy
 
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
-    [ProvideToolWindow(typeof(SSMS_AI_Buddy.Components.PromptWindow),
-                   Style = VsDockStyle.Float,
-                   Orientation = ToolWindowOrientation.Right,
-                   Window = null)]
+    [ProvideToolWindow(typeof(SSMS_AI_Buddy.Components.PromptWindow),Style = VsDockStyle.Float,Orientation = ToolWindowOrientation.Right,Window = null)]
     public sealed class SsmsQueryEditorAIPackage : AsyncPackage
     {
         public const string PackageGuidString = "f79b07ee-abe6-4e30-bb4f-c6808f451d62";
@@ -107,7 +106,6 @@ namespace SSMS_AI_Buddy
         private const string SELECTION_EVENT = "Provider_SelectionChanged";
         public static IObjectExplorerHelper _smoObjectExplorer;
         private SsmsHelper _helperService;
-
 
         #region Package Members
 
@@ -122,7 +120,7 @@ namespace SSMS_AI_Buddy
             _helperService = new SsmsHelper();
             await LoadSsmsStatusBarReference(); // allow ext to update SSMS statusbar
             InitializeSmoObjectExplorer(); // register the correct SSMS version to its Obj. Explorer
-            await MonitorEditorWindow(); // capture events when user types into SQL editor
+            // await MonitorEditorWindow(); // capture events when user types into SQL editor
            
             StatusBarService.UpdateStatusBarText($"AI Buddy Integrated Into SSMS"); // update SSMS statusbar with log file path
         }
@@ -346,6 +344,7 @@ namespace SSMS_AI_Buddy
             }
         }
 
+       
     } // class
 
     #endregion

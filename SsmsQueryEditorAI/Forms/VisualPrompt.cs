@@ -109,14 +109,14 @@ namespace SSMS_AI_Buddy.Forms
             }
         }
 
-
-
-
-
-
         public class OllamaResponse
         {
             public string response { get; set; }
+        }
+
+        private void VisualPrompt_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

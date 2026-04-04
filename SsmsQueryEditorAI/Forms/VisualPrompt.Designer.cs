@@ -68,6 +68,7 @@
             this.Controls.Add(this.txtPrompt);
             this.Name = "VisualPrompt";
             this.Text = "VisualPrompt";
+            this.Load += new System.EventHandler(this.VisualPrompt_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -9,6 +9,7 @@ using SSMS_AI_Buddy.Services;
 using System;
 using System.ComponentModel.Design;
 using System.Globalization;
+using System.IO;
 using static System.Net.Mime.MediaTypeNames;
 using Task = System.Threading.Tasks.Task;
 
@@ -28,6 +29,11 @@ namespace SSMS_AI_Buddy.Commands
         public const int SuggestSqlContinuationId = 0x0105;
         public const int DisplayPromptId = 0x0106;
 
+        static AIProperties _aiProperties;
+        static FileService _fileService;
+        static string basePath = string.Empty;
+        static string settingsFilePath = string.Empty;
+
         public static readonly Guid CommandSet = new Guid("d5cfa9e8-a7de-4eb4-b34f-0ab39f9e31a3");
 
         public static async Task InitializeAsync(AsyncPackage package)
@@ -45,6 +51,11 @@ namespace SSMS_AI_Buddy.Commands
             Add(package, commandService, DisplayPromptId, ExecuteDisplayPrompt);
             Add(package, commandService, SuggestGroupHavingId, ExecuteSuggestGroupHaving);
             Add(package, commandService, SuggestSqlContinuationId, ExecuteSuggestSqlContinuation);
+
+            // load AI properties to get prompts, LLM & URL settings
+            _fileService = new FileService();
+            _aiProperties = new AIProperties();
+            
         }
 
         private static void Add(AsyncPackage package, OleMenuCommandService commandService, int commandId, EventHandler execute)
@@ -56,13 +67,30 @@ namespace SSMS_AI_Buddy.Commands
         private static void ExecuteSqlJoinsRealtimeRules(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+
+            LoadSettingsAI();
+
             ShowStub(nameof(ExecuteSqlJoinsRealtimeRules), "SQL Joins Realtime...");
         }
 
+        private static void LoadSettingsAI()
+        {
+            basePath = AppDomain.CurrentDomain.BaseDirectory;
+            settingsFilePath = Path.Combine(basePath, _aiProperties.SettingsFilename);
+
+            // if file doesn't exist yet, default AI properties will be used
+            if (File.Exists(settingsFilePath))
+            {
+                _aiProperties = _fileService.LoadFromJson<AIProperties>(settingsFilePath);
+            }
+        }
 
         private static void ExecuteSuggestGroupHaving(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+
+            LoadSettingsAI();
+
             ShowStub(nameof(ExecuteSqlJoinsRealtimeRules), "SQL suggestion Group Having clause Using AI");
         }
 
@@ -75,12 +103,14 @@ namespace SSMS_AI_Buddy.Commands
         private static void ExecuteSuggestSqlContinuation(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+            LoadSettingsAI();
             ShowStub(nameof(ExecuteSuggestSqlContinuation), "SQL Continuation AI...");
         }
 
         private static void ExecuteWhereClauseAi(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+            LoadSettingsAI();
             ShowStub(nameof(ExecuteWhereClauseAi), "SQL Where Clause AI...");
         }
 
