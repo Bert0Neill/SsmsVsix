@@ -246,8 +246,8 @@ Invalid or incomplete JSON is a system failure.";
             {
                 
                 //model = "qwen2.5-coder:1.5b", // more accurate but slower
-                model = "qwen2.5-coder:0.5b", // faster but less accurate
-                //model = "deepseek-r1:1.5b",
+                //model = "qwen2.5-coder:0.5b", // faster but less accurate
+                model = "deepseek-r1:1.5b",
                 //model = "alibayram/smollm3:latest",
                 prompt = prompt,
                 system = system,

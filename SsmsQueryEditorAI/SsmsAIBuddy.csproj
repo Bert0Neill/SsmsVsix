@@ -112,6 +112,7 @@
     <Compile Include="SsmsQueryEditorAIPackage.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="File\Prompts.json" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -318,9 +319,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="File\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Page Include="Components\PromptWindowControl.xaml">
       <Generator>MSBuild:Compile</Generator>

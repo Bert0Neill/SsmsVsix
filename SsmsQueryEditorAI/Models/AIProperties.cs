@@ -32,7 +32,7 @@ namespace SSMS_AI_Buddy.Models
 
         [Category("AI Provider")]
         [DisplayName("Streaming Response")]
-        [Description("Do you want to stream the prompt response in realtime.")]
+        [Description("Do you want to stream the prompt response in real-time.")]
         public bool IsPromptResponseStreaming { get; set; } = false;
 
         [Category("Coding")]
@@ -44,11 +44,6 @@ namespace SSMS_AI_Buddy.Models
         [DisplayName("SQL Language")]
         [Description("What SQL based procedural language are you requesting answers from AI prompt to execute against")]
         public string SqlVersion { get; set; } = "TSQL";
-
-        [Category("Coding")]
-        [DisplayName("Realtime SQL Suggestion (Joins)")]
-        [Description("Use existing schema instead of AI to generate suggestions for JOINs when typing in editor")]
-        public bool IsRealTime { get; set; } = false;
 
         [Category("General Info")]
         [DisplayName("Last Modified")]
@@ -68,6 +63,11 @@ namespace SSMS_AI_Buddy.Models
         [ReadOnly(true)]
         public string SettingsFilename { get; set; } = "AI_Buddy_SSMS_Settings.json";
 
+       
+
+        /******************************************
+         * Hidden Properties
+         ******************************************/
         [Browsable(false)]
         [Category("General Info")]
         [DisplayName("Reset Filename")]
@@ -75,5 +75,45 @@ namespace SSMS_AI_Buddy.Models
         [ReadOnly(true)]
         public string ResetFilename { get; set; } = "AI_Buddy_SSMS_Settings_Reset.json";
 
+        [Browsable(false)]
+        [Category("Coding")]
+        [DisplayName("Realtime SQL Suggestion (Joins)")]
+        [Description("Use existing schema instead of AI to generate suggestions for JOINs when typing in editor")]
+        public bool IsRealTime { get; set; } = false;
+
+        [Browsable(false)]
+        [Category("Prompts")]
+        [DisplayName("Where Prompt")]
+        [Description("The 'Where' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
+        [ReadOnly(false)]
+        public string WherePrompt { get; set; } = @"Your long winded Where clause";
+
+        [Browsable(false)]
+        [Category("Prompts")]
+        [DisplayName(@"Group\Having Prompt")]
+        [Description(@"The 'Group\Having' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
+        [ReadOnly(false)]
+        public string GroupHavingPrompt { get; set; } = @"Your long winded Where clause";
+
+        [Browsable(false)]
+        [Category("Prompts")]
+        [DisplayName(@"Join Prompt")]
+        [Description(@"The 'Join' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
+        [ReadOnly(false)]
+        public string JoinPrompt { get; set; } = @"Your long winded Where clause";
+
+        [Browsable(false)]
+        [Category("Prompts")]
+        [DisplayName(@"Continuation Prompt")]
+        [Description(@"The 'Continuation' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
+        [ReadOnly(false)]
+        public string ContinuationPrompt { get; set; } = @"Your long winded Where clause";
+
+        [Browsable(false)]
+        [Category("Prompts")]
+        [DisplayName(@"RealTime Prompt")]
+        [Description(@"The 'RealTime' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
+        [ReadOnly(false)]
+        public string RealTimePrompt { get; set; } = @"Your long winded RealTime clause";
     }
 }
