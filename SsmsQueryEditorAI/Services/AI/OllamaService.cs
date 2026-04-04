@@ -214,7 +214,6 @@ namespace SSMS_AI_Buddy.Services.AI
             //";
 
             var system = @"No thinking. You are a backend SQL completion engine.
-
 STRICT RULES:
 - Output ONLY valid JSON.
 - Output MUST be a COMPLETE JSON array.
