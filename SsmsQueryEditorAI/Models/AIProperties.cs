@@ -80,14 +80,15 @@ namespace SSMS_AI_Buddy.Models
         public bool IsRealTime { get; set; } = false;
 
         /******************************************
-         * ReadOnly Prompts
+         * ReadOnly System Prompts
          ******************************************/
+
         [Browsable(true)]
-        [Category("Prompts")]
-        [DisplayName("System Prompt")]
-        [Description("How the AI LLM should react to your prompt, what rules it must follow when generating its answer")]
+        [Category("System Prompt")]
+        [DisplayName("Where")]
+        [Description("The 'Where' system prompt, that indicates to AI what rules you want AI to adhere too when generating the response. Edit in JSON file or delete JSON file to restart with defaults again")]
         [ReadOnly(true)]
-        public string SystemPrompt { get; set; } = @"No thinking. You are a backend SQL completion engine.
+        public string WherePrompt { get; set; } = @"No thinking. You are a backend SQL completion engine.
 STRICT RULES:
 - Output ONLY valid JSON.
 - Output MUST be a COMPLETE JSON array.
@@ -110,40 +111,89 @@ BAD examples:
 - Anything starting with SELECT, UPDATE, DELETE, INSERT.
 - Full standalone queries";
 
+        [Browsable(true)]
+        [Category("System Prompt")]
+        [DisplayName(@"Group\Having")]
+        [Description(@"The 'Group\Having' system prompt, that indicates to AI what rules you want AI to adhere too when generating the response. Edit in JSON file or delete JSON file to restart with defaults again")]
+        [ReadOnly(true)]
+        public string GroupHavingPrompt { get; set; } = @"No thinking. You are a backend SQL completion engine.
+STRICT RULES:
+- Output ONLY valid JSON.
+- Output MUST be a COMPLETE JSON array.
+- Do NOT include markdown, code fences, comments, or extra text.
+- Do NOT include trailing commas.
+
+COMPLETION RULES:
+- You are completing an EXISTING query; the user keeps their SQL. Output ONLY the next fragment to append.
+- DO NOT rewrite the full query. DO NOT duplicate SELECT ... FROM ... for the whole statement.
+- The JSON ""suggestion"" field MUST NOT start with SELECT. Output from JOIN, WHERE, GROUP BY, ORDER BY, HAVING, or a comma + column.
+- When joins apply: include several join suggestions with different join kinds (INNER JOIN, LEFT JOIN, and when sensible RIGHT JOIN, FULL OUTER JOIN). Same aliases and ON clause where only the join kind differs. CROSS JOIN only if a cross product is appropriate.
+
+GOOD examples:
+- ""INNER JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+- ""LEFT JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+- ""WHERE a.City = N'London'""
+- "", PostalCode""
+
+BAD examples:
+- Anything starting with SELECT, UPDATE, DELETE, INSERT.
+- Full standalone queries";
 
         [Browsable(true)]
-        [Category("Prompts")]
-        [DisplayName("Where Prompt")]
-        [Description("The 'Where' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
+        [Category("System Prompt")]
+        [DisplayName(@"Join")]
+        [Description("The 'Join' system prompt, that indicates to AI what rules you want AI to adhere too when generating the response. Edit in JSON file or delete JSON file to restart with defaults again")]
         [ReadOnly(true)]
-        public string WherePrompt { get; set; }
+        public string JoinPrompt { get; set; } = @"No thinking. You are a backend SQL completion engine.
+STRICT RULES:
+- Output ONLY valid JSON.
+- Output MUST be a COMPLETE JSON array.
+- Do NOT include markdown, code fences, comments, or extra text.
+- Do NOT include trailing commas.
+
+COMPLETION RULES:
+- You are completing an EXISTING query; the user keeps their SQL. Output ONLY the next fragment to append.
+- DO NOT rewrite the full query. DO NOT duplicate SELECT ... FROM ... for the whole statement.
+- The JSON ""suggestion"" field MUST NOT start with SELECT. Output from JOIN, WHERE, GROUP BY, ORDER BY, HAVING, or a comma + column.
+- When joins apply: include several join suggestions with different join kinds (INNER JOIN, LEFT JOIN, and when sensible RIGHT JOIN, FULL OUTER JOIN). Same aliases and ON clause where only the join kind differs. CROSS JOIN only if a cross product is appropriate.
+
+GOOD examples:
+- ""INNER JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+- ""LEFT JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+- ""WHERE a.City = N'London'""
+- "", PostalCode""
+
+BAD examples:
+- Anything starting with SELECT, UPDATE, DELETE, INSERT.
+- Full standalone queries";
 
         [Browsable(true)]
-        [Category("Prompts")]
-        [DisplayName(@"Group\Having Prompt")]
-        [Description(@"The 'Group\Having' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
+        [Category("System Prompt")]
+        [DisplayName(@"Continuation")]
+        [Description("The 'Continuation' system prompt, that indicates to AI what rules you want AI to adhere too when generating the response. Edit in JSON file or delete JSON file to restart with defaults again")]
         [ReadOnly(true)]
-        public string GroupHavingPrompt { get; set; }
+        public string ContinuationPrompt { get; set; } = @"No thinking. You are a backend SQL completion engine.
+STRICT RULES:
+- Output ONLY valid JSON.
+- Output MUST be a COMPLETE JSON array.
+- Do NOT include markdown, code fences, comments, or extra text.
+- Do NOT include trailing commas.
 
-        [Browsable(true)]
-        [Category("Prompts")]
-        [DisplayName(@"Join Prompt")]
-        [Description(@"The 'Join' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
-        [ReadOnly(true)]
-        public string JoinPrompt { get; set; }
+COMPLETION RULES:
+- You are completing an EXISTING query; the user keeps their SQL. Output ONLY the next fragment to append.
+- DO NOT rewrite the full query. DO NOT duplicate SELECT ... FROM ... for the whole statement.
+- The JSON ""suggestion"" field MUST NOT start with SELECT. Output from JOIN, WHERE, GROUP BY, ORDER BY, HAVING, or a comma + column.
+- When joins apply: include several join suggestions with different join kinds (INNER JOIN, LEFT JOIN, and when sensible RIGHT JOIN, FULL OUTER JOIN). Same aliases and ON clause where only the join kind differs. CROSS JOIN only if a cross product is appropriate.
 
-        [Browsable(true)]
-        [Category("Prompts")]
-        [DisplayName(@"Continuation Prompt")]
-        [Description(@"The 'Continuation' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
-        [ReadOnly(true)]
-        public string ContinuationPrompt { get; set; }
+GOOD examples:
+- ""INNER JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+- ""LEFT JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+- ""WHERE a.City = N'London'""
+- "", PostalCode""
 
-        [Browsable(true)]
-        [Category("Prompts")]
-        [DisplayName(@"RealTime Prompt")]
-        [Description(@"The 'RealTime' prompt that will be supplied to AI along with your (highlighted) SQL statement")]
-        [ReadOnly(true)]
-        public string RealTimePrompt { get; set; } = $@"";
+BAD examples:
+- Anything starting with SELECT, UPDATE, DELETE, INSERT.
+- Full standalone queries";
+
     }
 }
