@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using SSMS_AI_Buddy.Components;
 using SSMS_AI_Buddy.Models;
 using SSMS_AI_Buddy.Services;
+using SSMS_AI_Buddy.Services.AI;
 using System;
 using System.ComponentModel.Design;
 using System.Globalization;
@@ -30,9 +31,7 @@ namespace SSMS_AI_Buddy.Commands
         public const int DisplayPromptId = 0x0106;
 
         static AIProperties _aiProperties;
-        static FileService _fileService;
-        static string basePath = string.Empty;
-        static string settingsFilePath = string.Empty;
+        
 
         public static readonly Guid CommandSet = new Guid("d5cfa9e8-a7de-4eb4-b34f-0ab39f9e31a3");
 
@@ -52,10 +51,6 @@ namespace SSMS_AI_Buddy.Commands
             Add(package, commandService, SuggestGroupHavingId, ExecuteSuggestGroupHaving);
             Add(package, commandService, SuggestSqlContinuationId, ExecuteSuggestSqlContinuation);
 
-            // load AI properties to get prompts, LLM & URL settings
-            _fileService = new FileService();
-            _aiProperties = new AIProperties();
-            
         }
 
         private static void Add(AsyncPackage package, OleMenuCommandService commandService, int commandId, EventHandler execute)
@@ -68,13 +63,14 @@ namespace SSMS_AI_Buddy.Commands
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            LoadSettingsAI();
-
             ShowStub(nameof(ExecuteSqlJoinsRealtimeRules), "SQL Joins Realtime...");
         }
 
         private static void LoadSettingsAI()
         {
+            FileService _fileService = new FileService();
+            string basePath = string.Empty;
+            string settingsFilePath = string.Empty;
             basePath = AppDomain.CurrentDomain.BaseDirectory;
             settingsFilePath = Path.Combine(basePath, _aiProperties.SettingsFilename);
 
@@ -83,6 +79,11 @@ namespace SSMS_AI_Buddy.Commands
             {
                 _aiProperties = _fileService.LoadFromJson<AIProperties>(settingsFilePath);
             }
+            else {
+                _aiProperties = new AIProperties(); // default settings
+            }
+
+            OllamaSqlSuggestionService._aiProperties = _aiProperties;
         }
 
         private static void ExecuteSuggestGroupHaving(object sender, EventArgs e)
@@ -97,6 +98,7 @@ namespace SSMS_AI_Buddy.Commands
         private static void ExecuteSqlJoinsAi(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+            LoadSettingsAI();
             ShowStub(nameof(ExecuteSqlJoinsAi), "SQL Joins AI...");
         }
 
@@ -118,6 +120,8 @@ namespace SSMS_AI_Buddy.Commands
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
+            LoadSettingsAI();
+
             // Get selected SQL from the editor
             string highlightedSql = GetSelectedSqlText();
 
@@ -138,6 +142,7 @@ namespace SSMS_AI_Buddy.Commands
                 if (promptWindow.Content is PromptWindowControl control)
                 {
                     control.SetPromptText(highlightedSql);
+                    control.SetSettingsAI(_aiProperties);
                 }
             }
         }

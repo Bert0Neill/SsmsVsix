@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SSMS_AI_Buddy.Models
 {
-    internal class AIProperties
+    public class AIProperties
     {
         [Category("AI Provider")]
         [DisplayName("Name of AI provider")]

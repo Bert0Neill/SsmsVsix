@@ -16,8 +16,12 @@ using System.Threading.Tasks;
 
 namespace SSMS_AI_Buddy.Services.AI
 {
+    
+
     public static class OllamaSqlSuggestionService
     {
+        public static AIProperties _aiProperties { get; set; } // = new AIProperties();
+
         /// <summary>
         /// Strips markdown code fences (``` or ```json) whether they wrap the whole string or appear inline.
         /// </summary>
@@ -252,6 +256,7 @@ Invalid or incomplete JSON is a system failure.";
                 system = system,
                 //system = "No thinking, you are a backend SQL completion engine. Strict rules: Do NOT include <think> blocks, reasoning, or internal thoughts. Do NOT include markdown, code fences, or comments. Output ONLY valid, machine-parseable JSON. Output MUST be a single JSON array. Do NOT include trailing commas. Do NOT include any text outside the JSON array. If no valid suggestions exist, return an empty array []. Invalid JSON is considered a system failure.\r\n",
                 stream = false,
+                format= "json",
                 options = new
                 {
                     temperature = 0.1,

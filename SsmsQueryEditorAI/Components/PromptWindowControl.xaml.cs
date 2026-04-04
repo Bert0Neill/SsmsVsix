@@ -34,14 +34,14 @@ namespace SSMS_AI_Buddy.Components
             Unloaded += PromptWindowControl_Unloaded;
 
             _fileService = new FileService();
-            _aiProperties = new AIProperties();
-            _richTextBoxParagraphGenerator = new RichTextBoxParagraphGenerator();
+            //_aiProperties = new AIProperties();
+            //_richTextBoxParagraphGenerator = new RichTextBoxParagraphGenerator();
 
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), _aiProperties.SettingsFilename);
-            if (File.Exists(filePath))
-            {
-                _aiProperties = _fileService.LoadFromJson<AIProperties>(filePath);
-            }
+            //string filePath = Path.Combine(Directory.GetCurrentDirectory(), _aiProperties.SettingsFilename);
+            //if (File.Exists(filePath))
+            //{
+            //    _aiProperties = _fileService.LoadFromJson<AIProperties>(filePath);
+            //}
 
             rtbResults.Document.Blocks.Clear();
             SetPlaceholderIfNeeded();
@@ -295,6 +295,11 @@ namespace SSMS_AI_Buddy.Components
             rtbPrompt.CaretPosition = blankParagraph.ContentStart;
 
             rtbPrompt.Focus();
+        }
+
+        public void SetSettingsAI(AIProperties aiProperties)
+        {
+            _aiProperties = aiProperties;
         }
     }
 }
