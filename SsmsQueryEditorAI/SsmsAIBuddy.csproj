@@ -299,6 +299,7 @@
     <Content Include="Commands\Resources\Images\16\Social-balloon-friends.16.png" />
     <Content Include="Commands\Resources\Images\SuggestImprovementsCmd.png" />
     <Content Include="Commands\Resources\Images\16\Thalita-Torres-Office-Documents.16.png" />
+    <Content Include="Misc\ToDo.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\PropertiesFrm.resx">
