@@ -87,75 +87,75 @@ namespace SSMS_AI_Buddy.Services
         /// <returns></returns>
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
-            // 🔥 HANDLE POPUP KEYS FIRST
-            if (SqlSuggestionPopup.IsOpen && pguidCmdGroup == VSConstants.VSStd2K)
-            {
-                switch ((VSConstants.VSStd2KCmdID)nCmdID)
-                {
-                    case VSConstants.VSStd2KCmdID.TAB:
-                    case VSConstants.VSStd2KCmdID.RETURN:
-                        SqlSuggestionPopup.AcceptSelection();
-                        return VSConstants.S_OK;   // swallow
+            //// 🔥 HANDLE POPUP KEYS FIRST
+            //if (SqlSuggestionPopup.IsOpen && pguidCmdGroup == VSConstants.VSStd2K)
+            //{
+            //    switch ((VSConstants.VSStd2KCmdID)nCmdID)
+            //    {
+            //        case VSConstants.VSStd2KCmdID.TAB:
+            //        case VSConstants.VSStd2KCmdID.RETURN:
+            //            SqlSuggestionPopup.AcceptSelection();
+            //            return VSConstants.S_OK;   // swallow
 
-                    case VSConstants.VSStd2KCmdID.UP:
-                        SqlSuggestionPopup.SelectPrevious();
-                        return VSConstants.S_OK;
+            //        case VSConstants.VSStd2KCmdID.UP:
+            //            SqlSuggestionPopup.SelectPrevious();
+            //            return VSConstants.S_OK;
 
-                    case VSConstants.VSStd2KCmdID.DOWN:
-                        SqlSuggestionPopup.SelectNext();
-                        return VSConstants.S_OK;
+            //        case VSConstants.VSStd2KCmdID.DOWN:
+            //            SqlSuggestionPopup.SelectNext();
+            //            return VSConstants.S_OK;
 
-                    case VSConstants.VSStd2KCmdID.CANCEL: // ESC
-                        SqlSuggestionPopup.Close();
-                        return VSConstants.S_OK;
-                }
-            }
+            //        case VSConstants.VSStd2KCmdID.CANCEL: // ESC
+            //            SqlSuggestionPopup.Close();
+            //            return VSConstants.S_OK;
+            //    }
+            //}
 
-            // 🔽 NORMAL TYPING HANDLING
-            if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
-            {
-                char typedChar = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
+            //// 🔽 NORMAL TYPING HANDLING
+            //if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
+            //{
+            //    char typedChar = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
 
-                if (typedChar == ' ' || typedChar == '\n')
-                {
-                    var sql = EditorHelper.GetCurrentEditorText();
+            //    if (typedChar == ' ' || typedChar == '\n')
+            //    {
+            //        var sql = EditorHelper.GetCurrentEditorText();
 
-                    if (SqlAnalyzer.ShouldTrigger(sql))
-                    {
-                        var schema = SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
-                        var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
-                        var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
-                        var expanded = JoinGraphBuilder.Expand(tables, graph);
-                        var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
+            //        if (SqlAnalyzer.ShouldTrigger(sql))
+            //        {
+            //            var schema = SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+            //            var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
+            //            var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
+            //            var expanded = JoinGraphBuilder.Expand(tables, graph);
+            //            var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
 
-                        // 👉 SEND json + prompt to Ollama
-                        var suggestions = new List<SqlSuggestion>();
-                        try
-                        {
-                            ThreadHelper.JoinableTaskFactory.Run(async () =>
-                            {
-                                suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql)
-                                    ?? new List<SqlSuggestion>();
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine($"Ollama GetSqlSuggestionsAsync failed: {ex}");
-                        }
+            //            // 👉 SEND json + prompt to Ollama
+            //            var suggestions = new List<SqlSuggestion>();
+            //            try
+            //            {
+            //                ThreadHelper.JoinableTaskFactory.Run(async () =>
+            //                {
+            //                    suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql)
+            //                        ?? new List<SqlSuggestion>();
+            //                });
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                Debug.WriteLine($"Ollama GetSqlSuggestionsAsync failed: {ex}");
+            //            }
 
-                        // Show after this command chain finishes so the trigger char is committed and caret/layout match the popup.
-                        var view = _wpfTextView;
-                        var dispatcher = view?.VisualElement?.Dispatcher;
-                        if (dispatcher != null)
-                        {
-                            dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-                            {
-                                ShowSqlSuggestions(view, suggestions);
-                            }));
-                        }
-                    }
-                }
-            }
+            //            // Show after this command chain finishes so the trigger char is committed and caret/layout match the popup.
+            //            var view = _wpfTextView;
+            //            var dispatcher = view?.VisualElement?.Dispatcher;
+            //            if (dispatcher != null)
+            //            {
+            //                dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            //                {
+            //                    ShowSqlSuggestions(view, suggestions);
+            //                }));
+            //            }
+            //        }
+            //    }
+            //}
 
             return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
         }
@@ -268,6 +268,24 @@ namespace SSMS_AI_Buddy.Services
         }
         #endregion
 
+        //private void ShowSqlSuggestions(IWpfTextView view, IList<SqlSuggestion> suggestions)
+        //{
+        //    if (view == null || suggestions == null || suggestions.Count == 0)
+        //        return;
+
+        //    var caret = view.Caret.Position.BufferPosition;
+        //    var line = view.GetTextViewLineContainingBufferPosition(caret);
+        //    if (line == null) return;
+
+        //    var bounds = line.GetCharacterBounds(caret);
+        //    var location = new Point(bounds.Left, bounds.Bottom + 2);
+
+        //    SqlSuggestionPopup.Show(view.VisualElement, location, suggestions, selected =>
+        //        {
+        //            EditorHelper.InsertText(" " + selected.Suggestion); // insert only SQL text
+        //        });
+        //}
+
         private void ShowSqlSuggestions(IWpfTextView view, IList<SqlSuggestion> suggestions)
         {
             if (view == null || suggestions == null || suggestions.Count == 0)
@@ -281,9 +299,16 @@ namespace SSMS_AI_Buddy.Services
             var location = new Point(bounds.Left, bounds.Bottom + 2);
 
             SqlSuggestionPopup.Show(view.VisualElement, location, suggestions, selected =>
+            {
+                var buffer = view.TextBuffer;
+                var selectionEnd = view.Selection.StreamSelectionSpan.End.Position;
+
+                using (var edit = buffer.CreateEdit())
                 {
-                    EditorHelper.InsertText(" " + selected.Suggestion); // insert only SQL text
-                });
+                    edit.Insert(selectionEnd, " " + selected.Suggestion);
+                    edit.Apply();
+                }
+            });
         }
 
         public void TriggerSqlSuggestions(string sql)
@@ -293,17 +318,14 @@ namespace SSMS_AI_Buddy.Services
 
             ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
-                var schema = SchemaCache.GetOrAdd(_connectionKey,
-                    () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+                //var schema = SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+                //var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
+                //var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
+                //var expanded = JoinGraphBuilder.Expand(tables, graph);
+                //var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
+                //var suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql) ?? new List<SqlSuggestion>();
 
-                var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
-                var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
-                var expanded = JoinGraphBuilder.Expand(tables, graph);
-                var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
-
-                var suggestions = await OllamaSqlSuggestionService
-                    .GetSqlSuggestionsAsync(schemaJson, sql)
-                    ?? new List<SqlSuggestion>();
+                var suggestions = MockAIResponse();
 
                 var view = _wpfTextView;
 
@@ -312,6 +334,71 @@ namespace SSMS_AI_Buddy.Services
                     ShowSqlSuggestions(view, suggestions);
                 }));
             });
+        }
+
+        private List<SqlSuggestion> MockAIResponse()
+        {
+            string json = @"[
+              {
+                ""type"": ""join"",
+                ""suggestion"": ""INNER JOIN SalesLT.CustomerAddress ca ON SalesLT.Address.AddressID = ca.AddressID"",
+                ""description"": ""Join Address to CustomerAddress using AddressID""
+              },
+              {
+                ""type"": ""join"",
+                ""suggestion"": ""LEFT JOIN SalesLT.SalesOrderHeader soh ON SalesLT.Address.AddressID = soh.ShipToAddressID"",
+                ""description"": ""Join Address to SalesOrderHeader using ShipToAddressID""
+              },
+              {
+                ""type"": ""join"",
+                ""suggestion"": ""LEFT JOIN SalesLT.SalesOrderHeader soh ON SalesLT.Address.AddressID = soh.BillToAddressID"",
+                ""description"": ""Join Address to SalesOrderHeader using BillToAddressID""
+              },
+              {
+                ""type"": ""where"",
+                ""suggestion"": ""WHERE SalesLT.Address.City = 'London'"",
+                ""description"": ""Filter addresses by city""
+              },
+              {
+                ""type"": ""where"",
+                ""suggestion"": ""WHERE SalesLT.Address.CountryRegion = 'United States'"",
+                ""description"": ""Filter addresses by country or region""
+              },
+              {
+                ""type"": ""where"",
+                ""suggestion"": ""WHERE SalesLT.Address.PostalCode = '98052'"",
+                ""description"": ""Filter addresses by postal code""
+              },
+              {
+                ""type"": ""groupby"",
+                ""suggestion"": ""GROUP BY SalesLT.Address.City"",
+                ""description"": ""Group addresses by city""
+              },
+              {
+                ""type"": ""groupby"",
+                ""suggestion"": ""GROUP BY SalesLT.Address.CountryRegion, SalesLT.Address.StateProvince"",
+                ""description"": ""Group addresses by country and state/province""
+              },
+              {
+                ""type"": ""having"",
+                ""suggestion"": ""HAVING COUNT(SalesLT.Address.AddressID) > 1"",
+                ""description"": ""Return only groups with more than one address""
+              },
+              {
+                ""type"": ""orderby"",
+                ""suggestion"": ""ORDER BY SalesLT.Address.City"",
+                ""description"": ""Sort results by city""
+              },
+              {
+                ""type"": ""orderby"",
+                ""suggestion"": ""ORDER BY SalesLT.Address.ModifiedDate DESC"",
+                ""description"": ""Sort results by most recently modified addresses""
+              }
+            ]";
+
+            List<SqlSuggestion> suggestions =
+                JsonConvert.DeserializeObject<List<SqlSuggestion>>(json);
+            return suggestions;
         }
 
     }

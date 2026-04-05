@@ -1,16 +1,23 @@
-using EnvDTE;
+﻿using EnvDTE;
 using EnvDTE80;
 using Microsoft.Identity.Client;
+using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Text.Editor;
 using SSMS_AI_Buddy.Components;
 using SSMS_AI_Buddy.Models;
 using SSMS_AI_Buddy.Services;
 using SSMS_AI_Buddy.Services.AI;
+using SSMS_AI_Buddy.Services.SSMS;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Windows.Threading;
 using static System.Net.Mime.MediaTypeNames;
 using Task = System.Threading.Tasks.Task;
 
@@ -133,7 +140,7 @@ namespace SSMS_AI_Buddy.Commands
                 return;
 
             AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql);
-            //ShowStub(nameof(ExecuteSqlJoinsAi), "SQL Joins AI...");
+            
         }
 
         private static void ExecuteSuggestSqlContinuation(object sender, EventArgs e)
