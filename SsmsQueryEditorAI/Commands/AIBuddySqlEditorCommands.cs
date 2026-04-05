@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows.Threading;
+using static SSMS_AI_Buddy.Models.AppEnums;
 using static System.Net.Mime.MediaTypeNames;
 using Task = System.Threading.Tasks.Task;
 
@@ -71,28 +72,13 @@ namespace SSMS_AI_Buddy.Commands
             ThreadHelper.ThrowIfNotOnUIThread();
 
             string highlightedSql = GetSelectedSqlText();
+            
+            //AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql, AIActionType.RealTimeJoins);
+
             ShowStub(nameof(ExecuteSqlJoinsRealtimeRules), "SQL Joins Realtime...");
         }
 
-        //private static void LoadSettingsAI()
-        //{
-        //    FileService _fileService = new FileService();
-        //    string basePath = string.Empty;
-        //    string settingsFilePath = string.Empty;
-        //    basePath = AppDomain.CurrentDomain.BaseDirectory;
-        //    settingsFilePath = Path.Combine(basePath, _aiProperties.SettingsFilename);
-
-        //    // if file doesn't exist yet, default AI properties will be used
-        //    if (File.Exists(settingsFilePath))
-        //    {
-        //        _aiProperties = _fileService.LoadFromJson<AIProperties>(settingsFilePath);
-        //    }
-        //    else {
-        //        _aiProperties = new AIProperties(); // default settings
-        //    }
-
-        //    OllamaSqlSuggestionService._aiProperties = _aiProperties;
-        //}
+        
 
         private static void LoadSettingsAI()
         {
@@ -124,7 +110,7 @@ namespace SSMS_AI_Buddy.Commands
             if (string.IsNullOrWhiteSpace(highlightedSql))
                 return;
 
-            AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql);
+            AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql, AIActionType.AIGroupHaving);
 
             ShowStub(nameof(ExecuteSqlJoinsRealtimeRules), "SQL suggestion Group Having clause Using AI");
         }
@@ -139,8 +125,8 @@ namespace SSMS_AI_Buddy.Commands
             if (string.IsNullOrWhiteSpace(highlightedSql))
                 return;
 
-            AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql);
-            
+            AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql, AIActionType.AIJoins);
+
         }
 
         private static void ExecuteSuggestSqlContinuation(object sender, EventArgs e)
@@ -153,7 +139,8 @@ namespace SSMS_AI_Buddy.Commands
             if (string.IsNullOrWhiteSpace(highlightedSql))
                 return;
 
-            AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql);
+            AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql, AIActionType.RealTimeJoins);
+
             ShowStub(nameof(ExecuteSuggestSqlContinuation), "SQL Continuation AI...");
         }
 
@@ -167,7 +154,7 @@ namespace SSMS_AI_Buddy.Commands
             if (string.IsNullOrWhiteSpace(highlightedSql))
                 return;
 
-            AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql);
+            AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql, AIActionType.AIWhere);
             ShowStub(nameof(ExecuteWhereClauseAi), "SQL Where Clause AI...");
         }
 

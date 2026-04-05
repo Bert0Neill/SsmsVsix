@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Threading;
+using static SSMS_AI_Buddy.Models.AppEnums;
 
 namespace SSMS_AI_Buddy.Services
 {
@@ -87,29 +88,29 @@ namespace SSMS_AI_Buddy.Services
         /// <returns></returns>
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
-            //// 🔥 HANDLE POPUP KEYS FIRST
-            //if (SqlSuggestionPopup.IsOpen && pguidCmdGroup == VSConstants.VSStd2K)
-            //{
-            //    switch ((VSConstants.VSStd2KCmdID)nCmdID)
-            //    {
-            //        case VSConstants.VSStd2KCmdID.TAB:
-            //        case VSConstants.VSStd2KCmdID.RETURN:
-            //            SqlSuggestionPopup.AcceptSelection();
-            //            return VSConstants.S_OK;   // swallow
+            // 🔥 HANDLE POPUP KEYS FIRST
+            if (SqlSuggestionPopup.IsOpen && pguidCmdGroup == VSConstants.VSStd2K)
+            {
+                switch ((VSConstants.VSStd2KCmdID)nCmdID)
+                {
+                    case VSConstants.VSStd2KCmdID.TAB:
+                    case VSConstants.VSStd2KCmdID.RETURN:
+                        SqlSuggestionPopup.AcceptSelection();
+                        return VSConstants.S_OK;   // swallow
 
-            //        case VSConstants.VSStd2KCmdID.UP:
-            //            SqlSuggestionPopup.SelectPrevious();
-            //            return VSConstants.S_OK;
+                    case VSConstants.VSStd2KCmdID.UP:
+                        SqlSuggestionPopup.SelectPrevious();
+                        return VSConstants.S_OK;
 
-            //        case VSConstants.VSStd2KCmdID.DOWN:
-            //            SqlSuggestionPopup.SelectNext();
-            //            return VSConstants.S_OK;
+                    case VSConstants.VSStd2KCmdID.DOWN:
+                        SqlSuggestionPopup.SelectNext();
+                        return VSConstants.S_OK;
 
-            //        case VSConstants.VSStd2KCmdID.CANCEL: // ESC
-            //            SqlSuggestionPopup.Close();
-            //            return VSConstants.S_OK;
-            //    }
-            //}
+                    case VSConstants.VSStd2KCmdID.CANCEL: // ESC
+                        SqlSuggestionPopup.Close();
+                        return VSConstants.S_OK;
+                }
+            }
 
             //// 🔽 NORMAL TYPING HANDLING
             //if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
@@ -311,25 +312,23 @@ namespace SSMS_AI_Buddy.Services
             });
         }
 
-        public void TriggerSqlSuggestions(string sql)
+        public void TriggerSqlSuggestions(string sql, AIActionType aIActionType)
         {
             if (_wpfTextView == null || string.IsNullOrWhiteSpace(sql))
                 return;
 
             ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
-                //var schema = SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
-                //var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
-                //var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
-                //var expanded = JoinGraphBuilder.Expand(tables, graph);
-                //var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
-                //var suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql) ?? new List<SqlSuggestion>();
+                var schema = SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+                var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
+                var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
+                var expanded = JoinGraphBuilder.Expand(tables, graph);
+                var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
+                //var suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql, aIActionType) ?? new List<SqlSuggestion>();
 
                 var suggestions = MockAIResponse();
 
                 var view = _wpfTextView;
-                //ShowSqlSuggestions(view, suggestions);
-
                 view.VisualElement.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     ShowSqlSuggestions(view, suggestions);
