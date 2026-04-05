@@ -328,6 +328,7 @@ namespace SSMS_AI_Buddy.Services
                 var suggestions = MockAIResponse();
 
                 var view = _wpfTextView;
+                //ShowSqlSuggestions(view, suggestions);
 
                 view.VisualElement.Dispatcher.BeginInvoke(new Action(() =>
                 {
