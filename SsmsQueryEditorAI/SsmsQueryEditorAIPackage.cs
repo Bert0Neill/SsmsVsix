@@ -120,7 +120,7 @@ namespace SSMS_AI_Buddy
             _helperService = new SsmsHelper();
             await LoadSsmsStatusBarReference(); // allow ext to update SSMS statusbar
             InitializeSmoObjectExplorer(); // register the correct SSMS version to its Obj. Explorer
-            // await MonitorEditorWindow(); // capture events when user types into SQL editor
+            await MonitorEditorWindow(); // capture events when user types into SQL editor
            
             StatusBarService.UpdateStatusBarText($"AI Buddy Integrated Into SSMS"); // update SSMS statusbar with log file path
         }

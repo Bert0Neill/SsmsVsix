@@ -32,17 +32,7 @@ namespace SSMS_AI_Buddy.Components
         {
             InitializeComponent();
             Unloaded += PromptWindowControl_Unloaded;
-
             _fileService = new FileService();
-            //_aiProperties = new AIProperties();
-            //_richTextBoxParagraphGenerator = new RichTextBoxParagraphGenerator();
-
-            //string filePath = Path.Combine(Directory.GetCurrentDirectory(), _aiProperties.SettingsFilename);
-            //if (File.Exists(filePath))
-            //{
-            //    _aiProperties = _fileService.LoadFromJson<AIProperties>(filePath);
-            //}
-
             rtbResults.Document.Blocks.Clear();
             SetPlaceholderIfNeeded();
         }

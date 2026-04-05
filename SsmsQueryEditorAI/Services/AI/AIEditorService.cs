@@ -33,6 +33,8 @@ namespace SSMS_AI_Buddy.Services
         private string _serverName;
         private string _databaseName;
         private string _connectionKey;
+
+        public static AIEditorService ActiveService { get; private set; }
         #endregion
 
         public AIEditorService(SsmsQueryEditorAIPackage package, IVsTextView textView)
@@ -41,6 +43,8 @@ namespace SSMS_AI_Buddy.Services
 
             _package = package;
             _textView = textView;
+
+            ActiveService = this;
 
             var componentModel = ServiceProvider.GlobalProvider
                 .GetService(typeof(SComponentModel)) as IComponentModel;
@@ -282,70 +286,34 @@ namespace SSMS_AI_Buddy.Services
                 });
         }
 
-        private List<SqlSuggestion> MockAIResponse()
+        public void TriggerSqlSuggestions(string sql)
         {
-            string json = @"[
-              {
-                ""type"": ""join"",
-                ""suggestion"": ""INNER JOIN SalesLT.CustomerAddress ca ON SalesLT.Address.AddressID = ca.AddressID"",
-                ""description"": ""Join Address to CustomerAddress using AddressID""
-              },
-              {
-                ""type"": ""join"",
-                ""suggestion"": ""LEFT JOIN SalesLT.SalesOrderHeader soh ON SalesLT.Address.AddressID = soh.ShipToAddressID"",
-                ""description"": ""Join Address to SalesOrderHeader using ShipToAddressID""
-              },
-              {
-                ""type"": ""join"",
-                ""suggestion"": ""LEFT JOIN SalesLT.SalesOrderHeader soh ON SalesLT.Address.AddressID = soh.BillToAddressID"",
-                ""description"": ""Join Address to SalesOrderHeader using BillToAddressID""
-              },
-              {
-                ""type"": ""where"",
-                ""suggestion"": ""WHERE SalesLT.Address.City = 'London'"",
-                ""description"": ""Filter addresses by city""
-              },
-              {
-                ""type"": ""where"",
-                ""suggestion"": ""WHERE SalesLT.Address.CountryRegion = 'United States'"",
-                ""description"": ""Filter addresses by country or region""
-              },
-              {
-                ""type"": ""where"",
-                ""suggestion"": ""WHERE SalesLT.Address.PostalCode = '98052'"",
-                ""description"": ""Filter addresses by postal code""
-              },
-              {
-                ""type"": ""groupby"",
-                ""suggestion"": ""GROUP BY SalesLT.Address.City"",
-                ""description"": ""Group addresses by city""
-              },
-              {
-                ""type"": ""groupby"",
-                ""suggestion"": ""GROUP BY SalesLT.Address.CountryRegion, SalesLT.Address.StateProvince"",
-                ""description"": ""Group addresses by country and state/province""
-              },
-              {
-                ""type"": ""having"",
-                ""suggestion"": ""HAVING COUNT(SalesLT.Address.AddressID) > 1"",
-                ""description"": ""Return only groups with more than one address""
-              },
-              {
-                ""type"": ""orderby"",
-                ""suggestion"": ""ORDER BY SalesLT.Address.City"",
-                ""description"": ""Sort results by city""
-              },
-              {
-                ""type"": ""orderby"",
-                ""suggestion"": ""ORDER BY SalesLT.Address.ModifiedDate DESC"",
-                ""description"": ""Sort results by most recently modified addresses""
-              }
-            ]";
+            if (_wpfTextView == null || string.IsNullOrWhiteSpace(sql))
+                return;
 
-            List<SqlSuggestion> suggestions =
-                JsonConvert.DeserializeObject<List<SqlSuggestion>>(json);
-            return suggestions;
+            ThreadHelper.JoinableTaskFactory.Run(async () =>
+            {
+                var schema = SchemaCache.GetOrAdd(_connectionKey,
+                    () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+
+                var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
+                var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
+                var expanded = JoinGraphBuilder.Expand(tables, graph);
+                var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
+
+                var suggestions = await OllamaSqlSuggestionService
+                    .GetSqlSuggestionsAsync(schemaJson, sql)
+                    ?? new List<SqlSuggestion>();
+
+                var view = _wpfTextView;
+
+                view.VisualElement.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    ShowSqlSuggestions(view, suggestions);
+                }));
+            });
         }
+
     }
 }
 
