@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static SSMS_AI_Buddy.Models.AppEnums;
 
 namespace SSMS_AI_Buddy.Services.AI
 {
@@ -126,6 +127,28 @@ namespace SSMS_AI_Buddy.Services.AI
             return text;
         }
 
+        private static string GetSystemPrompt(AIActionType actionType)
+        {
+            switch (actionType)
+            {
+                case AIActionType.AIJoins:
+                    return _aiProperties.JoinPrompt;
+
+                case AIActionType.AIGroupHaving:
+                    return _aiProperties.GroupHavingPrompt;
+
+                case AIActionType.AIWhere:
+                    return _aiProperties.WherePrompt;
+
+                case AIActionType.AIPrompt:
+                    return _aiProperties.ContinuationPrompt;
+
+                default:
+                    throw new NotSupportedException(
+                        string.Format("Unsupported AI action type: {0}", actionType));
+            }
+        }
+
         // Ollama endpoint
         private static readonly HttpClient _http = new HttpClient
         {
@@ -139,10 +162,12 @@ namespace SSMS_AI_Buddy.Services.AI
         //};
 
 
-        public static async Task<List<SqlSuggestion>> GetSqlSuggestionsAsync(string schemaJson, string currentSql)
+        public static async Task<List<SqlSuggestion>> GetSqlSuggestionsAsync(string schemaJson, string currentSql, AIActionType aIActionType)
         {
             Debug.WriteLine($"Prompt Schema:{schemaJson} - {currentSql}");
             var prompt = AI_Resource.Full_Ai_Prompt.Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
+            string system = GetSystemPrompt(aIActionType);
+
 
             //            string prompt = $@"You are a SQL assistant.
             //Schema (only tables directly joinable to current SQL tables): {{{{SCHEMA}}}}
@@ -217,32 +242,32 @@ namespace SSMS_AI_Buddy.Services.AI
             //]
             //";
 
-            var system = @"No thinking. You are a backend SQL completion engine.
-STRICT RULES:
-- Output ONLY valid JSON.
-- Output MUST be a COMPLETE JSON array.
-- Do NOT include markdown, code fences, comments, or extra text.
-- Do NOT include trailing commas.
+//            var system = @"No thinking. You are a backend SQL completion engine.
+//STRICT RULES:
+//- Output ONLY valid JSON.
+//- Output MUST be a COMPLETE JSON array.
+//- Do NOT include markdown, code fences, comments, or extra text.
+//- Do NOT include trailing commas.
 
-COMPLETION RULES:
-- You are completing an EXISTING query; the user keeps their SQL. Output ONLY the next fragment to append.
-- DO NOT rewrite the full query. DO NOT duplicate SELECT ... FROM ... for the whole statement.
-- The JSON ""suggestion"" field MUST NOT start with SELECT. Output from JOIN, WHERE, GROUP BY, ORDER BY, HAVING, or a comma + column.
-- When joins apply: include several join suggestions with different join kinds (INNER JOIN, LEFT JOIN, and when sensible RIGHT JOIN, FULL OUTER JOIN). Same aliases and ON clause where only the join kind differs. CROSS JOIN only if a cross product is appropriate.
+//COMPLETION RULES:
+//- You are completing an EXISTING query; the user keeps their SQL. Output ONLY the next fragment to append.
+//- DO NOT rewrite the full query. DO NOT duplicate SELECT ... FROM ... for the whole statement.
+//- The JSON ""suggestion"" field MUST NOT start with SELECT. Output from JOIN, WHERE, GROUP BY, ORDER BY, HAVING, or a comma + column.
+//- When joins apply: include several join suggestions with different join kinds (INNER JOIN, LEFT JOIN, and when sensible RIGHT JOIN, FULL OUTER JOIN). Same aliases and ON clause where only the join kind differs. CROSS JOIN only if a cross product is appropriate.
 
-GOOD examples:
-- ""INNER JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
-- ""LEFT JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
-- ""WHERE a.City = N'London'""
-- "", PostalCode""
+//GOOD examples:
+//- ""INNER JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+//- ""LEFT JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+//- ""WHERE a.City = N'London'""
+//- "", PostalCode""
 
-BAD examples:
-- Anything starting with SELECT, UPDATE, DELETE, INSERT.
-- Full standalone queries
+//BAD examples:
+//- Anything starting with SELECT, UPDATE, DELETE, INSERT.
+//- Full standalone queries
 
-If no valid suggestions exist, return [].
+//If no valid suggestions exist, return [].
 
-Invalid or incomplete JSON is a system failure.";
+//Invalid or incomplete JSON is a system failure.";
 
 
             var request = new
