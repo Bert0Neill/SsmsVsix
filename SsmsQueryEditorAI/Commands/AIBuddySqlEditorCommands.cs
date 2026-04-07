@@ -39,8 +39,6 @@ namespace SSMS_AI_Buddy.Commands
         public const int DisplayPromptId = 0x0106;
 
         static AIProperties _aiProperties;
-        //public static AIEditorService ActiveService { get; set; }
-
         public static readonly Guid CommandSet = new Guid("d5cfa9e8-a7de-4eb4-b34f-0ab39f9e31a3");
 
         public static async Task InitializeAsync(AsyncPackage package)
