@@ -17,8 +17,6 @@ using static SSMS_AI_Buddy.Models.AppEnums;
 
 namespace SSMS_AI_Buddy.Services.AI
 {
-    
-
     public static class OllamaSqlSuggestionService
     {
         private static HttpClient _http;
@@ -178,17 +176,16 @@ namespace SSMS_AI_Buddy.Services.AI
 
             var request = new
             {
-                
-                model = "qwen2.5-coder:1.5b", // more accurate but slower
+                //model = "qwen2.5-coder:1.5b", // more accurate but slower
                 //model = "qwen2.5-coder:0.5b", // faster but less accurate
-                //model = _aiProperties.PromptLLMName,
+                model = _aiProperties.PromptLLMName,
                 prompt = prompt,
                 system = system,
                 stream = false,
                 format= "json",
                 options = new
                 {
-                    temperature = 0.1,
+                    temperature = 0.0,
                     num_predict = 500 // token limit for suggestions - adjust as needed based on typical response length and model limits
                 }
             };
