@@ -323,7 +323,8 @@ namespace SSMS_AI_Buddy.Services
                 var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
                 var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
                 var expanded = JoinGraphBuilder.Expand(tables, graph);
-                var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
+                var schemaJson = OllamaSchemaBuilder.BuildSlimSchema(_databaseName, schema, expanded);
+                //var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
                 var suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql, aIActionType) ?? new List<SqlSuggestion>();
 
                 //var suggestions = MockAIResponse();

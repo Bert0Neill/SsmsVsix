@@ -7,6 +7,24 @@ namespace SSMS_AI_Buddy.Services.SSMS
 {
     public static class OllamaSchemaBuilder
     {
+
+        public static string BuildSlimSchema(string database, CachedSchema schema, HashSet<string> tablesToInclude)
+        {
+            var relations = schema.ForeignKeys
+                .Where(fk =>
+                    tablesToInclude.Contains($"{fk.Schema}.{fk.Table}") &&
+                    tablesToInclude.Contains($"{fk.ReferencedSchema}.{fk.ReferencedTable}"))
+                .Select(fk => new
+                {
+                    from = $"{fk.Schema}.{fk.Table}.{fk.Column}",
+                    to = $"{fk.ReferencedSchema}.{fk.ReferencedTable}.{fk.ReferencedColumn}"
+                })
+                .Distinct()
+                .ToList();
+
+            return JsonConvert.SerializeObject(relations, Formatting.Indented);
+        }
+
         public static string Build(string database, CachedSchema schema, HashSet<string> tablesToInclude)
         {
             var result = new

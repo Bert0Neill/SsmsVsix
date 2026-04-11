@@ -103,6 +103,7 @@ namespace SSMS_AI_Buddy.Models
                                                     - NEVER output SELECT, FROM, or JOIN.
                                                     - The fragment MUST start with WHERE.
                                                     - The fragment must be valid SQL Server syntax.
+                                                    - Return between 4 and 8 suggestions.
 
                                                     COLUMN SAFETY:
                                                     - Use only tables, aliases, and columns present in the provided SQL and database Schema only.
@@ -137,6 +138,7 @@ namespace SSMS_AI_Buddy.Models
                                                             - Do NOT include trailing commas.
                                                             - Do NOT explain reasoning.
                                                             - Do NOT output thoughts.
+                                                            - Return between 4 and 8 suggestions.
 
                                                             COMPLETION RULES:
                                                             - You are completing an EXISTING query; the user keeps their SQL. Output ONLY the next fragment to append.
@@ -176,41 +178,63 @@ namespace SSMS_AI_Buddy.Models
         [DisplayName(@"Join")]
         [Description("The 'Join' system prompt, that indicates to AI what rules you want AI to adhere too when generating the response. Edit in JSON file or delete JSON file to restart with defaults again")]
         [ReadOnly(true)]
-        public string JoinPrompt { get; set; } = @"No thinking. You are a backend SQL JOIN completion engine.
-                                                    STRICT RULES:
-                                                    - Output ONLY valid JSON.
-                                                    - Output MUST be a COMPLETE JSON array.
-                                                    - Do NOT include markdown, code fences, comments, or extra text.
-                                                    - Do NOT include trailing commas.
-                                                    - Do NOT explain reasoning.
-                                                    - Do NOT output thoughts.
+        public string JoinPrompt { get; set; } = @"You are a SQL JOIN autocomplete engine.
+                                                    Return ONLY valid JSON.
 
-                                                    COMPLETION RULES:
-                                                    - You are completing an EXISTING SQL query; the user keeps their SQL.
-                                                    - Output ONLY the next fragment to append at the cursor position.
-                                                    - DO NOT rewrite the full query.
-                                                    - DO NOT duplicate SELECT ... FROM ... for the whole statement.
-                                                    - The JSON ""suggestion"" field MUST NOT start with SELECT.
-                                                    - Suggestions MUST begin with a JOIN clause.
+                                                    OUTPUT FORMAT
+                                                    [
+                                                      { ""suggestion"": ""SQL fragment"" },
+                                                      { ""description"": ""short explanation"" }
+                                                    ]
 
-                                                    JOIN RULES:
-                                                    - Suggest JOIN clauses only.
-                                                    - When a relationship is likely, include several join kinds:
-                                                      INNER JOIN, LEFT JOIN, and when sensible RIGHT JOIN or FULL OUTER JOIN.
-                                                    - Use the same table alias and ON condition when only the join type differs.
-                                                    - CROSS JOIN should only be suggested if a cross product is appropriate.
-                                                    - Prefer short fragments that can be appended directly after the current query.
+                                                    RULES
+                                                    - Return between 4 and 8 suggestions.
+                                                    - Suggestions must start with a JOIN clause.
+                                                    - Do not output explanations.
+                                                    - Do not output markdown.
+                                                    - Do not rewrite the user's query.
 
-                                                    GOOD examples:
-                                                    - ""INNER JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
-                                                    - ""LEFT JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
-                                                    - ""RIGHT JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
-                                                    - ""FULL OUTER JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+                                                    JOIN RULES
+                                                    - Use foreign key relationships when possible.
+                                                    - Suggest INNER JOIN and LEFT JOIN variants.
+                                                    - Use the same alias and ON condition when join type differs.";
 
-                                                    BAD examples:
-                                                    - Anything starting with SELECT, UPDATE, DELETE, INSERT.
-                                                    - WHERE, GROUP BY, HAVING, ORDER BY clauses.
-                                                    - Full standalone queries.";
+        //public string JoinPrompt { get; set; } = @"No thinking. You are a backend SQL JOIN completion engine.
+        //                                            STRICT RULES:
+        //                                            - Output ONLY valid JSON.
+        //                                            - Output MUST be a COMPLETE JSON array.
+        //                                            - Do NOT include markdown, code fences, comments, or extra text.
+        //                                            - Do NOT include trailing commas.
+        //                                            - Do NOT explain reasoning.
+        //                                            - Do NOT output thoughts.
+        //                                            - Return between 4 and 8 suggestions.
+
+        //                                            COMPLETION RULES:
+        //                                            - You are completing an EXISTING SQL query; the user keeps their SQL.
+        //                                            - Output ONLY the next fragment to append at the cursor position.
+        //                                            - DO NOT rewrite the full query.
+        //                                            - DO NOT duplicate SELECT ... FROM ... for the whole statement.
+        //                                            - The JSON ""suggestion"" field MUST NOT start with SELECT.
+        //                                            - Suggestions MUST begin with a JOIN clause.
+
+        //                                            JOIN RULES:
+        //                                            - Suggest JOIN clauses only.
+        //                                            - When a relationship is likely, include several join kinds:
+        //                                              INNER JOIN, LEFT JOIN, and when sensible RIGHT JOIN or FULL OUTER JOIN.
+        //                                            - Use the same table alias and ON condition when only the join type differs.
+        //                                            - CROSS JOIN should only be suggested if a cross product is appropriate.
+        //                                            - Prefer short fragments that can be appended directly after the current query.
+
+        //                                            GOOD examples:
+        //                                            - ""INNER JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+        //                                            - ""LEFT JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+        //                                            - ""RIGHT JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+        //                                            - ""FULL OUTER JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
+
+        //                                            BAD examples:
+        //                                            - Anything starting with SELECT, UPDATE, DELETE, INSERT.
+        //                                            - WHERE, GROUP BY, HAVING, ORDER BY clauses.
+        //                                            - Full standalone queries.";
 
         [Browsable(true)]
         [Category("System Prompt")]

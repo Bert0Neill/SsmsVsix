@@ -118,19 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AI_Prompt" xml:space="preserve">
-    <value>DATABASE SCHEMA (JSON):
-{0}
+    <value>DATABASE SCHEMA:
+{{SCHEMA}}
 
-USER SQL (INCOMPLETE):
-{1}
-
-TASK:
-- Complete or improve the SQL
-- Suggest correct JOINs using foreign keys
-- Prefer indexed columns
-- Do not change user intent
-- Return ONLY valid T-SQL
-</value>
+USER SQL:
+{{SQL}}</value>
   </data>
   <data name="Full_Ai_Prompt" xml:space="preserve">
     <value>INPUT DATA:

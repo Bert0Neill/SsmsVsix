@@ -171,22 +171,24 @@ namespace SSMS_AI_Buddy.Services.AI
         public static async Task<List<SqlSuggestion>> GetSqlSuggestionsAsync(string schemaJson, string currentSql, AIActionType aIActionType)
         {
             Debug.WriteLine($"Prompt Schema:{schemaJson} - {currentSql}");
-            var prompt = AI_Resource.Full_Ai_Prompt.Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
+            var prompt = AI_Resource.AI_Prompt.Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
+            //var prompt = AI_Resource.Full_Ai_Prompt.Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
             string system = GetSystemPrompt(aIActionType);
 
             var request = new
             {
-                //model = "qwen2.5-coder:1.5b", // more accurate but slower
-                //model = "qwen2.5-coder:0.5b", // faster but less accurate
-                model = _aiProperties.PromptLLMName,
+                model = "qwen2.5-coder:1.5b", // more accurate but slower
+                //model = "deepseek-coder:6.7b", // faster but less accurate
+                //model = _aiProperties.PromptLLMName,
                 prompt = prompt,
                 system = system,
                 stream = false,
                 format= "json",
                 options = new
                 {
-                    temperature = 0.0,
-                    num_predict = 500 // token limit for suggestions - adjust as needed based on typical response length and model limits
+                    temperature = 0.1,
+                    num_predict = 150, // token limit for suggestions - adjust as needed based on typical response length and model limits
+                     stop = new[] { "]" } // stop runaway generation
                 }
             };
 

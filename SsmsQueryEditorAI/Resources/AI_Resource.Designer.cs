@@ -61,19 +61,11 @@ namespace SSMS_AI_Buddy.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DATABASE SCHEMA (JSON):
-        ///{0}
+        ///   Looks up a localized string similar to DATABASE SCHEMA:
+        ///{{SCHEMA}}
         ///
-        ///USER SQL (INCOMPLETE):
-        ///{1}
-        ///
-        ///TASK:
-        ///- Complete or improve the SQL
-        ///- Suggest correct JOINs using foreign keys
-        ///- Prefer indexed columns
-        ///- Do not change user intent
-        ///- Return ONLY valid T-SQL
-        ///.
+        ///USER SQL:
+        ///{{SQL}}.
         /// </summary>
         internal static string AI_Prompt {
             get {
@@ -93,14 +85,14 @@ namespace SSMS_AI_Buddy.Resources {
         ///
         ///TASK:
         ///
-        ///Suggest valid NEXT SQL tokens or snippets that can be appended to the current SQL query.
+        ///Suggest CONTINUATION snippets only: text the user can append after their CURRENT SQL to keep typing. You are NOT rewriting or replacing their query.
         ///
         ///Focus ONLY on:
-        ///- JOIN clauses (INNER, LEFT, RIGHT) using valid tables and columns
-        ///- WHERE conditions using columns already in scope
-        ///- GROUP BY clauses using selected columns
-        ///- HAVING clauses using aggregated columns
-        ///- ORD [rest of string was truncated]&quot;;.
+        ///- JOIN fragments with ON … (see JOIN variety below)
+        ///- WHERE … (extra predicates)
+        ///- GROUP BY …, HAVING …, ORDER BY …
+        ///
+        ///JOIN variety (when a join is  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Full_Ai_Prompt {
             get {
