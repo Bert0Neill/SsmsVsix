@@ -181,29 +181,38 @@ namespace SSMS_AI_Buddy.Services.AI
             Debug.WriteLine($"Prompt Schema:{schemaJson} - {currentSql}");
             var prompt = AI_Resource.AI_Prompt.Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
             //var prompt = AI_Resource.Full_Ai_Prompt.Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
-            //string system = GetSystemPrompt(aIActionType);
+            string system = GetSystemPrompt(aIActionType);
 
-             string system = @"You are a SQL JOIN autocomplete engine.
-                                                    Return ONLY valid JSON.
+//             string system = @"You are a SQL JOIN autocomplete engine.
 
-                                                    OUTPUT FORMAT
-                                                    [
-                                                      {""type"": ""Join"", ""suggestion"": ""SQL fragment"", ""description"": ""short explanation"" }
-                                                    ]
+//Return ONLY valid JSON.
 
-                                                    RULES
-                                                    - Return between 4 and 8 suggestions.
-                                                    - Suggestions must start with a JOIN clause.
-                                                    - Do not output explanations
-                                                    - Do not output markdown
-                                                    - Do not rewrite the user's query                                                    
-                                                    - Only continuation suggestions, not full SELECT statements
-                                                    - Must return an [] array of JOIN suggestions, at least 4
+//OUTPUT FORMAT
+//[
+//  {""type"":""Join"",""suggestion"":""JOIN table t ON condition"",""description"":""short explanation""},
+//  {""type"":""Join"",""suggestion"":""LEFT JOIN table t ON condition"",""description"":""short explanation""},
+//  {""type"":""Join"",""suggestion"":""Right JOIN table t ON condition"",""description"":""short explanation""},
+//  {""type"":""Join"",""suggestion"":""Cross JOIN table t ON condition"",""description"":""short explanation""}
+//]
 
-                                                    JOIN RULES
-                                                    - Use foreign key relationships when possible.
-                                                    - Suggest JOIN, INNER JOIN, LEFT JOIN and CROSS JOIN variants.
-                                                    - Use the same alias and ON condition when join type differs.";
+//RULES
+//- Output MUST be a valid JSON array.
+//- Output MUST contain between 4 and 8 json array items.
+//- NEVER output fewer than 4 items.
+//- Suggestions MUST start with JOIN, INNER JOIN, LEFT JOIN, or CROSS JOIN.
+//- Only output JOIN fragments, never full SELECT statements.
+//- Do not rewrite the user query.
+//- Do not output explanations or markdown.
+
+//JOIN GENERATION
+//- Make a suggestion for every table relationship supplied in prompt.
+//- Use foreign key relationships from the schema.
+//- If multiple joins are possible, return suggestions for each.
+//- If fewer than 4 joins exist, create variants using JOIN, INNER JOIN, LEFT JOIN, CROSS JOIN.
+//- Reuse the same ON condition when only the join type differs.
+
+//ALIAS RULE
+//- If the base table has an alias, use that alias ";
 
         var request = new
             {

@@ -19,6 +19,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Threading;
 using static SSMS_AI_Buddy.Models.AppEnums;
+using System.Text.RegularExpressions;
 
 namespace SSMS_AI_Buddy.Services
 {
@@ -269,24 +270,6 @@ namespace SSMS_AI_Buddy.Services
         }
         #endregion
 
-        //private void ShowSqlSuggestions(IWpfTextView view, IList<SqlSuggestion> suggestions)
-        //{
-        //    if (view == null || suggestions == null || suggestions.Count == 0)
-        //        return;
-
-        //    var caret = view.Caret.Position.BufferPosition;
-        //    var line = view.GetTextViewLineContainingBufferPosition(caret);
-        //    if (line == null) return;
-
-        //    var bounds = line.GetCharacterBounds(caret);
-        //    var location = new Point(bounds.Left, bounds.Bottom + 2);
-
-        //    SqlSuggestionPopup.Show(view.VisualElement, location, suggestions, selected =>
-        //        {
-        //            EditorHelper.InsertText(" " + selected.Suggestion); // insert only SQL text
-        //        });
-        //}
-
         private void ShowSqlSuggestions(IWpfTextView view, IList<SqlSuggestion> suggestions)
         {
             if (view == null || suggestions == null || suggestions.Count == 0)
@@ -314,6 +297,8 @@ namespace SSMS_AI_Buddy.Services
 
         public void TriggerSqlSuggestions(string sql, AIActionType aIActionType)
         {
+            List<SqlSuggestion> suggestions = new List<SqlSuggestion>();
+
             if (_wpfTextView == null || string.IsNullOrWhiteSpace(sql))
                 return;
 
@@ -324,9 +309,15 @@ namespace SSMS_AI_Buddy.Services
                 var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
                 var expanded = JoinGraphBuilder.Expand(tables, graph);
                 var schemaJson = OllamaSchemaBuilder.BuildSlimSchemaRelationship(_databaseName, schema, expanded);
-                //var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
-                var suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql, aIActionType) ?? new List<SqlSuggestion>();
 
+                if (aIActionType == AIActionType.RealTimeJoins)
+                {
+                    suggestions =  RealtimeJoinSuggestionService.BuildRealTimeJoinSuggestions(schemaJson, sql) ?? new List<SqlSuggestion>();
+                }
+                else
+                {
+                    suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql, aIActionType) ?? new List<SqlSuggestion>();
+                }
                 //var suggestions = MockAIResponse();
 
                 var view = _wpfTextView;

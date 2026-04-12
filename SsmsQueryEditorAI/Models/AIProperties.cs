@@ -183,21 +183,30 @@ namespace SSMS_AI_Buddy.Models
 
                                                     OUTPUT FORMAT
                                                     [
-                                                      { ""suggestion"": ""SQL fragment"" },
-                                                      { ""description"": ""short explanation"" }
+                                                      {""type"":""Join"",""suggestion"":""JOIN table t ON condition"",""description"":""short explanation""},
+                                                      {""type"":""Join"",""suggestion"":""LEFT JOIN table t ON condition"",""description"":""short explanation""},
+                                                      {""type"":""Join"",""suggestion"":""Right JOIN table t ON condition"",""description"":""short explanation""},
+                                                      {""type"":""Join"",""suggestion"":""Cross JOIN table t ON condition"",""description"":""short explanation""}
                                                     ]
 
                                                     RULES
-                                                    - Return between 4 and 8 suggestions.
-                                                    - Suggestions must start with a JOIN clause.
-                                                    - Do not output explanations.
-                                                    - Do not output markdown.
-                                                    - Do not rewrite the user's query.
+                                                    - Output MUST be a valid JSON array.
+                                                    - Output MUST contain between 4 and 8 json array items.
+                                                    - NEVER output fewer than 4 items.
+                                                    - Suggestions MUST start with JOIN, INNER JOIN, LEFT JOIN, or CROSS JOIN.
+                                                    - Only output JOIN fragments, never full SELECT statements.
+                                                    - Do not rewrite the user query.
+                                                    - Do not output explanations or markdown.
 
-                                                    JOIN RULES
-                                                    - Use foreign key relationships when possible.
-                                                    - Suggest INNER JOIN and LEFT JOIN variants.
-                                                    - Use the same alias and ON condition when join type differs.";
+                                                    JOIN GENERATION
+                                                    - Make a suggestion for every table relationship supplied in prompt.
+                                                    - Use foreign key relationships from the schema.
+                                                    - If multiple joins are possible, return suggestions for each.
+                                                    - If fewer than 4 joins exist, create variants using JOIN, INNER JOIN, LEFT JOIN, CROSS JOIN.
+                                                    - Reuse the same ON condition when only the join type differs.
+
+                                                    ALIAS RULE
+                                                    - If the base table has an alias, use that alias ";
 
         //public string JoinPrompt { get; set; } = @"No thinking. You are a backend SQL JOIN completion engine.
         //                                            STRICT RULES:

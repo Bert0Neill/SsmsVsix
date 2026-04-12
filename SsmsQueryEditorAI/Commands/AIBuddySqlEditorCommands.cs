@@ -70,10 +70,11 @@ namespace SSMS_AI_Buddy.Commands
             ThreadHelper.ThrowIfNotOnUIThread();
 
             string highlightedSql = GetSelectedSqlText();
-            
+
             // perform a different action - Not AI based
 
-            ShowStub(nameof(ExecuteSqlJoinsRealtimeRules), "SQL Joins Realtime...");
+            AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql, AIActionType.RealTimeJoins);
+
         }
 
 
