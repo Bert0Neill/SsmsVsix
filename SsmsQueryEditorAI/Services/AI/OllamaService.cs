@@ -69,14 +69,15 @@ namespace SSMS_AI_Buddy.Services.AI
         }
 
 
-        /// <summary>
-        /// Parses the first complete JSON array from text (handles brackets inside string values).
-        /// </summary>
         private static List<SqlSuggestion> DeserializeSuggestionArray(string text)
         {
             text = RemoveCodeFences(text ?? string.Empty).Trim();
             text = Regex.Replace(text, "\u003Cthink\u003E[\\s\\S]*?\u003C/think\u003E", "", RegexOptions.IgnoreCase);
-            int start = text.IndexOf('[');
+
+            int startArray = text.IndexOf('[');
+            int startObject = text.IndexOf('{');
+
+            int start = startArray >= 0 ? startArray : startObject;
             if (start < 0)
                 return new List<SqlSuggestion>();
 
@@ -84,7 +85,14 @@ namespace SSMS_AI_Buddy.Services.AI
             using (var reader = new JsonTextReader(sr) { CloseInput = true })
             {
                 var token = JToken.Load(reader);
-                return token.ToObject<List<SqlSuggestion>>() ?? new List<SqlSuggestion>();
+
+                if (token.Type == JTokenType.Array)
+                    return token.ToObject<List<SqlSuggestion>>() ?? new List<SqlSuggestion>();
+
+                if (token.Type == JTokenType.Object)
+                    return new List<SqlSuggestion> { token.ToObject<SqlSuggestion>() };
+
+                return new List<SqlSuggestion>();
             }
         }
 
@@ -173,9 +181,31 @@ namespace SSMS_AI_Buddy.Services.AI
             Debug.WriteLine($"Prompt Schema:{schemaJson} - {currentSql}");
             var prompt = AI_Resource.AI_Prompt.Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
             //var prompt = AI_Resource.Full_Ai_Prompt.Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
-            string system = GetSystemPrompt(aIActionType);
+            //string system = GetSystemPrompt(aIActionType);
 
-            var request = new
+             string system = @"You are a SQL JOIN autocomplete engine.
+                                                    Return ONLY valid JSON.
+
+                                                    OUTPUT FORMAT
+                                                    [
+                                                      {""type"": ""Join"", ""suggestion"": ""SQL fragment"", ""description"": ""short explanation"" }
+                                                    ]
+
+                                                    RULES
+                                                    - Return between 4 and 8 suggestions.
+                                                    - Suggestions must start with a JOIN clause.
+                                                    - Do not output explanations
+                                                    - Do not output markdown
+                                                    - Do not rewrite the user's query                                                    
+                                                    - Only continuation suggestions, not full SELECT statements
+                                                    - Must return an [] array of JOIN suggestions, at least 4
+
+                                                    JOIN RULES
+                                                    - Use foreign key relationships when possible.
+                                                    - Suggest JOIN, INNER JOIN, LEFT JOIN and CROSS JOIN variants.
+                                                    - Use the same alias and ON condition when join type differs.";
+
+        var request = new
             {
                 model = "qwen2.5-coder:1.5b", // more accurate but slower
                 //model = "deepseek-coder:6.7b", // faster but less accurate
