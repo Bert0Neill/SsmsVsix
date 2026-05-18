@@ -74,36 +74,48 @@ namespace SSMS_AI_Buddy.Services.SSMS
             return tables;
         }
 
+        //private static List<SqlSuggestion> EnsureMinimumSuggestions(List<SqlSuggestion> suggestions)
+        //{
+        //    var variants = new[] { "JOIN", "INNER JOIN", "LEFT JOIN", "RIGHT JOIN" };
+
+        //    if (suggestions.Count >= 4)
+        //        return suggestions;
+
+        //    var expanded = new List<SqlSuggestion>();
+
+        //    foreach (var s in suggestions)
+        //    {
+        //        foreach (var v in variants)
+        //        {
+        //            expanded.Add(new SqlSuggestion
+        //            {
+        //                Type = "Join",
+        //                Suggestion = s.Suggestion.Replace("JOIN", v),
+        //                Description = s.Description
+        //            });
+
+        //            if (expanded.Count >= 4)
+        //                return expanded;
+        //        }
+        //    }
+
+        //    return expanded;
+        //}
+
         private static List<SqlSuggestion> EnsureMinimumSuggestions(List<SqlSuggestion> suggestions)
         {
-            var variants = new[] { "JOIN", "INNER JOIN", "LEFT JOIN", "RIGHT JOIN" };
-
-            if (suggestions.Count >= 4)
-                return suggestions;
-
-            var expanded = new List<SqlSuggestion>();
-
-            foreach (var s in suggestions)
-            {
-                foreach (var v in variants)
+            return suggestions
+                .Select(s => new SqlSuggestion
                 {
-                    expanded.Add(new SqlSuggestion
-                    {
-                        Type = "Join",
-                        Suggestion = s.Suggestion.Replace("JOIN", v),
-                        Description = s.Description
-                    });
-
-                    if (expanded.Count >= 4)
-                        return expanded;
-                }
-            }
-
-            return expanded;
+                    Type = "Join",
+                    Suggestion = s.Suggestion.Replace("JOIN", "INNER JOIN"),
+                    Description = s.Description
+                })
+                .ToList();
         }
 
 
-        
+
     }
 
 
