@@ -263,6 +263,7 @@
     <Content Include="Commands\Resources\Images\32\maintenance.png" />
     <Content Include="Commands\Resources\Images\32\software-as-service.png" />
     <Content Include="Commands\Resources\Images\32\wrench.png" />
+    <Content Include="Commands\Resources\Images\SelectDatabase.png" />
     <Content Include="Components\Resources\ToolWindow1Command.png" />
     <Content Include="Misc\18 Issues\SqlWorkbench.Interfaces.dll" />
     <Content Include="Misc\19\SqlPackageBase.dll">
