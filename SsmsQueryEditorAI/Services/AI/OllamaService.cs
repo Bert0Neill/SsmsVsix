@@ -10,10 +10,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static SSMS_AI_Buddy.Models.AppEnums;
+using static System.Net.WebRequestMethods;
 
 namespace SSMS_AI_Buddy.Services.AI
 {
@@ -34,6 +36,8 @@ namespace SSMS_AI_Buddy.Services.AI
                     {
                         BaseAddress = new Uri(_aiProperties.AIPromptURL)
                     };
+
+                    
                 }
 
                 return _http;
@@ -122,6 +126,40 @@ namespace SSMS_AI_Buddy.Services.AI
             }
         }
 
+        private static List<SqlSuggestion> ParseSuggestionsFromNvidiaHttpBody(string httpBody)
+        {
+            if (string.IsNullOrWhiteSpace(httpBody))
+                return new List<SqlSuggestion>();
+
+            try
+            {
+                var outer = JsonConvert.DeserializeObject<OpenAiResponse>(httpBody);
+
+                var content = outer?
+                    .Choices?
+                    .FirstOrDefault()?
+                    .Message?
+                    .Content;
+
+                if (string.IsNullOrWhiteSpace(content))
+                    return new List<SqlSuggestion>();
+
+                Debug.WriteLine(content);
+
+                var list = DeserializeSuggestionArray(content);
+
+                NormalizeContinuationSuggestions(list);
+
+                return list;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"NVIDIA suggestion parse failed: {ex}");
+
+                return new List<SqlSuggestion>();
+            }
+        }
+
         /// <summary>
         /// Models often emit a full SELECT ? even when asked for continuations; trim to the first JOIN / WHERE / etc.
         /// </summary>
@@ -183,65 +221,110 @@ namespace SSMS_AI_Buddy.Services.AI
             //var prompt = AI_Resource.Full_Ai_Prompt.Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
             string system = GetSystemPrompt(aIActionType);
 
-//             string system = @"You are a SQL JOIN autocomplete engine.
+            //             string system = @"You are a SQL JOIN autocomplete engine.
 
-//Return ONLY valid JSON.
+            //Return ONLY valid JSON.
 
-//OUTPUT FORMAT
-//[
-//  {""type"":""Join"",""suggestion"":""JOIN table t ON condition"",""description"":""short explanation""},
-//  {""type"":""Join"",""suggestion"":""LEFT JOIN table t ON condition"",""description"":""short explanation""},
-//  {""type"":""Join"",""suggestion"":""Right JOIN table t ON condition"",""description"":""short explanation""},
-//  {""type"":""Join"",""suggestion"":""Cross JOIN table t ON condition"",""description"":""short explanation""}
-//]
+            //OUTPUT FORMAT
+            //[
+            //  {""type"":""Join"",""suggestion"":""JOIN table t ON condition"",""description"":""short explanation""},
+            //  {""type"":""Join"",""suggestion"":""LEFT JOIN table t ON condition"",""description"":""short explanation""},
+            //  {""type"":""Join"",""suggestion"":""Right JOIN table t ON condition"",""description"":""short explanation""},
+            //  {""type"":""Join"",""suggestion"":""Cross JOIN table t ON condition"",""description"":""short explanation""}
+            //]
 
-//RULES
-//- Output MUST be a valid JSON array.
-//- Output MUST contain between 4 and 8 json array items.
-//- NEVER output fewer than 4 items.
-//- Suggestions MUST start with JOIN, INNER JOIN, LEFT JOIN, or CROSS JOIN.
-//- Only output JOIN fragments, never full SELECT statements.
-//- Do not rewrite the user query.
-//- Do not output explanations or markdown.
+            //RULES
+            //- Output MUST be a valid JSON array.
+            //- Output MUST contain between 4 and 8 json array items.
+            //- NEVER output fewer than 4 items.
+            //- Suggestions MUST start with JOIN, INNER JOIN, LEFT JOIN, or CROSS JOIN.
+            //- Only output JOIN fragments, never full SELECT statements.
+            //- Do not rewrite the user query.
+            //- Do not output explanations or markdown.
 
-//JOIN GENERATION
-//- Make a suggestion for every table relationship supplied in prompt.
-//- Use foreign key relationships from the schema.
-//- If multiple joins are possible, return suggestions for each.
-//- If fewer than 4 joins exist, create variants using JOIN, INNER JOIN, LEFT JOIN, CROSS JOIN.
-//- Reuse the same ON condition when only the join type differs.
+            //JOIN GENERATION
+            //- Make a suggestion for every table relationship supplied in prompt.
+            //- Use foreign key relationships from the schema.
+            //- If multiple joins are possible, return suggestions for each.
+            //- If fewer than 4 joins exist, create variants using JOIN, INNER JOIN, LEFT JOIN, CROSS JOIN.
+            //- Reuse the same ON condition when only the join type differs.
 
-//ALIAS RULE
-//- If the base table has an alias, use that alias ";
+            //ALIAS RULE
+            //- If the base table has an alias, use that alias ";
 
-        var request = new
+            //var request = new
+            //{
+            //    //model = "qwen2.5-coder:1.5b", // more accurate but slower
+            //    //model = "deepseek-coder:6.7b", // faster but less accurate
+            //    //model = _aiProperties.PromptLLMName,
+            //    model = "qwen/qwen3-coder-480b-a35b-instruct",
+            //    prompt = prompt,
+            //    system = system,
+            //    stream = false,
+            //    format = "json",
+
+            //    options = new
+            //    {
+            //        temperature = 0.1,
+            //        num_predict = 150, // token limit for suggestions - adjust as needed based on typical response length and model limits
+            //        stop = new[] { "]" } // stop runaway generation
+            //    }
+            //};
+
+            var request = new
             {
-                model = "qwen2.5-coder:1.5b", // more accurate but slower
-                //model = "deepseek-coder:6.7b", // faster but less accurate
-                //model = _aiProperties.PromptLLMName,
-                prompt = prompt,
-                system = system,
-                stream = false,
-                format= "json",
-                options = new
+                model = "qwen/qwen3-coder-480b-a35b-instruct",
+
+                messages = new[]
                 {
-                    temperature = 0.1,
-                    num_predict = 150, // token limit for suggestions - adjust as needed based on typical response length and model limits
-                     stop = new[] { "]" } // stop runaway generation
-                }
+
+                    new
+        {
+            role = "system",
+            content = system
+        },
+        new
+        {
+            role = "user",
+            content = prompt
+        }
+                },
+
+                temperature = 0.1,
+                top_p = 0.8,
+                max_tokens = 1000,
+                stream = false
             };
 
-            var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            //var response = await _http.PostAsync("/api/generate", content); // Ollama
-            var response = await Http.PostAsync(string.Empty, content);
+            var content = new StringContent(
+    JsonConvert.SerializeObject(request),
+    Encoding.UTF8,
+    "application/json");
+
+             var http = new HttpClient();
+
+            http.DefaultRequestHeaders.Authorization =
+    new AuthenticationHeaderValue("Bearer", "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");
+
+            // NVIDIA uses /chat/completions
+            var response = await http.PostAsync(
+    "https://integrate.api.nvidia.com/v1/chat/completions",
+    content);
+
+            //var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            //var response = await Http.PostAsync(string.Empty, content);
             response.EnsureSuccessStatusCode();
+
             var json = await response.Content.ReadAsStringAsync();
+
+            //var json = await response.Content.ReadAsStringAsync();
 
             Debug.WriteLine("=== Ollama raw JSON response ===");
             Debug.WriteLine(json);
             Debug.WriteLine("=== End of response ===");
 
-            return ParseSuggestionsFromOllamaHttpBody(json);
+            return ParseSuggestionsFromNvidiaHttpBody(json);
+            //return ParseSuggestionsFromOllamaHttpBody(json);
         }
     }
 

@@ -71,6 +71,7 @@
     <Compile Include="Models\AIHosterResponse.cs" />
     <Compile Include="Models\AIProperties.cs" />
     <Compile Include="Models\AppEnums.cs" />
+    <Compile Include="Models\OpenAiResponse.cs" />
     <Compile Include="Models\OllamaModels.cs" />
     <Compile Include="Models\SqlSuggestion.cs" />
     <Compile Include="Models\SqlCompletionContext.cs" />
