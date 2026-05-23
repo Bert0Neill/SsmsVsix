@@ -35,6 +35,7 @@ namespace SSMS_AI_Buddy.Components
             _fileService = new FileService();
             rtbResults.Document.Blocks.Clear();
             SetPlaceholderIfNeeded();
+            _richTextBoxParagraphGenerator = new RichTextBoxParagraphGenerator();
         }
 
         private void PromptWindowControl_Unloaded(object sender, RoutedEventArgs e)
