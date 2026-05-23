@@ -96,6 +96,7 @@
     <Compile Include="Services\AI\OllamaService.cs" />
     <Compile Include="Services\Connection\MonitorDbConnectionService.cs" />
     <Compile Include="Services\Converter\StringToVisibilityConverter.cs" />
+    <Compile Include="Services\Helper\NvidiaFreeAPI.cs" />
     <Compile Include="Services\Helper\MarkdownToFlowDocumentParser.cs" />
     <Compile Include="Services\Helper\FileService.cs" />
     <Compile Include="Services\Helper\LoggerService.cs" />

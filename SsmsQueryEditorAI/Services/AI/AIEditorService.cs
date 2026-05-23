@@ -11,15 +11,17 @@ using SSMS_AI_Buddy.Models;
 using SSMS_AI_Buddy.Resources;
 using SSMS_AI_Buddy.Services.AI;
 using SSMS_AI_Buddy.Services.Connection;
+using SSMS_AI_Buddy.Services.Helper;
 using SSMS_AI_Buddy.Services.SSMS;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 using static SSMS_AI_Buddy.Models.AppEnums;
-using System.Text.RegularExpressions;
 
 namespace SSMS_AI_Buddy.Services
 {
@@ -297,41 +299,59 @@ namespace SSMS_AI_Buddy.Services
 
         public void TriggerSqlSuggestions(string sql, AIActionType aIActionType)
         {
-            List<SqlSuggestion> suggestions = new List<SqlSuggestion>();
-
-            if (_wpfTextView == null || string.IsNullOrWhiteSpace(sql))
-                return;
-
-            if (SchemaReader.IsSystemDatabase(_connectionString))
+            try
             {
-                MessageBox.Show("You are connected to a system database. Please connect to a user database. Select from dropdown above SMO or run a SQL 'Use <DatabaseName>' statement, and try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                // Show hourglass / wait cursor
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                NvidiaFreeAPI.CallDeepSeekAsync(); // test performance of calling external API
+
+
+                List<SqlSuggestion> suggestions = new List<SqlSuggestion>();
+
+                if (_wpfTextView == null || string.IsNullOrWhiteSpace(sql))
+                    return;
+
+                if (SchemaReader.IsSystemDatabase(_connectionString))
+                {
+                    MessageBox.Show("You are connected to a system database. Please connect to a user database. Select from dropdown above SMO or run a SQL 'Use <DatabaseName>' statement, and try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                ThreadHelper.JoinableTaskFactory.Run(async () =>
+                {
+                    var schema = SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+                    var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
+                    var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
+                    var expanded = JoinGraphBuilder.Expand(tables, graph);
+                    var schemaJson = OllamaSchemaBuilder.BuildSlimSchemaRelationship(_databaseName, schema, expanded);
+
+                    if (aIActionType == AIActionType.RealTimeJoins)
+                    {
+                        suggestions = RealtimeJoinSuggestionService.BuildRealTimeJoinSuggestions(schemaJson, sql) ?? new List<SqlSuggestion>();
+                    }
+                    else
+                    {
+                        suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql, aIActionType) ?? new List<SqlSuggestion>();
+                    }
+                    //var suggestions = MockAIResponse();
+
+                    var view = _wpfTextView;
+                    view.VisualElement.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        ShowSqlSuggestions(view, suggestions);
+                    }));
+                });
+
             }
-
-            ThreadHelper.JoinableTaskFactory.Run(async () =>
+            finally
             {
-                var schema = SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
-                var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
-                var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
-                var expanded = JoinGraphBuilder.Expand(tables, graph);
-                var schemaJson = OllamaSchemaBuilder.BuildSlimSchemaRelationship(_databaseName, schema, expanded);
-
-                if (aIActionType == AIActionType.RealTimeJoins)
+                // Restore normal cursor
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    suggestions =  RealtimeJoinSuggestionService.BuildRealTimeJoinSuggestions(schemaJson, sql) ?? new List<SqlSuggestion>();
-                }
-                else
-                {
-                    suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql, aIActionType) ?? new List<SqlSuggestion>();
-                }
-                //var suggestions = MockAIResponse();
-
-                var view = _wpfTextView;
-                view.VisualElement.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    ShowSqlSuggestions(view, suggestions);
-                }));
-            });
+                    Mouse.OverrideCursor = null;
+                });
+            }
         }
 
         private List<SqlSuggestion> MockAIResponse()
