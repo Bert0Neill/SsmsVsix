@@ -302,6 +302,12 @@ namespace SSMS_AI_Buddy.Services
             if (_wpfTextView == null || string.IsNullOrWhiteSpace(sql))
                 return;
 
+            if (SchemaReader.IsSystemDatabase(_connectionString))
+            {
+                MessageBox.Show("You are connected to a system database. Please connect to a user database. Select from dropdown above SMO or run a SQL 'Use <DatabaseName>' statement, and try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
                 var schema = SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
