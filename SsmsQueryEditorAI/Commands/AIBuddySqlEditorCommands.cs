@@ -119,7 +119,7 @@ namespace SSMS_AI_Buddy.Commands
             if (string.IsNullOrWhiteSpace(highlightedSql))
                 return;
 
-            AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql, AIActionType.RealTimeJoins);
+            AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql, AIActionType.AIPerformance);
 
             //ShowStub(nameof(ExecuteSuggestSqlContinuation), "SQL Continuation AI...");
         }

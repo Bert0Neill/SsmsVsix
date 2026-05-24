@@ -213,6 +213,9 @@ namespace SSMS_AI_Buddy.Services.AI
                 case AIActionType.AIPrompt:
                     return _aiProperties.PerformancePrompt;
 
+                case AIActionType.AIPerformance:
+                    return _aiProperties.PerformancePrompt;
+
                 default:
                     throw new NotSupportedException(
                         string.Format("Unsupported AI action type: {0}", actionType));

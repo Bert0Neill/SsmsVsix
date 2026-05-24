@@ -96,7 +96,7 @@
 				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup2" />
 				<Icon guid="guidAIImages" id="bmpPicAIPrompt"/>
 				<Strings>
-					<ButtonText>Improve SQL Performance - AI</ButtonText>
+					<ButtonText>Suggest SQL Improvements- AI</ButtonText>
 				</Strings>
 			</Button>
 

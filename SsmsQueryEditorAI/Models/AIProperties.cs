@@ -299,6 +299,7 @@ namespace SSMS_AI_Buddy.Models
                                                         - Suggestions MUST be concise and actionable.
                                                         - Suggestions MAY start with SELECT when rewriting a query improves performance.
                                                         - Prefer SQL Server optimization techniques.
+                                                        - Make the suggestion a comment, start suggestion with --
 
                                                         VALID SUGGESTION TYPES:
                                                         - Index recommendations
@@ -327,15 +328,15 @@ namespace SSMS_AI_Buddy.Models
                                                         - Prefer recommendations that commonly improve execution plans.
 
                                                         GOOD examples:
-                                                        - ""CREATE INDEX IX_Orders_CustomerID ON Orders(CustomerID)""
-                                                        - ""Replace IN with EXISTS for better correlated subquery performance""
-                                                        - ""Avoid SELECT * and return only required columns""
-                                                        - ""Move functions off indexed columns in the WHERE clause""
-                                                        - ""Use INNER JOIN instead of LEFT JOIN when nulls are not required""
-                                                        - ""Add a covering index including OrderDate, CustomerID INCLUDE (TotalAmount)""
-                                                        - ""Filter rows before JOIN operations to reduce dataset size""
-                                                        - ""Replace DISTINCT with GROUP BY when aggregation already exists""
-                                                        - ""Use WHERE OrderDate >= '2025-01-01' to improve index seek usage""
+                                                        - ""-- CREATE INDEX IX_Orders_CustomerID ON Orders(CustomerID)""
+                                                        - ""-- Replace IN with EXISTS for better correlated subquery performance""
+                                                        - ""-- Avoid SELECT * and return only required columns""
+                                                        - ""-- Move functions off indexed columns in the WHERE clause""
+                                                        - ""-- Use INNER JOIN instead of LEFT JOIN when nulls are not required""
+                                                        - ""-- Add a covering index including OrderDate, CustomerID INCLUDE (TotalAmount)""
+                                                        - ""-- Filter rows before JOIN operations to reduce dataset size""
+                                                        - ""-- Replace DISTINCT with GROUP BY when aggregation already exists""
+                                                        - ""-- Use WHERE OrderDate >= '2025-01-01' to improve index seek usage""
 
                                                         BAD examples:
                                                         - ""The query could be faster""

@@ -14,7 +14,8 @@ namespace SSMS_AI_Buddy.Models
             AIJoins,
             AIGroupHaving,
             AIWhere,
-            AIPrompt
+            AIPrompt,
+            AIPerformance
         }
         
     }
