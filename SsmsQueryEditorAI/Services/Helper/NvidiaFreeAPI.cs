@@ -21,7 +21,8 @@ namespace SSMS_AI_Buddy.Services.Helper
 
             var requestBody = new
             {
-                model = "deepseek-ai/deepseek-r1",
+                //model = "deepseek-ai/deepseek-r1",
+                model = "qwen/qwen3-coder-480b-a35b-instruct",
                 messages = new[]
                 {
                 new

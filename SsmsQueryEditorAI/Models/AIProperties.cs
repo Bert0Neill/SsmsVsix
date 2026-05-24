@@ -3,22 +3,33 @@ using System.ComponentModel;
 
 namespace SSMS_AI_Buddy.Models
 {
+    //public static class AIProviderOptions
+    //{
+    //    public const string NvidiaRemote = "Nvidia (Remote)";
+    //    public const string OllamaLocal = "Ollama (Locally)";
+
+    //    public static readonly string[] All = { NvidiaRemote, OllamaLocal };
+    //}
+
     public class AIProperties
     {
         [Category("AI Provider")]
-        [DisplayName("Name of AI provider")]
-        [Description("For your reference, the name of the prompt provider.")]
-        public string AIProvider { get; set; } = "DeepSeek";
+        [DisplayName("AI Hoster")]
+        [Description("Select the hoster you wish to call with your prompt.")]
+        [TypeConverter(typeof(AIProviderTypeConverter))]
+        public string AIProvider { get; set; } = AIProviderOptions.OllamaLocal;
 
         [Category("AI Provider")]
         [DisplayName("Prompt API URL")]
         [Description("The Prompt URL that will get called with your prompt.")]
-        public string AIPromptURL { get; set; } = "http://localhost:11434/api/generate";
+        //public string AIPromptURL { get; set; } = "http://localhost:11434/api/generate"; // Ollama local default
+        public string AIPromptURL { get; set; } = "https://integrate.api.nvidia.com/v1/chat/completions"; // Nvidia remote default
 
         [Category("AI Provider")]
         [DisplayName("API Key")]
         [Description("The key may not be required for internal server prompts.")]
-        public string AIPromptKey { get; set; }
+        //public string AIPromptKey { get; set; } = string.Empty;
+        public string AIPromptKey { get; set; } = "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";
 
         [Category("AI Provider")]
         [DisplayName("LLM Name")]
