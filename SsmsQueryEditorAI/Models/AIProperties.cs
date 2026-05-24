@@ -51,6 +51,12 @@ namespace SSMS_AI_Buddy.Models
         [Description("Maximum number of text tokens the AI can generate in the response. Higher values allow longer answers but may increase response time and API usage.")]
         public int Token { get; set; } = 1000;
 
+        [Category("AI Provider")]
+        [DisplayName("Randomness")]
+        [Description("Limits the responses to an upper percentage accuracy. Used with NVida.")]
+        public double Randomness { get; set; } = 0.8; // defaults to 80%
+
+
         [Category("Coding")]
         [DisplayName("SSMS Version")]
         [Description("What version of SSMS are you requesting answers from AI prompt to execute on")]

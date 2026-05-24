@@ -211,7 +211,7 @@ namespace SSMS_AI_Buddy.Commands
                 _aiProperties = _fileService.LoadFromJson<AIProperties>(settingsFilePath);
             }
 
-            OllamaSqlSuggestionService._aiProperties = _aiProperties;
+            AIHosterSqlSuggestionService._aiProperties = _aiProperties;
         }
 
     }

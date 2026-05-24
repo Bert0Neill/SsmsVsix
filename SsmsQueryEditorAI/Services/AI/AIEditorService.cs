@@ -332,7 +332,7 @@ namespace SSMS_AI_Buddy.Services
                     }
                     else
                     {
-                        suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql, aIActionType) ?? new List<SqlSuggestion>();
+                        suggestions = await AIHosterSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql, aIActionType) ?? new List<SqlSuggestion>();
                     }
                     //var suggestions = MockAIResponse();
 

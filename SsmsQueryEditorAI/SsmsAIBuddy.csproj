@@ -96,7 +96,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Services\AI\OllamaService.cs" />
+    <Compile Include="Services\AI\AIHosterSqlSuggestionService.cs" />
     <Compile Include="Services\Connection\MonitorDbConnectionService.cs" />
     <Compile Include="Services\Converter\StringToVisibilityConverter.cs" />
     <Compile Include="Services\Helper\NvidiaFreeAPI.cs" />

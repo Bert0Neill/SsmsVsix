@@ -19,7 +19,7 @@ using static System.Net.WebRequestMethods;
 
 namespace SSMS_AI_Buddy.Services.AI
 {
-    public static class OllamaSqlSuggestionService
+    public static class AIHosterSqlSuggestionService
     {
         private static HttpClient _http;
 
@@ -258,32 +258,40 @@ namespace SSMS_AI_Buddy.Services.AI
             //- If the base table has an alias, use that alias ";
             #endregion
 
-            object request;
+            HttpResponseMessage response = null;
+            if (_aiProperties.AIProvider == AIProviderOptions.NvidiaRemote)
+            {
+                // NVidia settings
 
-            // NVidia settings
-            request = BuildNVidiaRequest(prompt, system);
-            var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            //var http = new HttpClient();
-            //http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "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");
-            //var response = await Http.PostAsync("https://integrate.api.nvidia.com/v1/chat/completions", content);
-            var response = await Http.PostAsync(_aiProperties.AIPromptURL, content);
+                //var http = new HttpClient();
+                //http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "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");
+                //var response = await Http.PostAsync("https://integrate.api.nvidia.com/v1/chat/completions", content);
 
+                var request = BuildNVidiaRequest(prompt, system);
+                var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+                response = await Http.PostAsync(_aiProperties.AIPromptURL, content);
+                response.EnsureSuccessStatusCode();
+                var json = await response.Content.ReadAsStringAsync();
+                return ParseSuggestionsFromNvidiaHttpBody(json); // Nvidia
+            }
+            else if (_aiProperties.AIProvider == AIProviderOptions.OllamaLocal)
+            {
+                // Ollama settings
+                var request = BuildOllamaRequest(prompt, system);
+                var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+                response = await Http.PostAsync(string.Empty, content); // does this call Ollama's /api/generate by default?
+                response.EnsureSuccessStatusCode();
+                var json = await response.Content.ReadAsStringAsync();
+                return ParseSuggestionsFromOllamaHttpBody(json); // Ollama
+            }
 
-            // Ollama settings
-            //request = BuildOllamaRequest(prompt, system);
-            //var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            //var response = await Http.PostAsync(string.Empty, content);
-            response.EnsureSuccessStatusCode();
+            return null; // should never be reached
 
-            var json = await response.Content.ReadAsStringAsync();
+            //Debug.WriteLine($"=== {_aiProperties.AIProvider.ToString()} raw JSON response ===");
+            //Debug.WriteLine(json);
+            //Debug.WriteLine("=== End of response ===");
 
-            //var json = await response.Content.ReadAsStringAsync();
-
-            Debug.WriteLine("=== Ollama raw JSON response ===");
-            Debug.WriteLine(json);
-            Debug.WriteLine("=== End of response ===");
-
-            return ParseSuggestionsFromNvidiaHttpBody(json); // Nvidia
+            //return ParseSuggestionsFromNvidiaHttpBody(json); // Nvidia
             //return ParseSuggestionsFromOllamaHttpBody(json); // Ollama
         }
 
@@ -294,16 +302,16 @@ namespace SSMS_AI_Buddy.Services.AI
                 //model = "qwen2.5-coder:1.5b", // more accurate but slower
                 //model = "deepseek-coder:6.7b", // faster but less accurate
                 //model = _aiProperties.PromptLLMName,
-                model = "qwen/qwen3-coder-480b-a35b-instruct",
+                model = _aiProperties.PromptLLMName, // "qwen/qwen3-coder-480b-a35b-instruct",
                 prompt = prompt,
                 system = system,
-                stream = false,
+                stream = _aiProperties.IsPromptResponseStreaming,
                 format = "json",
 
                 options = new
                 {
-                    temperature = 0.1,
-                    num_predict = 150, // token limit for suggestions - adjust as needed based on typical response length and model limits
+                    temperature = _aiProperties.Temperature, // 0.1,
+                    num_predict = _aiProperties.Token, // 150, // token limit for suggestions - adjust as needed based on typical response length and model limits
                     stop = new[] { "]" } // stop runaway generation
                 }
             };
@@ -314,7 +322,7 @@ namespace SSMS_AI_Buddy.Services.AI
         {
             return new
             {
-                model = "qwen/qwen3-coder-480b-a35b-instruct",
+                model = _aiProperties.PromptLLMName, // "qwen/qwen3-coder-480b-a35b-instruct",
 
                 messages = new[]
                 {
@@ -330,10 +338,10 @@ namespace SSMS_AI_Buddy.Services.AI
                     }
                 },
 
-                temperature = 0.1,
-                top_p = 0.8,
-                max_tokens = 1000,
-                stream = false
+                temperature = _aiProperties.Temperature, // 0.1,
+                top_p = _aiProperties.Randomness, // 0.8,
+                max_tokens = _aiProperties.Token, // 1000,
+                stream = _aiProperties.IsPromptResponseStreaming //false
             };
         }
     }
