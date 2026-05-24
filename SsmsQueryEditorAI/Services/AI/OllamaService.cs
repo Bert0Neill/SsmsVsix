@@ -37,7 +37,12 @@ namespace SSMS_AI_Buddy.Services.AI
                         BaseAddress = new Uri(_aiProperties.AIPromptURL)
                     };
 
-                    
+                    // NVidia API key setting (remote call)
+                    if (_aiProperties.AIProvider == AIProviderOptions.NvidiaRemote)
+                    {
+                        _http.DefaultRequestHeaders.Authorization =
+                            new AuthenticationHeaderValue("Bearer", "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");
+                    }
                 }
 
                 return _http;
@@ -218,9 +223,9 @@ namespace SSMS_AI_Buddy.Services.AI
         {
             Debug.WriteLine($"Prompt Schema:{schemaJson} - {currentSql}");
             var prompt = AI_Resource.AI_Prompt.Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
-            //var prompt = AI_Resource.Full_Ai_Prompt.Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
             string system = GetSystemPrompt(aIActionType);
 
+            #region Testng
             //             string system = @"You are a SQL JOIN autocomplete engine.
 
             //Return ONLY valid JSON.
@@ -251,66 +256,21 @@ namespace SSMS_AI_Buddy.Services.AI
 
             //ALIAS RULE
             //- If the base table has an alias, use that alias ";
+            #endregion
 
-            //var request = new
-            //{
-            //    //model = "qwen2.5-coder:1.5b", // more accurate but slower
-            //    //model = "deepseek-coder:6.7b", // faster but less accurate
-            //    //model = _aiProperties.PromptLLMName,
-            //    model = "qwen/qwen3-coder-480b-a35b-instruct",
-            //    prompt = prompt,
-            //    system = system,
-            //    stream = false,
-            //    format = "json",
+            object request;
 
-            //    options = new
-            //    {
-            //        temperature = 0.1,
-            //        num_predict = 150, // token limit for suggestions - adjust as needed based on typical response length and model limits
-            //        stop = new[] { "]" } // stop runaway generation
-            //    }
-            //};
+            // NVidia settings
+            request = BuildNVidiaRequest(prompt, system);
+            var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            //var http = new HttpClient();
+            //http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "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");
+            //var response = await Http.PostAsync("https://integrate.api.nvidia.com/v1/chat/completions", content);
+            var response = await Http.PostAsync(_aiProperties.AIPromptURL, content);
 
-            var request = new
-            {
-                model = "qwen/qwen3-coder-480b-a35b-instruct",
 
-                messages = new[]
-                {
-
-                    new
-        {
-            role = "system",
-            content = system
-        },
-        new
-        {
-            role = "user",
-            content = prompt
-        }
-                },
-
-                temperature = 0.1,
-                top_p = 0.8,
-                max_tokens = 1000,
-                stream = false
-            };
-
-            var content = new StringContent(
-    JsonConvert.SerializeObject(request),
-    Encoding.UTF8,
-    "application/json");
-
-             var http = new HttpClient();
-
-            http.DefaultRequestHeaders.Authorization =
-    new AuthenticationHeaderValue("Bearer", "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");
-
-            // NVIDIA uses /chat/completions
-            var response = await http.PostAsync(
-    "https://integrate.api.nvidia.com/v1/chat/completions",
-    content);
-
+            // Ollama settings
+            //request = BuildOllamaRequest(prompt, system);
             //var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
             //var response = await Http.PostAsync(string.Empty, content);
             response.EnsureSuccessStatusCode();
@@ -323,8 +283,58 @@ namespace SSMS_AI_Buddy.Services.AI
             Debug.WriteLine(json);
             Debug.WriteLine("=== End of response ===");
 
-            return ParseSuggestionsFromNvidiaHttpBody(json);
-            //return ParseSuggestionsFromOllamaHttpBody(json);
+            return ParseSuggestionsFromNvidiaHttpBody(json); // Nvidia
+            //return ParseSuggestionsFromOllamaHttpBody(json); // Ollama
+        }
+
+        private static Object BuildOllamaRequest(string prompt, string system)
+        {
+            var request = new
+            {
+                //model = "qwen2.5-coder:1.5b", // more accurate but slower
+                //model = "deepseek-coder:6.7b", // faster but less accurate
+                //model = _aiProperties.PromptLLMName,
+                model = "qwen/qwen3-coder-480b-a35b-instruct",
+                prompt = prompt,
+                system = system,
+                stream = false,
+                format = "json",
+
+                options = new
+                {
+                    temperature = 0.1,
+                    num_predict = 150, // token limit for suggestions - adjust as needed based on typical response length and model limits
+                    stop = new[] { "]" } // stop runaway generation
+                }
+            };
+            return request;
+        }
+
+        private static Object BuildNVidiaRequest(string prompt, string system)
+        {
+            return new
+            {
+                model = "qwen/qwen3-coder-480b-a35b-instruct",
+
+                messages = new[]
+                {
+                    new
+                    {
+                        role = "system",
+                        content = system
+                    },
+                    new
+                    {
+                        role = "user",
+                        content = prompt
+                    }
+                },
+
+                temperature = 0.1,
+                top_p = 0.8,
+                max_tokens = 1000,
+                stream = false
+            };
         }
     }
 
