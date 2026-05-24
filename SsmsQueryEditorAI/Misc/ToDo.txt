@@ -1,4 +1,4 @@
-﻿*) Improve performance suggestion - change prompt
+﻿
 *) Altar prompt for group\having to return group and having in same statement
 *) Test in 19+ SSMS
 *) Write Markdown document & Word docvument & Medium Blog

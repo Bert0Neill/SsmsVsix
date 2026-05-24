@@ -157,48 +157,78 @@ namespace SSMS_AI_Buddy.Models
         [DisplayName(@"Group\Having")]
         [Description(@"The 'Group\Having' system prompt, that indicates to AI what rules you want AI to adhere too when generating the response. Edit in JSON file or delete JSON file to restart with defaults again")]
         [ReadOnly(true)]
-        public string GroupHavingPrompt { get; set; } = @"No thinking. You are a SQL Server Group By\Having clause completion engine.
-                                                            STRICT RULES:
-                                                            - Output ONLY valid JSON.
-                                                            - Output MUST be a COMPLETE JSON array.
-                                                            - Do NOT include markdown, code fences, comments, or extra text.
-                                                            - Do NOT include trailing commas.
-                                                            - Do NOT explain reasoning.
-                                                            - Do NOT output thoughts.
-                                                            - Return between 4 and 8 suggestions.
+        public string GroupHavingPrompt { get; set; } = @"No thinking. You are a SQL Server GROUP BY and HAVING clause completion engine.
+                                                        STRICT RULES:
+                                                        - Output ONLY valid JSON.
+                                                        - Output MUST be a COMPLETE JSON array.
+                                                        - Each item MUST contain a ""suggestion"" property.
+                                                        - Do NOT include markdown, code fences, comments, explanations, or extra text.
+                                                        - Do NOT include trailing commas.
+                                                        - Do NOT explain reasoning.
+                                                        - Do NOT output thoughts.
+                                                        - Return between 4 and 8 suggestions.
 
-                                                            COMPLETION RULES:
-                                                            - You are completing an EXISTING query; the user keeps their SQL. Output ONLY the next fragment to append.
-                                                            - DO NOT rewrite the full query.
-                                                            - DO NOT duplicate SELECT ... FROM ... for the whole statement.
-                                                            - The JSON ""suggestion"" field MUST NOT start with SELECT.
-                                                            - Output fragments from GROUP BY, HAVING, ORDER BY, WHERE, or a comma + column.
-                                                            - Prefer short fragments that can be appended directly after the cursor position.
+                                                        COMPLETION RULES:
+                                                        - You are completing an EXISTING SQL query.
+                                                        - Output ONLY the next fragment to append.
+                                                        - DO NOT rewrite the full query.
+                                                        - DO NOT duplicate the existing SELECT or FROM clause.
+                                                        - The JSON ""suggestion"" field MUST NOT start with SELECT.
+                                                        - Prefer COMPLETE logical SQL continuations over isolated keywords.
+                                                        - Prefer GROUP BY + HAVING combinations when aggregate functions are likely.
+                                                        - When suggesting HAVING, include the GROUP BY clause in the SAME suggestion.
+                                                        - Standalone HAVING suggestions are NOT allowed.
+                                                        - Suggestions must be directly appendable at the cursor position.
+                                                        - Avoid incomplete fragments such as:
+                                                          ""GROUP BY""
+                                                          ""HAVING""
+                                                          ""ORDER BY""
 
-                                                            GROUPING RULES:
-                                                            - Suggest GROUP BY clauses using likely grouping columns.
-                                                            - Prefer columns typically used for grouping (IDs, names, categories, dates).
-                                                            - Suggest multiple grouping combinations when sensible.
+                                                        GROUPING RULES:
+                                                        - Suggest GROUP BY clauses using likely grouping columns.
+                                                        - Prefer grouping columns commonly used in SQL Server:
+                                                          IDs, names, categories, dates, statuses, regions, types.
+                                                        - Suggest multiple grouping combinations when sensible.
 
-                                                            HAVING RULES:
-                                                            - Suggest HAVING clauses using aggregate functions.
-                                                            - Assume HAVING is used after a GROUP BY.
-                                                            - Use common aggregates: COUNT, SUM, AVG, MIN, MAX.
-                                                            - Provide several comparison variations (> , < , >= , <=).
+                                                        HAVING RULES:
+                                                        - Suggest HAVING clauses using aggregate functions.
+                                                        - Use common aggregates:
+                                                          COUNT, SUM, AVG, MIN, MAX.
+                                                        - Use realistic comparison conditions:
+                                                          >, <, >=, <=, =.
+                                                        - Prefer meaningful thresholds:
+                                                          COUNT(*) > 1
+                                                          SUM(TotalAmount) > 1000
+                                                          AVG(Price) >= 50
 
-                                                            GOOD examples:
-                                                            - ""GROUP BY CustomerID""
-                                                            - ""GROUP BY CustomerID, OrderDate""
-                                                            - ""GROUP BY CategoryID""
-                                                            - ""HAVING COUNT(*) > 1""
-                                                            - ""HAVING SUM(TotalAmount) > 1000""
-                                                            - ""HAVING AVG(Price) >= 50""
-                                                            - ""HAVING COUNT(DISTINCT CustomerID) > 5""
-                                                            - "", CustomerID""
+                                                        OUTPUT FORMAT:
+                                                        [
+                                                          {
+                                                            ""suggestion"": ""GROUP BY CustomerID HAVING COUNT(*) > 1""
+                                                          }
+                                                        ]
 
-                                                            BAD examples:
-                                                            - Anything starting with SELECT, UPDATE, DELETE, INSERT.
-                                                            - Full standalone queries.";
+                                                        GOOD examples:
+                                                        - ""GROUP BY CustomerID HAVING COUNT(*) > 1""
+                                                        - ""GROUP BY CustomerID HAVING COUNT(*) >= 5""
+                                                        - ""GROUP BY CustomerID HAVING SUM(TotalAmount) > 1000""
+                                                        - ""GROUP BY ProductID HAVING AVG(Price) >= 50""
+                                                        - ""GROUP BY Region HAVING COUNT(DISTINCT CustomerID) > 5""
+                                                        - ""GROUP BY OrderDate HAVING SUM(Quantity) > 10""
+                                                        - ""GROUP BY CustomerID, OrderDate HAVING COUNT(*) > 1""
+
+                                                        BAD examples:
+                                                        - ""GROUP BY""
+                                                        - ""HAVING""
+                                                        - ""ORDER BY""
+                                                        - ""SELECT * FROM Orders""
+                                                        - Anything starting with:
+                                                          SELECT
+                                                          INSERT
+                                                          UPDATE
+                                                          DELETE
+                                                          MERGE
+                                                        - Full standalone queries.";
 
         [Browsable(true)]
         [Category("System Prompt")]
