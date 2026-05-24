@@ -41,6 +41,16 @@ namespace SSMS_AI_Buddy.Models
         [Description("Do you want to stream the prompt response in real-time.")]
         public bool IsPromptResponseStreaming { get; set; } = false;
 
+        [Category("AI Provider")]
+        [DisplayName("Temperature")]
+        [Description("Controls the randomness of the AI's responses.")]
+        public double Temperature { get; set; } = 0.5; // default value for creativity in AI response, can be adjusted by user
+
+        [Category("AI Provider")]
+        [DisplayName("Max Tokens")]
+        [Description("Maximum number of text tokens the AI can generate in the response. Higher values allow longer answers but may increase response time and API usage.")]
+        public int Token { get; set; } = 1000;
+
         [Category("Coding")]
         [DisplayName("SSMS Version")]
         [Description("What version of SSMS are you requesting answers from AI prompt to execute on")]
