@@ -135,8 +135,6 @@ namespace SSMS_AI_Buddy.Commands
                 return;
 
             AIEditorService.ActiveService?.TriggerSqlSuggestions(highlightedSql, AIActionType.AIWhere);
-
-            //ShowStub(nameof(ExecuteWhereClauseAi), "SQL Where Clause AI...");
         }
 
         private static void ExecuteDisplayPrompt(object sender, EventArgs e)

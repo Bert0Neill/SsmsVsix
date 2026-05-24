@@ -1,4 +1,5 @@
 ﻿1) Suggest Having, change the table and suggest Having again -> throws an error
+2) Where prompt - pass tales schema
 
 *) Altar prompt for group\having to return group and having in same statement
 *) Test in 19+ SSMS

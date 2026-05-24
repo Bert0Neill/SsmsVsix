@@ -16,6 +16,7 @@ using SSMS_AI_Buddy.Services.SSMS;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -330,10 +331,19 @@ namespace SSMS_AI_Buddy.Services
                     {
                         suggestions = RealtimeJoinSuggestionService.BuildRealTimeJoinSuggestions(schemaJson, sql) ?? new List<SqlSuggestion>();
                     }
+                    else if (aIActionType == AIActionType.AIWhere)
+                    {
+                        // filter to only the tables in sql statement
+                        var filteredSchema = FilterTables(schema, tables);
+
+                        string json = JsonConvert.SerializeObject(filteredSchema, Formatting.Indented); // only pass table(s) schema
+                        suggestions = await AIHosterSqlSuggestionService.GetSqlSuggestionsAsync(json, sql, aIActionType) ?? new List<SqlSuggestion>();
+                    }
                     else
                     {
                         suggestions = await AIHosterSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql, aIActionType) ?? new List<SqlSuggestion>();
                     }
+
                     //var suggestions = MockAIResponse();
 
                     var view = _wpfTextView;
@@ -352,6 +362,34 @@ namespace SSMS_AI_Buddy.Services
                     Mouse.OverrideCursor = null;
                 });
             }
+        }
+
+        public static CachedSchema FilterTables(CachedSchema schema, HashSet<string> allowedTables)
+        {
+            return new CachedSchema
+            {
+                Tables = schema.Tables
+                    .Where(t => allowedTables.Contains($"{t.Schema}.{t.Name}"))
+                    .ToList(),
+
+                Columns = schema.Columns
+                    .Where(c => allowedTables.Contains($"{c.Schema}.{c.TableName}"))
+                    .ToList(),
+
+                PrimaryKeys = schema.PrimaryKeys
+                    .Where(pk => allowedTables.Contains($"{pk.Schema}.{pk.Table}"))
+                    .ToList(),
+
+                ForeignKeys = schema.ForeignKeys
+                    .Where(fk =>
+                        allowedTables.Contains($"{fk.Schema}.{fk.Table}") &&
+                        allowedTables.Contains($"{fk.ReferencedSchema}.{fk.ReferencedTable}"))
+                    .ToList(),
+
+                Indexes = schema.Indexes
+                    .Where(i => allowedTables.Contains($"{i.Schema}.{i.Table}"))
+                    .ToList()
+            };
         }
 
         private List<SqlSuggestion> MockAIResponse()
