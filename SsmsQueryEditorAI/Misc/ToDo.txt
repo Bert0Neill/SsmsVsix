@@ -1,9 +1,4 @@
-﻿1) Improve performance suggestion
-2) Altar prompt for group\having to return group and having in same statement
-
-*) Build up System prompt based on menu action type
-*) Alter each AI Property System prompt to reflect ask (Join, Where, Group, Continuation)
-*) Build a real time parser based on SQL highlighed to provide a list of joins (based on last table first)
-*) Get active database, when it changes (dropdown or from Editor or from USE statement)
+﻿*) Improve performance suggestion - change prompt
+*) Altar prompt for group\having to return group and having in same statement
 *) Test in 19+ SSMS
 *) Write Markdown document & Word docvument & Medium Blog

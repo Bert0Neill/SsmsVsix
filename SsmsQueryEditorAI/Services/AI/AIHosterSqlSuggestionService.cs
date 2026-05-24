@@ -211,7 +211,7 @@ namespace SSMS_AI_Buddy.Services.AI
                     return _aiProperties.WherePrompt;
 
                 case AIActionType.AIPrompt:
-                    return _aiProperties.ContinuationPrompt;
+                    return _aiProperties.PerformancePrompt;
 
                 default:
                     throw new NotSupportedException(

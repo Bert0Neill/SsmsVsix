@@ -218,7 +218,7 @@ namespace SSMS_AI_Buddy.Models
 
                                                     RULES
                                                     - Output MUST be a valid JSON array.
-                                                    - Output MUST contain between 4 and 8 json array items.
+                                                    - Output MUST contain between 4 and 10 json array items.
                                                     - NEVER output fewer than 4 items.
                                                     - Suggestions MUST start with JOIN, INNER JOIN, LEFT JOIN, or CROSS JOIN.
                                                     - Only output JOIN fragments, never full SELECT statements.
@@ -274,79 +274,76 @@ namespace SSMS_AI_Buddy.Models
 
         [Browsable(true)]
         [Category("System Prompt")]
-        [DisplayName(@"Continuation")]
-        [Description("The 'Continuation' system prompt, that indicates to AI what rules you want AI to adhere too when generating the response. Edit in JSON file or delete JSON file to restart with defaults again")]
+        [DisplayName(@"Performance")]
+        [Description("The 'Performance' system prompt, that indicates to AI what rules you want AI to adhere too when generating the response. Edit in JSON file or delete JSON file to restart with defaults again")]
         [ReadOnly(true)]
-        public string ContinuationPrompt { get; set; } = @"You are a backend SQL autocomplete engine.
-                                                            STRICT RULES:
-                                                            - Output ONLY valid JSON.
-                                                            - Output MUST be a COMPLETE JSON array.
-                                                            - Each item MUST contain a ""suggestion"" property.
-                                                            - Do NOT include markdown, code fences, comments, or explanations.
-                                                            - Do NOT include trailing commas.
-                                                            - Do NOT output reasoning or thoughts.
-                                                            - Return between 4 and 8 suggestions.
+        public string PerformancePrompt { get; set; } = @"STRICT RULES:
+                                                        - Output ONLY valid JSON.
+                                                        - Output MUST be a COMPLETE JSON array.
+                                                        - Each item MUST contain a ""suggestion"" property.
+                                                        - Do NOT include markdown, code fences, comments, or explanations.
+                                                        - Do NOT include trailing commas.
+                                                        - Do NOT output reasoning or thoughts.
+                                                        - Return between 4 and 8 suggestions.
 
-                                                            JSON FORMAT:
-                                                            [
-                                                              { ""suggestion"": ""SQL fragment"" }
-                                                            ]
+                                                        JSON FORMAT:
+                                                        [
+                                                          { ""suggestion"": ""optimization recommendation"" }
+                                                        ]
 
-                                                            COMPLETION RULES:
-                                                            - The user already has a SQL query.
-                                                            - You are ONLY generating the next fragment to append at the cursor.
-                                                            - NEVER rewrite the full query.
-                                                            - NEVER repeat SELECT ... FROM.
-                                                            - The ""suggestion"" value MUST NOT start with SELECT, INSERT, UPDATE, DELETE, or MERGE.
-                                                            - Suggestions must be short SQL fragments.
+                                                        PERFORMANCE OPTIMIZATION RULES:
+                                                        - The user already has a SQL query.
+                                                        - You are ONLY generating SQL performance improvements.
+                                                        - Focus on improving execution speed, reducing IO, lowering CPU usage, and improving index usage.
+                                                        - Suggestions may rewrite parts of the query for performance purposes.
+                                                        - Suggestions MUST be concise and actionable.
+                                                        - Suggestions MAY start with SELECT when rewriting a query improves performance.
+                                                        - Prefer SQL Server optimization techniques.
 
-                                                            VALID SUGGESTION TYPES:
-                                                            - JOIN clauses
-                                                            - WHERE conditions
-                                                            - GROUP BY clauses
-                                                            - HAVING conditions
-                                                            - ORDER BY clauses
-                                                            - additional column selections starting with a comma
+                                                        VALID SUGGESTION TYPES:
+                                                        - Index recommendations
+                                                        - Query rewrites
+                                                        - EXISTS instead of IN
+                                                        - JOIN optimization
+                                                        - SARGable WHERE conditions
+                                                        - Reducing SELECT *
+                                                        - Covering indexes
+                                                        - Filtered indexes
+                                                        - Removing unnecessary DISTINCT
+                                                        - Replacing subqueries with joins
+                                                        - Using TOP when appropriate
+                                                        - Predicate pushdown improvements
+                                                        - Avoiding functions on indexed columns
+                                                        - Partition filtering
+                                                        - Temp table or CTE optimization
+                                                        - Aggregation optimization
 
-                                                            SQL CLAUSE PRIORITY:
-                                                            Prefer suggestions in this logical SQL order when applicable:
-                                                            1. JOIN
-                                                            2. WHERE
-                                                            3. GROUP BY
-                                                            4. HAVING
-                                                            5. ORDER BY
+                                                        SUGGESTION QUALITY:
+                                                        - Prefer realistic SQL Server syntax.
+                                                        - Prefer short but useful optimization recommendations.
+                                                        - Avoid duplicate suggestions.
+                                                        - Avoid generic advice like ""improve indexes"".
+                                                        - Suggestions should be directly applicable to the provided query.
+                                                        - Prefer recommendations that commonly improve execution plans.
 
-                                                            JOIN RULES:
-                                                            - When joins apply, include multiple join variants:
-                                                              INNER JOIN
-                                                              LEFT JOIN
-                                                              RIGHT JOIN (when sensible)
-                                                              FULL OUTER JOIN (when sensible)
-                                                            - Use the same alias and ON condition when only the join type changes.
-                                                            - Suggest joins only when they logically extend the existing tables.
-                                                            - CROSS JOIN only when a cross product makes sense.
+                                                        GOOD examples:
+                                                        - ""CREATE INDEX IX_Orders_CustomerID ON Orders(CustomerID)""
+                                                        - ""Replace IN with EXISTS for better correlated subquery performance""
+                                                        - ""Avoid SELECT * and return only required columns""
+                                                        - ""Move functions off indexed columns in the WHERE clause""
+                                                        - ""Use INNER JOIN instead of LEFT JOIN when nulls are not required""
+                                                        - ""Add a covering index including OrderDate, CustomerID INCLUDE (TotalAmount)""
+                                                        - ""Filter rows before JOIN operations to reduce dataset size""
+                                                        - ""Replace DISTINCT with GROUP BY when aggregation already exists""
+                                                        - ""Use WHERE OrderDate >= '2025-01-01' to improve index seek usage""
 
-                                                            SUGGESTION QUALITY:
-                                                            - Prefer realistic SQL Server style syntax.
-                                                            - Prefer short fragments that can be appended directly.
-                                                            - Avoid duplicate suggestions.
-                                                            - Avoid repeating tables already joined.
-
-                                                            GOOD examples:
-                                                            - ""INNER JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
-                                                            - ""LEFT JOIN SalesLT.CustomerAddress AS ca ON a.AddressID = ca.AddressID""
-                                                            - ""WHERE a.City = N'London'""
-                                                            - ""WHERE a.ModifiedDate >= '2026-01-01'""
-                                                            - ""GROUP BY a.CustomerID""
-                                                            - ""HAVING COUNT(*) > 1""
-                                                            - ""ORDER BY a.CustomerID""
-                                                            - "", PostalCode""
-
-                                                            BAD examples:
-                                                            - ""SELECT * FROM ...""
-                                                            - ""UPDATE ...""
-                                                            - ""DELETE ...""
-                                                            - full standalone queries.""";
+                                                        BAD examples:
+                                                        - ""The query could be faster""
+                                                        - ""Maybe add indexes""
+                                                        - ""Use better SQL""
+                                                        - Long explanations
+                                                        - Markdown output
+                                                        - Full essays";
 
     }
 }
