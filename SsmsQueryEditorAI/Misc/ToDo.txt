@@ -1,5 +1,6 @@
-﻿1) Suggest Having, change the table and suggest Having again -> throws an error
-
+﻿*) Popup dialog not sending prompt - bad request (most likely to Ollama)
+*) Suggest Having, change the table and suggest Having again -> throws an error
+*) Test with complex queries
 
 
 *) Test in 19+ SSMS
