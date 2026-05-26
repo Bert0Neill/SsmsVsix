@@ -1,2 +1,10 @@
-﻿deepseek-r1:1.5b // Ollama | qwen/qwen3-coder-480b-a35b-instruct // NVidia
-https://integrate.api.nvidia.com/v1/chat/completions // Nvidia | http://localhost:11434/api/generate // Ollama local default
+﻿deepseek-r1:1.5b
+qwen2-math:1.5b
+http://localhost:11434/api/generate
+
+
+// Nvidia 
+https://integrate.api.nvidia.com/v1/chat/completions
+qwen/qwen3-coder-480b-a35b-instruct
+minimaxai/minimax-m2.7
+openai/gpt-oss-120b
