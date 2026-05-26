@@ -26,17 +26,13 @@ namespace SSMS_AI_Buddy.Components
     {
         private readonly string _placeholderTextPrompt = "Enter AI prompt...";
         private AIProperties _aiProperties;
-        private readonly FileService _fileService;
         private readonly RichTextBoxParagraphGenerator _richTextBoxParagraphGenerator;
-        private bool _isImagesAttached = false;
-        private List<string> _imageFilename = new List<string>();
         private StringBuilder _responseBuffer = new StringBuilder();
 
         public PromptWindowControl()
         {
             InitializeComponent();
             Unloaded += PromptWindowControl_Unloaded;
-            _fileService = new FileService();
             rtbResults.Document.Blocks.Clear();
             SetPlaceholderIfNeeded();
             _richTextBoxParagraphGenerator = new RichTextBoxParagraphGenerator();
@@ -123,8 +119,6 @@ namespace SSMS_AI_Buddy.Components
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                _isImagesAttached = false;
-                _imageFilename = new List<string>();
                 _responseBuffer.Clear();
 
                 // disable submit button to prevent multiple clicks

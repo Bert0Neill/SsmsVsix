@@ -200,6 +200,7 @@ namespace SSMS_AI_Buddy.Services.AI
             using (HttpClient client = new HttpClient())
             {
                 object requestBody = null;
+
                 requestBody = GenerateAIRequest(prompt, system, client);
                 string jsonContent = JsonConvert.SerializeObject(requestBody);
                 HttpContent httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
