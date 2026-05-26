@@ -5,9 +5,12 @@ using SSMS_AI_Buddy.Services.Helper;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +18,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static Microsoft.VisualStudio.Debugger.DkmThread;
 
 namespace SSMS_AI_Buddy.Components
 {
@@ -118,6 +122,7 @@ namespace SSMS_AI_Buddy.Components
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
+
                 _isImagesAttached = false;
                 _imageFilename = new List<string>();
                 _responseBuffer.Clear();
@@ -142,9 +147,10 @@ namespace SSMS_AI_Buddy.Components
                 SetPlaceholderIfNeeded();
 
                 // Get AI response
-                await GetOllamaResponseStreamAsync(prompt, chunk => _responseBuffer.Append(chunk));
+                await RetrieveAIResponseAsync(prompt, chunk => _responseBuffer.Append(chunk));
                 AppendResult(_responseBuffer.ToString());
                 _responseBuffer.Clear();
+
                 btnSubmit.IsEnabled = true;
             }
             catch (Exception ex)
@@ -201,37 +207,90 @@ namespace SSMS_AI_Buddy.Components
 
             return extractedText.ToString();
         }
-
-        private BitmapSource ResizeBitmapSource(BitmapSource source, int width, int height)
-        {
-            var scaleX = (double)width / source.PixelWidth;
-            var scaleY = (double)height / source.PixelHeight;
-            var transform = new TransformedBitmap(source, new ScaleTransform(scaleX, scaleY));
-            return transform;
-        }
-
-        private void SaveImage(BitmapSource image, string filePath)
-        {
-            using (FileStream stream = new FileStream(filePath, FileMode.Create))
-            {
-                PngBitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(image));
-                encoder.Save(stream);
-            }
-        }
         #endregion
 
         #region HTTP Streaming
-        private async Task GetOllamaResponseStreamAsync(string prompt, Action<string> onResponseChunk)
+        private async Task RetrieveAIResponseAsync(string prompt, Action<string> onResponseChunk)
         {
             using (HttpClient client = new HttpClient())
             {
-                var requestBody = new
+                object requestBody = null;
+
+                switch (_aiProperties.AIProvider)
                 {
-                    model = _aiProperties.PromptLLMName,
-                    prompt = prompt,
-                    stream = _aiProperties.IsPromptResponseStreaming
-                };
+                    case AIProviderOptions.OllamaLocal:
+
+                        requestBody = new
+                        {
+                            model = _aiProperties.PromptLLMName,
+                            prompt = prompt,
+                            stream = _aiProperties.IsPromptResponseStreaming
+                        };
+
+                        break;
+
+                    case AIProviderOptions.NvidiaRemote:
+
+                        requestBody = new
+                        {
+                            model = _aiProperties.PromptLLMName,
+                            messages = new[]
+                            {
+                                new
+                                {
+                                    role = "user",
+                                    content = prompt
+                                }
+                            },
+
+                            temperature = _aiProperties.Temperature,
+                            top_p = _aiProperties.Randomness,
+                            max_tokens = _aiProperties.Token,
+                            stream = _aiProperties.IsPromptResponseStreaming
+                        };
+
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _aiProperties.AIPromptKey);
+
+                        break;
+
+                    default:
+                        throw new NotSupportedException(
+                            string.Format(
+                                "Unsupported provider: {0}",
+                                _aiProperties.AIProvider));
+                }
+
+                //if (_aiProperties.AIProvider == AIProviderOptions.OllamaLocal)
+                //{
+                //    // Ollama request format
+                //    requestBody = new
+                //    {
+                //        model = _aiProperties.PromptLLMName,
+                //        prompt = prompt,
+                //        stream = _aiProperties.IsPromptResponseStreaming
+                //    };
+                //}
+                //else if (_aiProperties.AIProvider == AIProviderOptions.NvidiaRemote)
+                //{
+                //    // NVidia request format
+                //    requestBody = new
+                //    {
+                //        model = _aiProperties.PromptLLMName,
+                //        messages = new[]
+                //        {
+                //            new
+                //            {
+                //                role = "user",
+                //                content = prompt
+                //            }
+                //        },
+                //        temperature = _aiProperties.Temperature,
+                //        top_p = _aiProperties.Randomness,
+                //        max_tokens = _aiProperties.Token,
+                //        stream = true
+                //        //stream = _aiProperties.IsPromptResponseStreaming
+                //    };
+                //}
 
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_aiProperties.AIPromptKey}");
@@ -254,16 +313,55 @@ namespace SSMS_AI_Buddy.Components
                         while (!reader.EndOfStream)
                         {
                             var line = await reader.ReadLineAsync();
-                            if (!string.IsNullOrWhiteSpace(line))
+
+                            if (string.IsNullOrWhiteSpace(line))
+                                continue;
+
+                            try
                             {
-                                var jsonResponse = JsonConvert.DeserializeObject<AIHosterResponse>(line);
-                                jsonResponse.response = Regex.Replace(jsonResponse.response, @"<\/?think>", "").TrimStart('\n', '\r', ' ');
-                                onResponseChunk?.Invoke(jsonResponse.response);
+                                if (_aiProperties.AIProvider == AIProviderOptions.OllamaLocal)
+                                {
+                                    // Ollama
+                                    var jsonResponse = JsonConvert.DeserializeObject<AIHosterResponse>(line);
+                                    jsonResponse.response = Regex.Replace(jsonResponse.response, @"<\/?think>", "").TrimStart('\n', '\r', ' ');
+                                    onResponseChunk?.Invoke(jsonResponse.response);
+                                }
+                                else if (_aiProperties.AIProvider == AIProviderOptions.NvidiaRemote)
+                                {
+                                    // NVidia
+                                    var jsonResponse = JsonConvert.DeserializeObject<OpenAiResponse>(line);
+                                    var content = jsonResponse?.Choices?.FirstOrDefault()?.Message?.Content;
+
+                                    if (!string.IsNullOrWhiteSpace(content))
+                                    {
+                                        // data cleanse response
+                                        content = CleanResponse(content);
+                                        onResponseChunk?.Invoke(content);
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                onResponseChunk?.Invoke($"Parse error: {ex.Message}");
                             }
                         }
                     }
                 }
             }
+        }
+
+
+        
+
+        private string CleanResponse(string content)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+                return content;
+
+            return content
+                .Replace("<think>", "")
+                .Replace("</think>", "")
+                .TrimStart('\n', '\r', ' ');
         }
 
         #endregion

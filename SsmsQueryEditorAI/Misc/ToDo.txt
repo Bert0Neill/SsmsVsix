@@ -5,3 +5,169 @@
 
 *) Test in 19+ SSMS
 *) Write Markdown document & Word docvument & Medium Blog
+
+
+// **** Complex Query To test With **** //
+------------------------------------------
+
+WITH SalesData AS
+(
+    SELECT
+        soh.SalesOrderID,
+        soh.OrderDate,
+        soh.CustomerID,
+        soh.SalesPersonID,
+        soh.TerritoryID,
+        soh.TotalDue,
+
+        c.AccountNumber,
+        p.FirstName + ' ' + p.LastName AS CustomerName,
+
+        sp.BusinessEntityID AS SalesRepID,
+        pp.FirstName + ' ' + pp.LastName AS SalesRepName,
+
+        st.Name AS TerritoryName,
+        st.CountryRegionCode,
+
+        sod.ProductID,
+        sod.OrderQty,
+        sod.LineTotal,
+
+        pr.Name AS ProductName,
+        pc.Name AS CategoryName,
+        psc.Name AS SubCategoryName
+
+    FROM Sales.SalesOrderHeader soh
+
+    INNER JOIN Sales.SalesOrderDetail sod
+        ON soh.SalesOrderID = sod.SalesOrderID
+
+    INNER JOIN Sales.Customer c
+        ON soh.CustomerID = c.CustomerID
+
+    LEFT JOIN Person.Person p
+        ON c.PersonID = p.BusinessEntityID
+
+    LEFT JOIN Sales.SalesPerson sp
+        ON soh.SalesPersonID = sp.BusinessEntityID
+
+    LEFT JOIN Person.Person pp
+        ON sp.BusinessEntityID = pp.BusinessEntityID
+
+    LEFT JOIN Sales.SalesTerritory st
+        ON soh.TerritoryID = st.TerritoryID
+
+    INNER JOIN Production.Product pr
+        ON sod.ProductID = pr.ProductID
+
+    LEFT JOIN Production.ProductSubcategory psc
+        ON pr.ProductSubcategoryID = psc.ProductSubcategoryID
+
+    LEFT JOIN Production.ProductCategory pc
+        ON psc.ProductCategoryID = pc.ProductCategoryID
+
+    WHERE soh.OrderDate >= '2013-01-01'
+),
+
+CustomerTotals AS
+(
+    SELECT
+        CustomerID,
+        CustomerName,
+        TerritoryName,
+
+        COUNT(DISTINCT SalesOrderID) AS TotalOrders,
+        SUM(LineTotal) AS TotalSales,
+        AVG(LineTotal) AS AvgLineValue,
+
+        RANK() OVER
+        (
+            PARTITION BY TerritoryName
+            ORDER BY SUM(LineTotal) DESC
+        ) AS CustomerRank
+
+    FROM SalesData
+    GROUP BY
+        CustomerID,
+        CustomerName,
+        TerritoryName
+),
+
+CategorySales AS
+(
+    SELECT
+        CategoryName,
+
+        SUM(LineTotal) AS CategoryRevenue,
+
+        DENSE_RANK() OVER
+        (
+            ORDER BY SUM(LineTotal) DESC
+        ) AS RevenueRank
+
+    FROM SalesData
+    GROUP BY CategoryName
+)
+
+SELECT
+    sd.TerritoryName,
+    sd.CountryRegionCode,
+
+    ct.CustomerName,
+    ct.TotalOrders,
+    ct.TotalSales,
+    ct.AvgLineValue,
+    ct.CustomerRank,
+
+    cs.CategoryName,
+    cs.CategoryRevenue,
+    cs.RevenueRank,
+
+    sd.SalesRepName,
+
+    CASE
+        WHEN ct.TotalSales > 100000 THEN 'VIP'
+        WHEN ct.TotalSales > 50000 THEN 'Preferred'
+        ELSE 'Standard'
+    END AS CustomerTier,
+
+    MIN(sd.OrderDate) AS FirstOrderDate,
+    MAX(sd.OrderDate) AS LastOrderDate,
+
+    COUNT(DISTINCT sd.ProductID) AS UniqueProductsPurchased
+
+FROM SalesData sd
+
+INNER JOIN CustomerTotals ct
+    ON sd.CustomerID = ct.CustomerID
+
+INNER JOIN CategorySales cs
+    ON sd.CategoryName = cs.CategoryName
+
+GROUP BY
+    sd.TerritoryName,
+    sd.CountryRegionCode,
+
+    ct.CustomerName,
+    ct.TotalOrders,
+    ct.TotalSales,
+    ct.AvgLineValue,
+    ct.CustomerRank,
+
+    cs.CategoryName,
+    cs.CategoryRevenue,
+    cs.RevenueRank,
+
+    sd.SalesRepName
+
+HAVING SUM(sd.LineTotal) > 10000
+
+ORDER BY
+    ct.TotalSales DESC,
+    cs.RevenueRank ASC;
+
+-------------------------------------------
+
+NVidia Response
+-------------------------------------------
+{"id":"chatcmpl-52d24ef1-845f-4aa8-b6d8-0cfe09948ada","choices":[{"index":0,"message":{"content":"Here are several improved versions of your SQL query depending on your specific needs:\n\n## 1. **Select Specific Columns (Recommended)**\n```sql\nSELECT address_id, street, city, state, postal_code, country\nFROM address;\n```\n\n## 2. **With Proper Ordering**\n```sql\nSELECT address_id, street, city, state, postal_code, country\nFROM address\nORDER BY city, street;\n```\n\n## 3. **With Filtering (if you need only active addresses)**\n```sql\nSELECT address_id, street, city, state, postal_code, country\nFROM address\nWHERE active = 1\nORDER BY city, street;\n```\n\n## 4. **With Table Aliases for Joins**\n```sql\nSELECT a.address_id, a.street, a.city, a.state, a.postal_code, a.country\nFROM address a\nWHERE a.active = 1\nORDER BY a.city, a.street;\n```\n\n## 5. **With Column Aliases for Better Readability**\n```sql\nSELECT \n    address_id AS id,\n    street AS street_address,\n    city,\n    state,\n    postal_code,\n    country\nFROM address\nWHERE active = 1\nORDER BY city, street;\n```\n\n## **Key Improvements Made:**\n- ✅ **Avoid `SELECT *`** - Specify only needed columns for better performance\n- ✅ **Add `ORDER BY`** - Results are returned in a consistent order\n- ✅ **Use table aliases** - Makes queries more maintainable\n- ✅ **Add filtering** - Only return relevant data\n- ✅ **Use meaningful column aliases** - Improves readability\n\nChoose the version that best fits your specific use case!","role":"assistant","reasoning_content":null},"finish_reason":"stop","logprobs":null}],"created":1779786714,"model":"qwen/qwen3-coder-480b-a35b-instruct","service_tier":null,"system_fingerprint":null,"object":"chat.completion","usage":{"prompt_tokens":16,"completion_tokens":359,"total_tokens":375,"prompt_tokens_details":{"audio_tokens":null,"cached_tokens":16}},"nvext":{"worker_id":{"prefill_worker_id":7587894933637319032,"prefill_dp_rank":0,"decode_worker_id":7587894933637319032,"decode_dp_rank":0},"timing":{"request_received_ms":1779786714190,"prefill_wait_time_ms":0.487236,"prefill_time_ms":188.999726,"ttft_ms":189.486962,"total_time_ms":7825.662139,"kv_hit_rate":0.0,"router_queue_depth":0}}}

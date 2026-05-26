@@ -10,4 +10,6 @@ namespace SSMS_AI_Buddy.Models
     {
         public string response { get; set; }
     }
+
+    
 }
