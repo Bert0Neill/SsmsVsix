@@ -5,11 +5,12 @@ namespace SSMS_AI_Buddy.Models
 {
     public class AIProperties
     {
+        [Browsable(false)]
         [Category("AI Provider")]
         [DisplayName("AI Hoster")]
         [Description("Select the hoster you wish to call with your prompt.")]
         [TypeConverter(typeof(AIProviderTypeConverter))]
-        public string AIProvider { get; set; } = AIProviderOptions.OllamaLocal;
+        public string AIProvider { get; set; } = AIProviderOptions.NvidiaRemote;
 
         [Category("AI Provider")]
         [DisplayName("Prompt API URL")]
