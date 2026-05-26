@@ -1,5 +1,3 @@
-using Azure;
-using Microsoft.SqlServer.Management.Smo;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SSMS_AI_Buddy.Models;
@@ -15,40 +13,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static SSMS_AI_Buddy.Models.AppEnums;
-using static System.Net.WebRequestMethods;
 
 namespace SSMS_AI_Buddy.Services.AI
 {
     public static class AIHosterSqlSuggestionService
     {
-        private static HttpClient _http;
-
-        private static HttpClient Http
-        {
-            get
-            {
-                if (_http == null)
-                {
-                    if (_aiProperties == null || string.IsNullOrWhiteSpace(_aiProperties.AIPromptURL))
-                        throw new InvalidOperationException("AIProperties or AIPromptURL not configured.");
-
-                    _http = new HttpClient
-                    {
-                        BaseAddress = new Uri(_aiProperties.AIPromptURL)
-                    };
-
-                    // NVidia API key setting (remote call)
-                    if (_aiProperties.AIProvider == AIProviderOptions.NvidiaRemote)
-                    {
-                        _http.DefaultRequestHeaders.Authorization =
-                            new AuthenticationHeaderValue("Bearer", "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");
-                    }
-                }
-
-                return _http;
-            }
-        }
-
         public static AIProperties _aiProperties { get; set; }
 
         /// <summary>
@@ -76,7 +45,6 @@ namespace SSMS_AI_Buddy.Services.AI
 
             return input;
         }
-
 
         private static List<SqlSuggestion> DeserializeSuggestionArray(string text)
         {
@@ -106,7 +74,7 @@ namespace SSMS_AI_Buddy.Services.AI
         }
 
         /// <summary>
-        /// Parses Ollama <c>/api/generate</c> JSON body: read only <see cref="ModelResponse.Response"/>,
+        /// Parses Ollama <c>/api/generate</c> JSON body: read only <see cref="OllamaModelResponse.Response"/>,
         /// never the outer <c>context</c> array (regex from first '[' to last ']' would include it).
         /// </summary>
         private static List<SqlSuggestion> ParseSuggestionsFromOllamaHttpBody(string httpBody)
@@ -116,7 +84,7 @@ namespace SSMS_AI_Buddy.Services.AI
 
             try
             {
-                var outer = JsonConvert.DeserializeObject<ModelResponse>(httpBody);
+                var outer = JsonConvert.DeserializeObject<OllamaModelResponse>(httpBody);
                 if (outer == null || string.IsNullOrWhiteSpace(outer.Response))
                     return new List<SqlSuggestion>();
 
@@ -131,14 +99,14 @@ namespace SSMS_AI_Buddy.Services.AI
             }
         }
 
-        private static List<SqlSuggestion> ParseSuggestionsFromNvidiaHttpBody(string httpBody)
+        private static List<SqlSuggestion> ParseSuggestionsFromNVidiaHttpBody(string httpBody)
         {
             if (string.IsNullOrWhiteSpace(httpBody))
                 return new List<SqlSuggestion>();
 
             try
             {
-                var outer = JsonConvert.DeserializeObject<OpenAiResponse>(httpBody);
+                var outer = JsonConvert.DeserializeObject<NVidiaModelResponse>(httpBody);
 
                 var content = outer?
                     .Choices?
@@ -222,188 +190,106 @@ namespace SSMS_AI_Buddy.Services.AI
             }
         }
 
-        public static async Task<List<SqlSuggestion>> GetSqlSuggestionsAsync(string schemaJson, string currentSql, AIActionType aIActionType)
+        public static async Task<List<SqlSuggestion>> RetrieveAIResponseAsync(string schemaJson, string currentSql, AIActionType aIActionType)
         {
             Debug.WriteLine($"Prompt Schema:{schemaJson} - {currentSql}");
             var prompt = AI_Resource.AI_Prompt.Replace("{{SCHEMA}}", schemaJson).Replace("{{SQL}}", currentSql);
             string system = GetSystemPrompt(aIActionType);
 
-            #region Testng
-            //             string system = @"You are a SQL JOIN autocomplete engine.
 
-            //Return ONLY valid JSON.
-
-            //OUTPUT FORMAT
-            //[
-            //  {""type"":""Join"",""suggestion"":""JOIN table t ON condition"",""description"":""short explanation""},
-            //  {""type"":""Join"",""suggestion"":""LEFT JOIN table t ON condition"",""description"":""short explanation""},
-            //  {""type"":""Join"",""suggestion"":""Right JOIN table t ON condition"",""description"":""short explanation""},
-            //  {""type"":""Join"",""suggestion"":""Cross JOIN table t ON condition"",""description"":""short explanation""}
-            //]
-
-            //RULES
-            //- Output MUST be a valid JSON array.
-            //- Output MUST contain between 4 and 8 json array items.
-            //- NEVER output fewer than 4 items.
-            //- Suggestions MUST start with JOIN, INNER JOIN, LEFT JOIN, or CROSS JOIN.
-            //- Only output JOIN fragments, never full SELECT statements.
-            //- Do not rewrite the user query.
-            //- Do not output explanations or markdown.
-
-            //JOIN GENERATION
-            //- Make a suggestion for every table relationship supplied in prompt.
-            //- Use foreign key relationships from the schema.
-            //- If multiple joins are possible, return suggestions for each.
-            //- If fewer than 4 joins exist, create variants using JOIN, INNER JOIN, LEFT JOIN, CROSS JOIN.
-            //- Reuse the same ON condition when only the join type differs.
-
-            //ALIAS RULE
-            //- If the base table has an alias, use that alias ";
-            #endregion
-
-            HttpResponseMessage response = null;
-            if (_aiProperties.AIProvider == AIProviderOptions.NvidiaRemote)
+            using (HttpClient client = new HttpClient())
             {
-                // NVidia settings
+                object requestBody = null;
+                requestBody = GenerateAIRequest(prompt, system, client);
+                string jsonContent = JsonConvert.SerializeObject(requestBody);
+                HttpContent httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-                //var http = new HttpClient();
-                //http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "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");
-                //var response = await Http.PostAsync("https://integrate.api.nvidia.com/v1/chat/completions", content);
-
-                var request = BuildNVidiaRequest(prompt, system);
-                var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-                response = await Http.PostAsync(_aiProperties.AIPromptURL, content);
-                response.EnsureSuccessStatusCode();
-                var json = await response.Content.ReadAsStringAsync();
-                return ParseSuggestionsFromNvidiaHttpBody(json); // Nvidia
-            }
-            else if (_aiProperties.AIProvider == AIProviderOptions.OllamaLocal)
-            {
-                // Ollama settings
-                var request = BuildOllamaRequest(prompt, system);
-                var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-                response = await Http.PostAsync(string.Empty, content); // does this call Ollama's /api/generate by default?
-                response.EnsureSuccessStatusCode();
-                var json = await response.Content.ReadAsStringAsync();
-                return ParseSuggestionsFromOllamaHttpBody(json); // Ollama
-            }
-
-            return null; // should never be reached
-
-            //Debug.WriteLine($"=== {_aiProperties.AIProvider.ToString()} raw JSON response ===");
-            //Debug.WriteLine(json);
-            //Debug.WriteLine("=== End of response ===");
-
-            //return ParseSuggestionsFromNvidiaHttpBody(json); // Nvidia
-            //return ParseSuggestionsFromOllamaHttpBody(json); // Ollama
-        }
-
-        private static Object BuildOllamaRequest(string prompt, string system)
-        {
-            var request = new
-            {
-                //model = "qwen2.5-coder:1.5b", // more accurate but slower
-                //model = "deepseek-coder:6.7b", // faster but less accurate
-                //model = _aiProperties.PromptLLMName,
-                model = _aiProperties.PromptLLMName, // "qwen/qwen3-coder-480b-a35b-instruct",
-                prompt = prompt,
-                system = system,
-                stream = _aiProperties.IsPromptResponseStreaming,
-                format = "json",
-
-                options = new
+                using (var request = new HttpRequestMessage(HttpMethod.Post, _aiProperties.AIPromptURL) { Content = httpContent })
+                using (var res = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
                 {
-                    temperature = _aiProperties.Temperature, // 0.1,
-                    num_predict = _aiProperties.Token, // 150, // token limit for suggestions - adjust as needed based on typical response length and model limits
-                    stop = new[] { "]" } // stop runaway generation
-                }
-            };
-            return request;
-        }
+                    res.EnsureSuccessStatusCode();
+                    var json = await res.Content.ReadAsStringAsync();
+                    DisplayResponse(json);
 
-        private static Object BuildNVidiaRequest(string prompt, string system)
-        {
-            return new
-            {
-                model = _aiProperties.PromptLLMName, // "qwen/qwen3-coder-480b-a35b-instruct",
-
-                messages = new[]
-                {
-                    new
+                    if (_aiProperties.AIProvider == AIProviderOptions.NvidiaRemote)
                     {
-                        role = "system",
-                        content = system
-                    },
-                    new
-                    {
-                        role = "user",
-                        content = prompt
+                        return ParseSuggestionsFromNVidiaHttpBody(json); // NVidia                        
                     }
-                },
+                    else if (_aiProperties.AIProvider == AIProviderOptions.OllamaLocal)
+                    {
+                        return ParseSuggestionsFromOllamaHttpBody(json); // Ollama
+                    }
+                    else
+                    {
+                        throw new NotSupportedException(string.Format("Unsupported provider: {0}", _aiProperties.AIProvider));
+                    }
+                }
+            }
+        }
 
-                temperature = _aiProperties.Temperature, // 0.1,
-                top_p = _aiProperties.Randomness, // 0.8,
-                max_tokens = _aiProperties.Token, // 1000,
-                stream = _aiProperties.IsPromptResponseStreaming //false
-            };
+        private static object GenerateAIRequest(string prompt, string system, HttpClient client)
+        {
+            object requestBody;
+            switch (_aiProperties.AIProvider)
+            {
+                case AIProviderOptions.OllamaLocal:
+
+                    requestBody = new
+                    {
+                        model = _aiProperties.PromptLLMName,
+                        prompt = prompt,
+                        system = system,
+                        stream = _aiProperties.IsPromptResponseStreaming
+                    };
+
+                    break;
+
+                case AIProviderOptions.NvidiaRemote:
+
+                    requestBody = new
+                    {
+                        model = _aiProperties.PromptLLMName,
+                        messages = new[]
+                        {
+                                new
+                                {
+                                    role = "user",
+                                    content = prompt
+                                },
+                                new
+                                {
+                                    role = "system",
+                                    content = system
+                                }
+                            },
+
+                        temperature = _aiProperties.Temperature,
+                        top_p = _aiProperties.Randomness,
+                        max_tokens = _aiProperties.Token,
+                        stream = _aiProperties.IsPromptResponseStreaming
+                    };
+
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _aiProperties.AIPromptKey);
+
+                    break;
+
+                default:
+                    throw new NotSupportedException(string.Format("Unsupported provider: {0}", _aiProperties.AIProvider));
+            }
+
+            return requestBody;
+        }
+
+        private static void DisplayResponse(string json)
+        {
+            Debug.WriteLine($"=== {_aiProperties.AIProvider.ToString()} raw JSON response ===");
+            Debug.WriteLine(json);
+            Debug.WriteLine("=== End of response ===");
         }
     }
 
-    public class ModelResponse
-    {
-        [JsonProperty("model")]
-        public string Model { get; set; }
-
-        [JsonProperty("created_at")]
-        public DateTime CreatedAt { get; set; }
-
-        [JsonProperty("response")]
-        public string Response { get; set; }
-
-        // other properties if needed...
-    }
-
-    public class GeminiRequest
-    {
-        [JsonProperty("contents")]
-        public List<Content> Contents { get; set; }
-
-        [JsonProperty("generationConfig")]
-        public GenerationConfig GenerationConfig { get; set; }
-    }
-
-    public class GenerationConfig
-    {
-        [JsonProperty("response_mime_type")]
-        public string ResponseMimeType { get; set; }
-
-        [JsonProperty("temperature")]
-        public double Temperature { get; set; } = 0.1;
-    }
-
-
-
-    public class Content
-    {
-        public string Role { get; set; } = "user";
-        public List<Part> Parts { get; set; }
-    }
-
-    public class Part
-    {
-        public string Text { get; set; }
-    }
-
-
-    public class GeminiResponse
-    {
-        public List<Candidate> Candidates { get; set; }
-    }
-
-    public class Candidate
-    {
-        public Content Content { get; set; }
-    }
+    
 }
 
 

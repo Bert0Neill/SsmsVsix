@@ -223,110 +223,6 @@ namespace AI_Buddy.Components
             }
         }
 
-        //private async Task GetOllamaResponseStreamAsync(string prompt, Action<string> onResponseChunk)
-        //{
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        using (var formData = new MultipartFormDataContent())
-        //        {
-        //            // Add the image file
-        //            string imagePath = "C:\\Users\\ONeillB\\source\\repos\\TestConsole\\ExtractedImage_1.jpeg";
-        //            var fileContent = new ByteArrayContent(File.ReadAllBytes(imagePath));
-        //            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png"); // Change based on file type
-        //            formData.Add(fileContent, "image", Path.GetFileName(imagePath)); // 'image' should match API's expected field name
-
-        //            // Add JSON data (optional)
-        //            var jsonPayload = new
-        //            {
-        //                model = _aiProperties.PromptLLMName,
-        //                prompt = prompt,
-        //                stream = _aiProperties.IsPromptResponseStreaming
-        //            };
-        //            string jsonString = JsonConvert.SerializeObject(jsonPayload);
-        //            var jsonStringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
-        //            formData.Add(jsonStringContent, "json_payload"); // Change field name if required
-
-        //            // Set API key in headers
-        //            client.DefaultRequestHeaders.Clear();
-        //            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_aiProperties.AIPromptKey}");
-
-        //            // Make the request
-        //            var response = await client.PostAsync(_aiProperties.AIPromptURL, formData);
-
-        //            // Handle response
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                string responseData = await response.Content.ReadAsStringAsync();
-        //                Console.WriteLine("Response: " + responseData);
-        //            }
-        //            else
-        //            {
-        //                Console.WriteLine("Error: " + response.StatusCode);
-        //            }
-        //        }
-        //    }
-
-        //    //using (HttpClient client = new HttpClient())
-        //    //{
-        //    //    var requestBody = new
-        //    //    {
-        //    //        model = _aiProperties.PromptLLMName,
-        //    //        prompt = prompt,
-        //    //        stream = _aiProperties.IsPromptResponseStreaming // Enable streaming response
-        //    //    };
-
-        //    //    var formData = new MultipartFormDataContent();
-        //    //    string jsonContent = JsonConvert.SerializeObject(requestBody);
-        //    //    var jsonStringContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-        //    //    formData.Add(jsonStringContent, "json_payload"); // Use correct field name if needed
-
-
-        //    //    // Attach images if available
-        //    //    if (_isImagesAttached)
-        //    //    {
-        //    //        foreach (var imagePath in _imageFilename)
-        //    //        {
-        //    //            var fileContent = new ByteArrayContent(File.ReadAllBytes(imagePath));
-        //    //            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg"); // Adjust as needed
-        //    //            formData.Add(fileContent, "image", Path.GetFileName(imagePath)); // 'image' is the form field name
-        //    //        }
-        //    //    }
-
-        //    //    // Set API key in headers
-        //    //    client.DefaultRequestHeaders.Clear();
-        //    //    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_aiProperties.AIPromptKey}");
-
-        //    //    using (var request = new HttpRequestMessage(HttpMethod.Post, _aiProperties.AIPromptURL) { Content = formData })
-        //    //    using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
-        //    //    {
-        //    //        if (!response.IsSuccessStatusCode)
-        //    //        {
-        //    //            onResponseChunk($"Error: {response.StatusCode}");
-        //    //            return;
-        //    //        }
-
-        //    //        using (var stream = await response.Content.ReadAsStreamAsync())
-        //    //        using (var reader = new StreamReader(stream))
-        //    //        {
-        //    //            while (!reader.EndOfStream)
-        //    //            {
-        //    //                var line = await reader.ReadLineAsync();
-        //    //                if (!string.IsNullOrWhiteSpace(line))
-        //    //                {
-        //    //                    var jsonResponse = JsonConvert.DeserializeObject<AIHosterResponse>(line);
-        //    //                    jsonResponse.response = Regex.Replace(jsonResponse.response, @"<\/?think>", "") // Remove DeepSeek's <think> elements
-        //    //                        .TrimStart('\n', '\r')
-        //    //                        .TrimStart();
-
-        //    //                    onResponseChunk(jsonResponse.response);
-        //    //                }
-        //    //            }
-        //    //        }
-        //    //    }
-        //    //}
-        //}
-
-
         private string ExtractRichTextBoxContent()
         {
             StringBuilder extractedText = new StringBuilder();
@@ -472,8 +368,6 @@ namespace AI_Buddy.Components
                 }
             }
         }
-
-
 
         private BitmapSource ResizeBitmapSource(BitmapSource source, double widthPercentage, double heightPercentage)
         {

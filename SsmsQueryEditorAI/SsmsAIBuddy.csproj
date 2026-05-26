@@ -73,8 +73,8 @@
     <Compile Include="Models\AIProviderTypeConverter.cs" />
     <Compile Include="Models\AppEnums.cs" />
     <Compile Include="Models\AIProviderOptions.cs" />
-    <Compile Include="Models\OpenAiResponse.cs" />
-    <Compile Include="Models\OllamaModels.cs" />
+    <Compile Include="Models\OllamaModelResponse.cs" />
+    <Compile Include="Models\NVidiaModelResponse.cs" />
     <Compile Include="Models\SqlSuggestion.cs" />
     <Compile Include="Models\SqlCompletionContext.cs" />
     <Compile Include="Models\ConnectionInfo.cs" />

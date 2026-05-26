@@ -3,14 +3,6 @@ using System.ComponentModel;
 
 namespace SSMS_AI_Buddy.Models
 {
-    //public static class AIProviderOptions
-    //{
-    //    public const string NvidiaRemote = "Nvidia (Remote)";
-    //    public const string OllamaLocal = "Ollama (Locally)";
-
-    //    public static readonly string[] All = { NvidiaRemote, OllamaLocal };
-    //}
-
     public class AIProperties
     {
         [Category("AI Provider")]
@@ -22,24 +14,22 @@ namespace SSMS_AI_Buddy.Models
         [Category("AI Provider")]
         [DisplayName("Prompt API URL")]
         [Description("The Prompt URL that will get called with your prompt.")]
-        //public string AIPromptURL { get; set; } = "http://localhost:11434/api/generate"; // Ollama local default
-        public string AIPromptURL { get; set; } = "https://integrate.api.nvidia.com/v1/chat/completions"; // Nvidia remote default
+        public string AIPromptURL { get; set; } = "https://integrate.api.nvidia.com/v1/chat/completions"; // Nvidia remote | "http://localhost:11434/api/generate"; // Ollama local default
 
         [Category("AI Provider")]
         [DisplayName("API Key")]
         [Description("The key may not be required for internal server prompts.")]
-        //public string AIPromptKey { get; set; } = string.Empty;
-        public string AIPromptKey { get; set; } = "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"; // Bert's own key!
+        public string AIPromptKey { get; set; } = "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"; // Bert's own NVidia key!
 
         [Category("AI Provider")]
         [DisplayName("LLM Name")]
         [Description("For your reference, what LLM model your Hoster is using (for e.g deepseek-r1:5b)")]
-        public string PromptLLMName { get; set; } = "deepseek-r1:1.5b"; //
+        public string PromptLLMName { get; set; } = "deepseek-r1:1.5b"; //qwen/qwen3-coder-480b-a35b-instruct NVidia
 
         [Browsable(false)]
         [Category("AI Provider")]
         [DisplayName("Streaming Response")]
-        [Description("Currently all prompts are returned as a block and not streamed in real-time, so that the user can select the appropiate item from the whole list.")]
+        [Description("Currently all prompts are returned as a block and not streamed in real-time, so that the user can select the appropiate item from a full list.")]
         public bool IsPromptResponseStreaming { get; set; } = false;
 
         [Category("AI Provider")]

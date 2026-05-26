@@ -249,51 +249,14 @@ namespace SSMS_AI_Buddy.Components
                             stream = _aiProperties.IsPromptResponseStreaming
                         };
 
+                        client.DefaultRequestHeaders.Clear();
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _aiProperties.AIPromptKey);
 
                         break;
 
                     default:
-                        throw new NotSupportedException(
-                            string.Format(
-                                "Unsupported provider: {0}",
-                                _aiProperties.AIProvider));
+                        throw new NotSupportedException(string.Format("Unsupported provider: {0}", _aiProperties.AIProvider));
                 }
-
-                //if (_aiProperties.AIProvider == AIProviderOptions.OllamaLocal)
-                //{
-                //    // Ollama request format
-                //    requestBody = new
-                //    {
-                //        model = _aiProperties.PromptLLMName,
-                //        prompt = prompt,
-                //        stream = _aiProperties.IsPromptResponseStreaming
-                //    };
-                //}
-                //else if (_aiProperties.AIProvider == AIProviderOptions.NvidiaRemote)
-                //{
-                //    // NVidia request format
-                //    requestBody = new
-                //    {
-                //        model = _aiProperties.PromptLLMName,
-                //        messages = new[]
-                //        {
-                //            new
-                //            {
-                //                role = "user",
-                //                content = prompt
-                //            }
-                //        },
-                //        temperature = _aiProperties.Temperature,
-                //        top_p = _aiProperties.Randomness,
-                //        max_tokens = _aiProperties.Token,
-                //        stream = true
-                //        //stream = _aiProperties.IsPromptResponseStreaming
-                //    };
-                //}
-
-                client.DefaultRequestHeaders.Clear();
-                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_aiProperties.AIPromptKey}");
 
                 string jsonContent = JsonConvert.SerializeObject(requestBody);
                 HttpContent httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
@@ -329,12 +292,11 @@ namespace SSMS_AI_Buddy.Components
                                 else if (_aiProperties.AIProvider == AIProviderOptions.NvidiaRemote)
                                 {
                                     // NVidia
-                                    var jsonResponse = JsonConvert.DeserializeObject<OpenAiResponse>(line);
+                                    var jsonResponse = JsonConvert.DeserializeObject<NVidiaModelResponse>(line);
                                     var content = jsonResponse?.Choices?.FirstOrDefault()?.Message?.Content;
 
                                     if (!string.IsNullOrWhiteSpace(content))
-                                    {
-                                        // data cleanse response
+                                    {                                        
                                         content = CleanResponse(content);
                                         onResponseChunk?.Invoke(content);
                                     }
@@ -349,9 +311,6 @@ namespace SSMS_AI_Buddy.Components
                 }
             }
         }
-
-
-        
 
         private string CleanResponse(string content)
         {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SSMS_AI_Buddy.Models
 {
-    public class OpenAiResponse
+    public class NVidiaModelResponse
     {
         [JsonProperty("choices")]
         public List<Choice> Choices { get; set; }

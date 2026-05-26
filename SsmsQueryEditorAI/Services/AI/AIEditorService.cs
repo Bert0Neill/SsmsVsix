@@ -337,11 +337,11 @@ namespace SSMS_AI_Buddy.Services
                         var filteredSchema = FilterTables(schema, tables);
 
                         string json = JsonConvert.SerializeObject(filteredSchema, Formatting.Indented); // only pass table(s) schema
-                        suggestions = await AIHosterSqlSuggestionService.GetSqlSuggestionsAsync(json, sql, aIActionType) ?? new List<SqlSuggestion>();
+                        suggestions = await AIHosterSqlSuggestionService.RetrieveAIResponseAsync(json, sql, aIActionType) ?? new List<SqlSuggestion>();
                     }
                     else
                     {
-                        suggestions = await AIHosterSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql, aIActionType) ?? new List<SqlSuggestion>();
+                        suggestions = await AIHosterSqlSuggestionService.RetrieveAIResponseAsync(schemaJson, sql, aIActionType) ?? new List<SqlSuggestion>();
                     }
 
                     //var suggestions = MockAIResponse();
