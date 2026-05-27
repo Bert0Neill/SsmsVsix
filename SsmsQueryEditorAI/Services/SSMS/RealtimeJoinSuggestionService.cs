@@ -3,16 +3,11 @@ using SSMS_AI_Buddy.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
- using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Text.RegularExpressions;
 namespace SSMS_AI_Buddy.Services.SSMS
 {
     public static class RealtimeJoinSuggestionService
     {
-
-
         public static List<SqlSuggestion> BuildRealTimeJoinSuggestions(string schemaJson, string sql)
         {
             var suggestions = new List<SqlSuggestion>();
@@ -20,7 +15,7 @@ namespace SSMS_AI_Buddy.Services.SSMS
             if (string.IsNullOrWhiteSpace(schemaJson) || string.IsNullOrWhiteSpace(sql))
                 return suggestions;
 
-           // var relations = JsonSerializer.Deserialize<List<SchemaRelation>>(schemaJson);
+            // var relations = JsonSerializer.Deserialize<List<SchemaRelation>>(schemaJson);
             var relations = JsonConvert.DeserializeObject<List<SchemaRelation>>(schemaJson);
 
             if (relations == null || relations.Count == 0)
@@ -113,13 +108,8 @@ namespace SSMS_AI_Buddy.Services.SSMS
                 })
                 .ToList();
         }
-
-
-
     }
-
-
-    }
+}
 
 public class SchemaRelation
 {

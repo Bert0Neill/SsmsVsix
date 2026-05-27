@@ -5,7 +5,7 @@ namespace SSMS_AI_Buddy.Models
 {
     public class AIProperties
     {
-        [Browsable(false)]
+        //[Browsable(false)]
         [Category("AI Provider")]
         [DisplayName("AI Hoster")]
         [Description("Select the hoster you wish to call with your prompt.")]

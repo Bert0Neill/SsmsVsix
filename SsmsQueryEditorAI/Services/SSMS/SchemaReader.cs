@@ -207,13 +207,9 @@ namespace SSMS_AI_Buddy.Services.SSMS
         {
             var builder = new SqlConnectionStringBuilder(connectionString);
 
-            string dbName = builder.InitialCatalog;
+            string dbName = builder.InitialCatalog.Trim();
 
-            return
-                dbName.Equals("master", StringComparison.OrdinalIgnoreCase) ||
-                dbName.Equals("model", StringComparison.OrdinalIgnoreCase) ||
-                dbName.Equals("msdb", StringComparison.OrdinalIgnoreCase) ||
-                dbName.Equals("tempdb", StringComparison.OrdinalIgnoreCase);
+            return !string.IsNullOrEmpty(dbName) && AIEditorService.SystemDatabases.Contains(dbName);
         }
 
         #endregion

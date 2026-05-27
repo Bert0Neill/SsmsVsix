@@ -10,11 +10,17 @@ namespace SSMS_AI_Buddy.Services.SSMS
 
         public static CachedSchema GetOrAdd(string key, Func<CachedSchema> loader)
         {
-            if (_cache.ContainsKey(key))
-                return _cache[key];
+            if (string.IsNullOrWhiteSpace(key))
+                return null;
 
-            var schema = loader();
+            CachedSchema schema;
+
+            if (_cache.TryGetValue(key, out schema))
+                return schema;
+
+            schema = loader();
             _cache[key] = schema;
+
             return schema;
         }
     }

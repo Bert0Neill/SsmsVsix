@@ -39,6 +39,14 @@ namespace SSMS_AI_Buddy.Services
         private string _databaseName;
         private string _connectionKey;
 
+        internal static readonly HashSet<string> SystemDatabases = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "master",
+            "model",
+            "msdb",
+            "tempdb"
+        };
+
         public static AIEditorService ActiveService { get; private set; }
         #endregion
 
@@ -116,52 +124,6 @@ namespace SSMS_AI_Buddy.Services
                 }
             }
 
-            //// 🔽 NORMAL TYPING HANDLING
-            //if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.TYPECHAR)
-            //{
-            //    char typedChar = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
-
-            //    if (typedChar == ' ' || typedChar == '\n')
-            //    {
-            //        var sql = EditorHelper.GetCurrentEditorText();
-
-            //        if (SqlAnalyzer.ShouldTrigger(sql))
-            //        {
-            //            var schema = SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
-            //            var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
-            //            var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
-            //            var expanded = JoinGraphBuilder.Expand(tables, graph);
-            //            var schemaJson = OllamaSchemaBuilder.Build(_databaseName, schema, expanded);
-
-            //            // 👉 SEND json + prompt to Ollama
-            //            var suggestions = new List<SqlSuggestion>();
-            //            try
-            //            {
-            //                ThreadHelper.JoinableTaskFactory.Run(async () =>
-            //                {
-            //                    suggestions = await OllamaSqlSuggestionService.GetSqlSuggestionsAsync(schemaJson, sql)
-            //                        ?? new List<SqlSuggestion>();
-            //                });
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                Debug.WriteLine($"Ollama GetSqlSuggestionsAsync failed: {ex}");
-            //            }
-
-            //            // Show after this command chain finishes so the trigger char is committed and caret/layout match the popup.
-            //            var view = _wpfTextView;
-            //            var dispatcher = view?.VisualElement?.Dispatcher;
-            //            if (dispatcher != null)
-            //            {
-            //                dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-            //                {
-            //                    ShowSqlSuggestions(view, suggestions);
-            //                }));
-            //            }
-            //        }
-            //    }
-            //}
-
             return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
         }
 
@@ -228,17 +190,40 @@ namespace SSMS_AI_Buddy.Services
             _wpfTextView.Closed -= OnTextViewClosed;
         }
 
+        //private void OnActiveConnectionChanged(string server, string database)
+        //{
+        //    Debug.WriteLine($"Active connection changed: {server}.{database}");
+
+        //    _serverName = server;
+        //    _databaseName = database;
+        //    _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
+        //    _connectionKey = $"{server}|{database}";
+
+        //    // get DB schema and cache it
+        //    SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+        //}
+
+        
+
         private void OnActiveConnectionChanged(string server, string database)
         {
             Debug.WriteLine($"Active connection changed: {server}.{database}");
 
+            // If system DB, do NOT apply it
+            if (SystemDatabases.Contains(database))
+            {
+                Debug.WriteLine($"Ignored system database: {database}");
+                return;
+            }
+
             _serverName = server;
             _databaseName = database;
+
             _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
             _connectionKey = $"{server}|{database}";
 
-            // get DB schema and cache it
-            SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+            SchemaCache.GetOrAdd(_connectionKey,
+                () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
         }
         #endregion
 
@@ -305,17 +290,27 @@ namespace SSMS_AI_Buddy.Services
                 // Show hourglass / wait cursor
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                NvidiaFreeAPI.CallDeepSeekAsync(); // test performance of calling external API
+                // NvidiaFreeAPI.CallDeepSeekAsync(); // test performance of calling external API
 
+                if (string.IsNullOrEmpty(_connectionString?.Trim()))
+                {
+                    MessageBox.Show($@"You are currently connected to a system database.
+Please connect to a user database.
+Select from the dropdown above SQL Management Object or run the SQL 'Use <Database>' statement, and try again.", "Warning - System DB", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
                 List<SqlSuggestion> suggestions = new List<SqlSuggestion>();
 
                 if (_wpfTextView == null || string.IsNullOrWhiteSpace(sql))
                     return;
 
+                // verify that user isn't connected to a system database
                 if (SchemaReader.IsSystemDatabase(_connectionString))
                 {
-                    MessageBox.Show("You are connected to a system database. Please connect to a user database. Select from dropdown above SMO or run a SQL 'Use <DatabaseName>' statement, and try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($@"You are connected to a system database ({_databaseName}).
+Please connect to a user database.
+Select from the dropdown above SMO or run the SQL 'Use <Database>' statement, and try again.", "Warning - System DB", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -335,7 +330,6 @@ namespace SSMS_AI_Buddy.Services
                     {
                         // filter to only the tables in sql statement
                         var filteredSchema = FilterTables(schema, tables);
-
                         string json = JsonConvert.SerializeObject(filteredSchema, Formatting.Indented); // only pass table(s) schema
                         suggestions = await AIHosterSqlSuggestionService.RetrieveAIResponseAsync(json, sql, aIActionType) ?? new List<SqlSuggestion>();
                     }
