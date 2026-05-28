@@ -121,7 +121,7 @@ namespace SSMS_AI_Buddy
             await LoadSsmsStatusBarReference(); // allow ext to update SSMS statusbar
             InitializeSmoObjectExplorer(); // register the correct SSMS version to its Obj. Explorer
             await MonitorEditorWindow(); // capture events when user types into SQL editor
-           
+
             StatusBarService.UpdateStatusBarText($"AI Buddy Integrated Into SSMS"); // update SSMS statusbar with log file path
         }
 
@@ -270,10 +270,44 @@ namespace SSMS_AI_Buddy
                         }
                     }
                 }
+                else
+                {
+                    var conn = GetConnectionFromWindow(gotFocus);
+                }
             }
             catch (Exception ex)
             {
                 LoggerService.Error($"{ex.Message}");
+            }
+        }
+
+        private (string ServerName, string DatabaseName) GetConnectionFromWindow(EnvDTE.Window window)
+        {
+            try
+            {
+                if (window == null)
+                    return (null, null);
+
+                // SSMS query window exposes a frame object dynamically
+                dynamic frame = window.Object;
+
+                if (frame == null)
+                    return (null, null);
+
+                // ConnectionInfo is provided by SSMS
+                dynamic connInfo = frame.ConnectionInfo;
+
+                if (connInfo == null)
+                    return (null, null);
+
+                string server = connInfo.ServerName;
+                string database = connInfo.Database;
+
+                return (server, database);
+            }
+            catch
+            {
+                return (null, null);
             }
         }
 
@@ -299,7 +333,8 @@ namespace SSMS_AI_Buddy
                     break;
             }
 
-            _smoObjectExplorer.HookSelectionChanged(SELECTION_EVENT);
+            // _smoObjectExplorer.HookSelectionChanged(SELECTION_EVENT);
+            _smoObjectExplorer.HookSelectionChanged(SELECTION_EVENT, OnDatabaseChanged);
         }
 
         private async Task LoadSsmsStatusBarReference()
@@ -344,7 +379,16 @@ namespace SSMS_AI_Buddy
             }
         }
 
-       
+        private void OnDatabaseChanged(string server, string database)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            Debug.WriteLine($"DB Changed -> {server} / {database}");
+
+            StatusBarService.UpdateStatusBarText($"{server} / {database}");
+        }
+
+
     } // class
 
     #endregion

@@ -18,6 +18,8 @@ namespace SSMS_21_SqlAdjust
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
         }
+
+        public void HookSelectionChanged(string eventName, Action<string, string> callback) { }
         public void HookSelectionChanged(string methodName)
         {
             try

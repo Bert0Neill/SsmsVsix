@@ -293,7 +293,7 @@ namespace SSMS_AI_Buddy.Services
                 {
                     MessageBox.Show($@"You are currently connected to a system database.
 Please connect to a user database.
-Select from the dropdown above SQL Management Object or run the SQL 'Use <Database>' statement, and try again.", "Warning - System DB", MessageBoxButton.OK, MessageBoxImage.Warning);
+Select from the dropdown above the 'SQL Management Object' panel or run the SQL statement 'Use <Database>', and try again.", "Warning - System DB", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 

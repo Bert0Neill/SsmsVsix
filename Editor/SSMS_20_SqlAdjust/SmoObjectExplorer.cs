@@ -13,11 +13,63 @@ namespace SSMS_20_SqlAdjust
         private IServiceProvider _package { get; }
         private Delegate _handlerDelegate;
         public string SelectedSmoNode { get; set; }
+        private Action<string, string> _callback;
 
         public SmoObjectExplorer(IServiceProvider package)
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
         }
+
+        public void HookSelectionChanged(string eventName, Action<string, string> callback)
+        {
+            _callback = callback;
+
+            try
+            {
+                var objectExplorer = GetObjectExplorer();
+                if (objectExplorer == null)
+                    return;
+
+                var objectExplorerType = objectExplorer.GetType();
+
+                var piContainer = objectExplorerType.GetProperty("Container");
+                var container = piContainer?.GetValue(objectExplorer);
+
+                var piComponents = container?.GetType().GetProperty("Components");
+                var components = piComponents?.GetValue(container) as ComponentCollection;
+
+                object contextService = null;
+
+                foreach (Component component in components)
+                {
+                    if (component.GetType().FullName.Contains("ContextService"))
+                    {
+                        contextService = component;
+                        break;
+                    }
+                }
+
+                if (contextService == null)
+                    return;
+
+                var piContext = contextService.GetType().GetProperty("ObjectExplorerContext");
+                var context = piContext?.GetValue(contextService);
+
+                if (context == null)
+                    return;
+
+                var evt = context.GetType().GetEvent("CurrentContextChanged");
+                if (evt == null)
+                    return;
+
+                evt.AddEventHandler(context, new EventHandler(OnContextChanged));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Hooking Error");
+            }
+        }
+
         public void HookSelectionChanged(string methodName)
         {
             try
@@ -209,6 +261,50 @@ namespace SSMS_20_SqlAdjust
                 Debug.WriteLine($"Error accessing property '{propertyName}': {ex.Message}");
             }
             return null;
+        }
+
+        private void OnContextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                var (server, db) = ExtractFromObjectExplorer();
+
+                _callback?.Invoke(server, db);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Context Changed Error");
+            }
+        }
+
+        private (string Server, string Database) ExtractFromObjectExplorer()
+        {
+            try
+            {
+                var objectExplorer = GetObjectExplorer();
+                var selection = objectExplorer?.GetType()
+                    .GetProperty("SelectedNodes")
+                    ?.GetValue(objectExplorer) as System.Collections.IEnumerable;
+
+                foreach (var node in selection)
+                {
+                    string text = node?.ToString();
+
+                    if (string.IsNullOrEmpty(text))
+                        continue;
+
+                    // crude but works for SSMS nodes
+                    if (text.Contains("\\") && text.Contains("."))
+                    {
+                        var parts = text.Split('\\');
+                        if (parts.Length >= 2)
+                            return (parts[0], parts[1]);
+                    }
+                }
+            }
+            catch { }
+
+            return (null, null);
         }
 
     }

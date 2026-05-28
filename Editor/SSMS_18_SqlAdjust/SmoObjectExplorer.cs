@@ -25,6 +25,8 @@ namespace SSMS_18_SqlAdjust
             return serviceProvider?.GetService(typeof(IObjectExplorerService)) as IObjectExplorerService;
         }
 
+        public void HookSelectionChanged(string eventName, Action<string, string> callback) { }
+
         public void HookSelectionChanged(string methodName)
         {
             try
