@@ -9,165 +9,264 @@
 
 // **** Complex Query To test With **** //
 ------------------------------------------
-
-WITH SalesData AS
-(
-    SELECT
-        soh.SalesOrderID,
-        soh.OrderDate,
-        soh.CustomerID,
-        soh.SalesPersonID,
-        soh.TerritoryID,
-        soh.TotalDue,
-
-        c.AccountNumber,
-        p.FirstName + ' ' + p.LastName AS CustomerName,
-
-        sp.BusinessEntityID AS SalesRepID,
-        pp.FirstName + ' ' + pp.LastName AS SalesRepName,
-
-        st.Name AS TerritoryName,
-        st.CountryRegionCode,
-
-        sod.ProductID,
-        sod.OrderQty,
-        sod.LineTotal,
-
-        pr.Name AS ProductName,
-        pc.Name AS CategoryName,
-        psc.Name AS SubCategoryName
-
-    FROM Sales.SalesOrderHeader soh
-
-    INNER JOIN Sales.SalesOrderDetail sod
-        ON soh.SalesOrderID = sod.SalesOrderID
-
-    INNER JOIN Sales.Customer c
-        ON soh.CustomerID = c.CustomerID
-
-    LEFT JOIN Person.Person p
-        ON c.PersonID = p.BusinessEntityID
-
-    LEFT JOIN Sales.SalesPerson sp
-        ON soh.SalesPersonID = sp.BusinessEntityID
-
-    LEFT JOIN Person.Person pp
-        ON sp.BusinessEntityID = pp.BusinessEntityID
-
-    LEFT JOIN Sales.SalesTerritory st
-        ON soh.TerritoryID = st.TerritoryID
-
-    INNER JOIN Production.Product pr
-        ON sod.ProductID = pr.ProductID
-
-    LEFT JOIN Production.ProductSubcategory psc
-        ON pr.ProductSubcategoryID = psc.ProductSubcategoryID
-
-    LEFT JOIN Production.ProductCategory pc
-        ON psc.ProductCategoryID = pc.ProductCategoryID
-
-    WHERE soh.OrderDate >= '2013-01-01'
-),
-
-CustomerTotals AS
-(
-    SELECT
-        CustomerID,
-        CustomerName,
-        TerritoryName,
-
-        COUNT(DISTINCT SalesOrderID) AS TotalOrders,
-        SUM(LineTotal) AS TotalSales,
-        AVG(LineTotal) AS AvgLineValue,
-
-        RANK() OVER
-        (
-            PARTITION BY TerritoryName
-            ORDER BY SUM(LineTotal) DESC
-        ) AS CustomerRank
-
-    FROM SalesData
-    GROUP BY
-        CustomerID,
-        CustomerName,
-        TerritoryName
-),
-
-CategorySales AS
-(
-    SELECT
-        CategoryName,
-
-        SUM(LineTotal) AS CategoryRevenue,
-
-        DENSE_RANK() OVER
-        (
-            ORDER BY SUM(LineTotal) DESC
-        ) AS RevenueRank
-
-    FROM SalesData
-    GROUP BY CategoryName
-)
-
 SELECT
-    sd.TerritoryName,
-    sd.CountryRegionCode,
+    c.CustomerID,
+    c.CompanyName,
+    CONCAT(c.FirstName, ' ', c.LastName) AS CustomerName,
+    c.EmailAddress,
 
-    ct.CustomerName,
-    ct.TotalOrders,
-    ct.TotalSales,
-    ct.AvgLineValue,
-    ct.CustomerRank,
+    a.City,
+    a.CountryRegion,
 
-    cs.CategoryName,
-    cs.CategoryRevenue,
-    cs.RevenueRank,
+    soh.SalesOrderID,
+    soh.OrderDate,
+    soh.TotalDue,
 
-    sd.SalesRepName,
+    p.Name AS ProductName,
+    pc.Name AS CategoryName,
+
+    sod.OrderQty,
+    sod.LineTotal,
+
+    totals.CustomerLifetimeSpend,
 
     CASE
-        WHEN ct.TotalSales > 100000 THEN 'VIP'
-        WHEN ct.TotalSales > 50000 THEN 'Preferred'
-        ELSE 'Standard'
+        WHEN totals.CustomerLifetimeSpend > 50000 THEN 'Platinum'
+        WHEN totals.CustomerLifetimeSpend > 20000 THEN 'Gold'
+        WHEN totals.CustomerLifetimeSpend > 5000 THEN 'Silver'
+        ELSE 'Bronze'
     END AS CustomerTier,
 
-    MIN(sd.OrderDate) AS FirstOrderDate,
-    MAX(sd.OrderDate) AS LastOrderDate,
+    ROW_NUMBER() OVER
+    (
+        PARTITION BY c.CustomerID
+        ORDER BY soh.OrderDate DESC
+    ) AS OrderSequence
 
-    COUNT(DISTINCT sd.ProductID) AS UniqueProductsPurchased
+FROM SalesLT.Customer c
 
-FROM SalesData sd
+JOIN SalesLT.SalesOrderHeader soh
+    ON c.CustomerID = soh.CustomerID
 
-INNER JOIN CustomerTotals ct
-    ON sd.CustomerID = ct.CustomerID
+JOIN SalesLT.SalesOrderDetail sod
+    ON soh.SalesOrderID = sod.SalesOrderID
 
-INNER JOIN CategorySales cs
-    ON sd.CategoryName = cs.CategoryName
+JOIN SalesLT.Product p
+    ON sod.ProductID = p.ProductID
 
-GROUP BY
-    sd.TerritoryName,
-    sd.CountryRegionCode,
+LEFT JOIN SalesLT.ProductCategory pc
+    ON p.ProductCategoryID = pc.ProductCategoryID
 
-    ct.CustomerName,
-    ct.TotalOrders,
-    ct.TotalSales,
-    ct.AvgLineValue,
-    ct.CustomerRank,
+LEFT JOIN SalesLT.CustomerAddress ca
+    ON c.CustomerID = ca.CustomerID
 
-    cs.CategoryName,
-    cs.CategoryRevenue,
-    cs.RevenueRank,
+LEFT JOIN SalesLT.Address a
+    ON ca.AddressID = a.AddressID
 
-    sd.SalesRepName
+JOIN
+(
+    SELECT
+        soh.CustomerID,
+        SUM(sod.LineTotal) AS CustomerLifetimeSpend
+    FROM SalesLT.SalesOrderHeader soh
+    JOIN SalesLT.SalesOrderDetail sod
+        ON soh.SalesOrderID = sod.SalesOrderID
+    GROUP BY soh.CustomerID
+) totals
+    ON c.CustomerID = totals.CustomerID
 
-HAVING SUM(sd.LineTotal) > 10000
+WHERE
+    soh.Status = 5
+    AND sod.LineTotal > 100
 
 ORDER BY
-    ct.TotalSales DESC,
-    cs.RevenueRank ASC;
+    totals.CustomerLifetimeSpend DESC,
+    soh.OrderDate DESC;
 
--------------------------------------------
+-----------------
+SELECT
+    c.CustomerID,
+    c.CompanyName,
+    c.FirstName + ' ' + c.LastName AS CustomerName,
+    c.EmailAddress,
 
-NVidia Response
--------------------------------------------
-{"id":"chatcmpl-52d24ef1-845f-4aa8-b6d8-0cfe09948ada","choices":[{"index":0,"message":{"content":"Here are several improved versions of your SQL query depending on your specific needs:\n\n## 1. **Select Specific Columns (Recommended)**\n```sql\nSELECT address_id, street, city, state, postal_code, country\nFROM address;\n```\n\n## 2. **With Proper Ordering**\n```sql\nSELECT address_id, street, city, state, postal_code, country\nFROM address\nORDER BY city, street;\n```\n\n## 3. **With Filtering (if you need only active addresses)**\n```sql\nSELECT address_id, street, city, state, postal_code, country\nFROM address\nWHERE active = 1\nORDER BY city, street;\n```\n\n## 4. **With Table Aliases for Joins**\n```sql\nSELECT a.address_id, a.street, a.city, a.state, a.postal_code, a.country\nFROM address a\nWHERE a.active = 1\nORDER BY a.city, a.street;\n```\n\n## 5. **With Column Aliases for Better Readability**\n```sql\nSELECT \n    address_id AS id,\n    street AS street_address,\n    city,\n    state,\n    postal_code,\n    country\nFROM address\nWHERE active = 1\nORDER BY city, street;\n```\n\n## **Key Improvements Made:**\n- ✅ **Avoid `SELECT *`** - Specify only needed columns for better performance\n- ✅ **Add `ORDER BY`** - Results are returned in a consistent order\n- ✅ **Use table aliases** - Makes queries more maintainable\n- ✅ **Add filtering** - Only return relevant data\n- ✅ **Use meaningful column aliases** - Improves readability\n\nChoose the version that best fits your specific use case!","role":"assistant","reasoning_content":null},"finish_reason":"stop","logprobs":null}],"created":1779786714,"model":"qwen/qwen3-coder-480b-a35b-instruct","service_tier":null,"system_fingerprint":null,"object":"chat.completion","usage":{"prompt_tokens":16,"completion_tokens":359,"total_tokens":375,"prompt_tokens_details":{"audio_tokens":null,"cached_tokens":16}},"nvext":{"worker_id":{"prefill_worker_id":7587894933637319032,"prefill_dp_rank":0,"decode_worker_id":7587894933637319032,"decode_dp_rank":0},"timing":{"request_received_ms":1779786714190,"prefill_wait_time_ms":0.487236,"prefill_time_ms":188.999726,"ttft_ms":189.486962,"total_time_ms":7825.662139,"kv_hit_rate":0.0,"router_queue_depth":0}}}
+    a.City,
+    a.StateProvince,
+    a.CountryRegion,
+
+    soh.SalesOrderID,
+    soh.OrderDate,
+    soh.TotalDue,
+
+    p.ProductID,
+    p.Name AS ProductName,
+    pc.Name AS CategoryName,
+
+    sod.OrderQty,
+    sod.UnitPrice,
+    sod.LineTotal,
+
+    custTotals.CustomerLifetimeSpend,
+    categoryStats.AvgCategoryRevenue,
+    orderStats.TotalOrders,
+    orderStats.AvgOrderValue,
+
+    ---------------------------------------------------
+    -- Ranking (safe usage)
+    ---------------------------------------------------
+
+    DENSE_RANK() OVER
+    (
+        ORDER BY custTotals.CustomerLifetimeSpend DESC
+    ) AS RevenueRank,
+
+    ROW_NUMBER() OVER
+    (
+        PARTITION BY c.CustomerID
+        ORDER BY soh.OrderDate DESC
+    ) AS CustomerOrderSequence,
+
+    ---------------------------------------------------
+    -- Business Logic
+    ---------------------------------------------------
+
+    CASE
+        WHEN custTotals.CustomerLifetimeSpend > 50000 THEN 'Platinum'
+        WHEN custTotals.CustomerLifetimeSpend > 20000 THEN 'Gold'
+        WHEN custTotals.CustomerLifetimeSpend > 5000 THEN 'Silver'
+        ELSE 'Bronze'
+    END AS CustomerTier,
+
+    CASE
+        WHEN p.Color IS NULL THEN 'No Color'
+        ELSE p.Color
+    END AS ProductColor,
+
+    latestOrder.LastOrderDate,
+    latestOrder.LastOrderTotal,
+
+    topCategory.TopCategoryPurchased,
+
+    ---------------------------------------------------
+    -- Correlated JSON
+    ---------------------------------------------------
+
+    (
+        SELECT TOP 3
+            p2.Name AS ProductName,
+            SUM(sod2.LineTotal) AS Revenue
+        FROM SalesLT.SalesOrderDetail sod2
+        INNER JOIN SalesLT.Product p2
+            ON sod2.ProductID = p2.ProductID
+        WHERE sod2.ProductID = p.ProductID
+        GROUP BY p2.Name
+        ORDER BY Revenue DESC
+        FOR JSON PATH
+    ) AS ProductRevenueJson
+
+FROM SalesLT.Customer c
+
+INNER JOIN SalesLT.SalesOrderHeader soh
+    ON c.CustomerID = soh.CustomerID
+
+INNER JOIN SalesLT.SalesOrderDetail sod
+    ON soh.SalesOrderID = sod.SalesOrderID
+
+INNER JOIN SalesLT.Product p
+    ON sod.ProductID = p.ProductID
+
+LEFT JOIN SalesLT.ProductCategory pc
+    ON p.ProductCategoryID = pc.ProductCategoryID
+
+LEFT JOIN SalesLT.CustomerAddress ca
+    ON c.CustomerID = ca.CustomerID
+
+LEFT JOIN SalesLT.Address a
+    ON ca.AddressID = a.AddressID
+
+---------------------------------------------------
+-- Customer Lifetime Totals
+---------------------------------------------------
+
+INNER JOIN
+(
+    SELECT
+        soh2.CustomerID,
+        SUM(sod2.LineTotal) AS CustomerLifetimeSpend
+    FROM SalesLT.SalesOrderHeader soh2
+    INNER JOIN SalesLT.SalesOrderDetail sod2
+        ON soh2.SalesOrderID = sod2.SalesOrderID
+    GROUP BY soh2.CustomerID
+) custTotals
+    ON c.CustomerID = custTotals.CustomerID
+
+---------------------------------------------------
+-- Category Revenue Stats
+---------------------------------------------------
+
+INNER JOIN
+(
+    SELECT
+        p3.ProductCategoryID,
+        AVG(sod3.LineTotal) AS AvgCategoryRevenue
+    FROM SalesLT.SalesOrderDetail sod3
+    INNER JOIN SalesLT.Product p3
+        ON sod3.ProductID = p3.ProductID
+    GROUP BY p3.ProductCategoryID
+) categoryStats
+    ON p.ProductCategoryID = categoryStats.ProductCategoryID
+
+---------------------------------------------------
+-- APPLY: Latest Order
+---------------------------------------------------
+
+OUTER APPLY
+(
+    SELECT TOP 1
+        soh4.OrderDate AS LastOrderDate,
+        soh4.TotalDue AS LastOrderTotal
+    FROM SalesLT.SalesOrderHeader soh4
+    WHERE soh4.CustomerID = c.CustomerID
+    ORDER BY soh4.OrderDate DESC
+) latestOrder
+
+---------------------------------------------------
+-- APPLY: Order Statistics
+---------------------------------------------------
+
+OUTER APPLY
+(
+    SELECT
+        COUNT(*) AS TotalOrders,
+        AVG(TotalDue) AS AvgOrderValue
+    FROM SalesLT.SalesOrderHeader soh5
+    WHERE soh5.CustomerID = c.CustomerID
+) orderStats
+
+---------------------------------------------------
+-- APPLY: Top Category
+---------------------------------------------------
+
+OUTER APPLY
+(
+    SELECT TOP 1
+        pc2.Name AS TopCategoryPurchased
+    FROM SalesLT.SalesOrderHeader soh6
+    INNER JOIN SalesLT.SalesOrderDetail sod6
+        ON soh6.SalesOrderID = sod6.SalesOrderID
+    INNER JOIN SalesLT.Product p6
+        ON sod6.ProductID = p6.ProductID
+    INNER JOIN SalesLT.ProductCategory pc2
+        ON p6.ProductCategoryID = pc2.ProductCategoryID
+    WHERE soh6.CustomerID = c.CustomerID
+    GROUP BY pc2.Name
+    ORDER BY SUM(sod6.LineTotal) DESC
+) topCategory
+
+WHERE
+    soh.Status = 5
+    AND sod.LineTotal > 100
+
+ORDER BY
+    custTotals.CustomerLifetimeSpend DESC,
+    soh.OrderDate DESC;

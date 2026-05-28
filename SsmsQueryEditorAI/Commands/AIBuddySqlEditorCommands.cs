@@ -77,7 +77,6 @@ namespace SSMS_AI_Buddy.Commands
 
         }
 
-
         private static void ExecuteSuggestGroupHaving(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();

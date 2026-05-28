@@ -222,8 +222,7 @@ namespace SSMS_AI_Buddy.Services
             _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
             _connectionKey = $"{server}|{database}";
 
-            SchemaCache.GetOrAdd(_connectionKey,
-                () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+            SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
         }
         #endregion
 
@@ -289,8 +288,6 @@ namespace SSMS_AI_Buddy.Services
             {
                 // Show hourglass / wait cursor
                 Mouse.OverrideCursor = Cursors.Wait;
-
-                // NvidiaFreeAPI.CallDeepSeekAsync(); // test performance of calling external API
 
                 if (string.IsNullOrEmpty(_connectionString?.Trim()))
                 {

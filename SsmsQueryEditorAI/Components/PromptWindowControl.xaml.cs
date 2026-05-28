@@ -91,6 +91,16 @@ namespace SSMS_AI_Buddy.Components
                 else
                 {
                     var blocks = MarkdownRenderer.Parse(text); // Parse markdown including code blocks
+
+                    //// debug - extract text content from blocks
+                    //var texts = blocks
+                    //    .OfType<Paragraph>()
+                    //    .Select(p => new TextRange(
+                    //        p.ContentStart,
+                    //        p.ContentEnd
+                    //    ).Text)
+                    //    .ToList();
+
                     foreach (var block in blocks)
                     {
                         rtbResults.Document.Blocks.Add(block);

@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace SSMS_AI_Buddy.Services.Helper
@@ -49,13 +47,29 @@ namespace SSMS_AI_Buddy.Services.Helper
                 var line = raw.TrimEnd('\r');
                 var trimmed = line.TrimStart();
 
+                // skip blank lines
+                if (string.IsNullOrWhiteSpace(trimmed))
+                    continue;
+
+                // Horizontal rule
+                if (trimmed == "---")
+                {
+                    blocks.Add(new Paragraph(new Run("────────────────────"))
+                    {
+                        Margin = new Thickness(2, 6, 2, 6)
+                    });
+
+                    continue;
+                }
+
                 // CODE BLOCK START / END
                 if (trimmed.StartsWith("```"))
                 {
                     if (!inCodeBlock)
                     {
                         inCodeBlock = true;
-                        codeLanguage = trimmed.Replace("```", "").Trim().ToLower();
+                        //codeLanguage = trimmed.Replace("```", "").Trim().ToLower();
+                        codeLanguage = trimmed.Substring(3).Trim().ToLower();
                         codeBuffer.Clear();
                     }
                     else
@@ -96,8 +110,7 @@ namespace SSMS_AI_Buddy.Services.Helper
                     continue;
                 }
 
-                // BULLET LIST
-                // BULLET LIST
+                // BULLET LIST                
                 if (trimmed.StartsWith("- ") || trimmed.StartsWith("• "))
                 {
                     var paragraph = new Paragraph
@@ -124,6 +137,12 @@ namespace SSMS_AI_Buddy.Services.Helper
                 };
                 ParseInline(normalParagraph, trimmed);
                 blocks.Add(normalParagraph);
+            }
+
+            // flush unclosed code block
+            if (inCodeBlock && codeBuffer.Length > 0)
+            {
+                blocks.Add(CreateCodeBlock(codeBuffer.ToString(), codeLanguage));
             }
 
             return blocks;

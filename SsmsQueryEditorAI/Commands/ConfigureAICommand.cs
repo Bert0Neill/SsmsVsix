@@ -94,18 +94,6 @@ namespace SSMS_AI_Buddy.Commands
             // Show WinForms form with selected text
             var propertiesForm = new PropertiesFrm();
             propertiesForm.ShowDialog();
-
-            //string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            //string title = "ConfigureAI_Cmd";
-
-            //// Show a message box to prove we were here
-            //VsShellUtilities.ShowMessageBox(
-            //    this.package,
-            //    message,
-            //    title,
-            //    OLEMSGICON.OLEMSGICON_INFO,
-            //    OLEMSGBUTTON.OLEMSGBUTTON_OK,
-            //    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
         }
     }
 }
