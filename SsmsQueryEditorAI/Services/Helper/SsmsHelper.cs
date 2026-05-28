@@ -43,6 +43,9 @@ namespace SSMS_AI_Buddy.Services
                     case 21:
                         ssmsVersion = "SSMS 21";
                         break;
+                    case 22:
+                        ssmsVersion = "SSMS 22";
+                        break;
                     default:
                         ssmsVersion = "Unknown";
                         break;

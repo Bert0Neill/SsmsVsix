@@ -273,7 +273,7 @@ namespace SSMS_AI_Buddy
                     _smoObjectExplorer = new ssms22::SSMS_22_SqlAdjust.SmoObjectExplorer(this);
                     break;
                 default:
-                    // default to SSMS 20 - most common version
+                    // default to SSMS 20 - currently most common version
                     _smoObjectExplorer = new ssms20::SSMS_20_SqlAdjust.SmoObjectExplorer(this);
                     break;
             }
