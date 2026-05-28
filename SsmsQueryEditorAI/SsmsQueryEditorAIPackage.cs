@@ -58,15 +58,12 @@ using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
-using Newtonsoft.Json;
-using SSMS_AI_Buddy.Models;
 using SSMS_AI_Buddy.Resources;
 using SSMS_AI_Buddy.Services;
 using SSMS_AI_Buddy.Services.SSMS;
 using SSMS_SqlAdjust_Interfaces;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Task = System.Threading.Tasks.Task;
@@ -106,7 +103,8 @@ namespace SSMS_AI_Buddy
         private const string SELECTION_EVENT = "Provider_SelectionChanged";
         public static IObjectExplorerHelper _smoObjectExplorer;
         private SsmsHelper _helperService;
-
+        private string _lastServer;
+        private string _lastDb;
         #region Package Members
 
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
@@ -119,7 +117,8 @@ namespace SSMS_AI_Buddy
 
             _helperService = new SsmsHelper();
             await LoadSsmsStatusBarReference(); // allow ext to update SSMS statusbar
-            InitializeSmoObjectExplorer(); // register the correct SSMS version to its Obj. Explorer
+
+            InitializeSmoObjectExplorer(); // register the correct SSMS version to its Obj. Explorer 
             await MonitorEditorWindow(); // capture events when user types into SQL editor
 
             StatusBarService.UpdateStatusBarText($"AI Buddy Integrated Into SSMS"); // update SSMS statusbar with log file path
@@ -190,125 +189,67 @@ namespace SSMS_AI_Buddy
 
             try
             {
-                const string ACCEPT_FILE_TYPE = "SQL";
-                const string ACCEPT_FILE_EXT = ".sql";
-
-                // Check if document exists
                 if (gotFocus?.Document == null)
-                {
-                    Debug.WriteLine("VSIX Package: No document in focus");
                     return;
-                }
 
-                // Check if it's a SQL document
-                bool isSqlFile = false;
+                string docLanguage;
+                string docFileName;
+
                 try
                 {
-                    string docLanguage = gotFocus.Document.Language;
-                    string docFileName = gotFocus.Document.FullName;
-
-                    LoggerService.Info($"VSIX Package: Document language: {docLanguage}, Filename: {docFileName}");
-
-                    isSqlFile = docLanguage == ACCEPT_FILE_TYPE || docFileName.EndsWith(ACCEPT_FILE_EXT, StringComparison.OrdinalIgnoreCase);
+                    docLanguage = gotFocus.Document.Language;
+                    docFileName = gotFocus.Document.FullName;
                 }
-                catch (Exception ex)
+                catch
                 {
-                    LoggerService.Error($"{ex.Message}");
                     return;
                 }
+
+                bool isSqlFile =
+                    docLanguage == "SQL" ||
+                    docFileName.EndsWith(".sql", StringComparison.OrdinalIgnoreCase);
 
                 if (isSqlFile)
                 {
-                    Debug.WriteLine("VSIX Package: SQL file detected, setting up event handlers");
-
-                    var componentModel = this.GetService(typeof(SComponentModel)) as IComponentModel;
-                    if (componentModel == null)
-                    {
-                        Debug.WriteLine("VSIX Package: ComponentModel is null");
-                        return;
-                    }
-
-                    var editorFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
-                    var textManager = this.GetService(typeof(SVsTextManager)) as IVsTextManager;
-
-                    if (textManager == null || editorFactory == null)
-                    {
-                        Debug.WriteLine("VSIX Package: TextManager or EditorFactory is null");
-                        return;
-                    }
-
-                    IVsTextView textView;
-                    int result = textManager.GetActiveView(1, null, out textView);
-                    if (ErrorHandler.Failed(result) || textView == null)
-                    {
-                        Debug.WriteLine($"VSIX Package: Failed to get active text view, result: {result}");
-                        return;
-                    }
-
-                    var wpfTextView = editorFactory.GetWpfTextView(textView);
-                    if (wpfTextView != null)
-                    {
-                        Debug.WriteLine("VSIX Package: Setting up text view filter");
-
-                        IVsTextView nativeTextView = editorFactory.GetViewAdapter(wpfTextView);
-                        if (nativeTextView != null)
-                        {
-                            _textViewFilter = new AIEditorService(this, nativeTextView); // AIEditorService - hooks into editor events (monitoring of active SQL editors for connection string)
-
-                            // Before you process commands (typing, paste, enter, shortcuts, etc.), let my object see them first (YourFilter → ExistingFilter → Editor → Default behavior)
-                            result = nativeTextView.AddCommandFilter((IOleCommandTarget)_textViewFilter, out IOleCommandTarget nextCommandFilter);
-
-                            if (result == VSConstants.S_OK)
-                            {
-                                ((AIEditorService)_textViewFilter)._nextFilter = nextCommandFilter;
-                                Debug.WriteLine("VSIX Package: Tab key filter installed successfully");
-                            }
-                            else
-                            {
-                                Debug.WriteLine($"VSIX Package: Failed to install tab key filter, result: {result}");
-                            }
-                        }
-                    }
+                    AttachEditorFilterIfNeeded(gotFocus);
                 }
-                else
-                {
-                    var conn = GetConnectionFromWindow(gotFocus);
-                }
+
             }
             catch (Exception ex)
             {
-                LoggerService.Error($"{ex.Message}");
+                LoggerService.Error(ex.ToString());
             }
         }
 
-        private (string ServerName, string DatabaseName) GetConnectionFromWindow(EnvDTE.Window window)
+        private void AttachEditorFilterIfNeeded(EnvDTE.Window gotFocus)
         {
-            try
-            {
-                if (window == null)
-                    return (null, null);
+            var componentModel = GetService(typeof(SComponentModel)) as IComponentModel;
+            var editorFactory = componentModel?.GetService<IVsEditorAdaptersFactoryService>();
+            var textManager = GetService(typeof(SVsTextManager)) as IVsTextManager;
 
-                // SSMS query window exposes a frame object dynamically
-                dynamic frame = window.Object;
+            if (textManager == null || editorFactory == null)
+                return;
 
-                if (frame == null)
-                    return (null, null);
+            IVsTextView textView;
+            if (ErrorHandler.Failed(textManager.GetActiveView(1, null, out textView)) || textView == null)
+                return;
 
-                // ConnectionInfo is provided by SSMS
-                dynamic connInfo = frame.ConnectionInfo;
+            var wpfTextView = editorFactory.GetWpfTextView(textView);
+            if (wpfTextView == null)
+                return;
 
-                if (connInfo == null)
-                    return (null, null);
+            var nativeTextView = editorFactory.GetViewAdapter(wpfTextView);
+            if (nativeTextView == null)
+                return;
 
-                string server = connInfo.ServerName;
-                string database = connInfo.Database;
+            _textViewFilter = new AIEditorService(this, nativeTextView);
 
-                return (server, database);
-            }
-            catch
-            {
-                return (null, null);
-            }
+            nativeTextView.AddCommandFilter(
+                (IOleCommandTarget)_textViewFilter,
+                out IOleCommandTarget next
+            );
+
+            ((AIEditorService)_textViewFilter)._nextFilter = next;
         }
 
         private void InitializeSmoObjectExplorer()
@@ -333,8 +274,7 @@ namespace SSMS_AI_Buddy
                     break;
             }
 
-            // _smoObjectExplorer.HookSelectionChanged(SELECTION_EVENT);
-            _smoObjectExplorer.HookSelectionChanged(SELECTION_EVENT, OnDatabaseChanged);
+            _smoObjectExplorer.HookSelectionChanged(SELECTION_EVENT);
         }
 
         private async Task LoadSsmsStatusBarReference()
@@ -378,16 +318,6 @@ namespace SSMS_AI_Buddy
                 LoggerService.Info($"Unexpected error in Dispose: {ex.Message}");
             }
         }
-
-        private void OnDatabaseChanged(string server, string database)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            Debug.WriteLine($"DB Changed -> {server} / {database}");
-
-            StatusBarService.UpdateStatusBarText($"{server} / {database}");
-        }
-
 
     } // class
 

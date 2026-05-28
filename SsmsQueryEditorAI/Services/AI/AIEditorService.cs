@@ -8,20 +8,15 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Newtonsoft.Json;
 using SSMS_AI_Buddy.Models;
-using SSMS_AI_Buddy.Resources;
 using SSMS_AI_Buddy.Services.AI;
 using SSMS_AI_Buddy.Services.Connection;
-using SSMS_AI_Buddy.Services.Helper;
 using SSMS_AI_Buddy.Services.SSMS;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using static SSMS_AI_Buddy.Models.AppEnums;
 
 namespace SSMS_AI_Buddy.Services
@@ -34,10 +29,10 @@ namespace SSMS_AI_Buddy.Services
         public IOleCommandTarget _nextFilter { get; set; }
         private IWpfTextView _wpfTextView;
         private MonitorDbConnectionService _activeMonitor;
-        private string _connectionString;
+        private static string _connectionString;
         private string _serverName;
         private string _databaseName;
-        private string _connectionKey;
+        private static string _connectionKey;
 
         internal static readonly HashSet<string> SystemDatabases = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -190,21 +185,6 @@ namespace SSMS_AI_Buddy.Services
             _wpfTextView.Closed -= OnTextViewClosed;
         }
 
-        //private void OnActiveConnectionChanged(string server, string database)
-        //{
-        //    Debug.WriteLine($"Active connection changed: {server}.{database}");
-
-        //    _serverName = server;
-        //    _databaseName = database;
-        //    _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
-        //    _connectionKey = $"{server}|{database}";
-
-        //    // get DB schema and cache it
-        //    SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
-        //}
-
-        
-
         private void OnActiveConnectionChanged(string server, string database)
         {
             Debug.WriteLine($"Active connection changed: {server}.{database}");
@@ -221,6 +201,8 @@ namespace SSMS_AI_Buddy.Services
 
             _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
             _connectionKey = $"{server}|{database}";
+
+            Debug.WriteLine($"SQL AI: Connectionstring : {_connectionString}");
 
             SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
         }

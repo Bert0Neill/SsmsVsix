@@ -173,7 +173,7 @@ namespace SSMS_AI_Buddy.Services.Connection
                         _currentDatabase = database;
                         _currentUsername = username;
 
-                        Debug.WriteLine($"Connection updated: {server}.{database}");
+                        Debug.WriteLine($"Sql AI : Connection updated: {server}.{database}");
 
                         // Notify about connection change
                         ConnectionChanged?.Invoke(server, database);
@@ -211,49 +211,119 @@ namespace SSMS_AI_Buddy.Services.Connection
             database = null;
             userName = null;
 
-            if (string.IsNullOrWhiteSpace(caption) || !caption.Contains(" - "))
+            if (string.IsNullOrWhiteSpace(caption))
                 return false;
 
-            var parts = caption.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length < 2)
+            int dashIndex = caption.LastIndexOf(" - ");
+
+            if (dashIndex < 0)
                 return false;
 
-            var connectionPart = parts[1].Trim();
+            string connectionPart =
+                caption.Substring(dashIndex + 3).Trim();
 
-            if (connectionPart.Equals("Connecting...", StringComparison.OrdinalIgnoreCase))
-                return false;
-
-            // Extract username if present: (user)
-            var openParen = connectionPart.IndexOf('(');
-            if (openParen > 0)
+            // Ignore transient states
+            if (connectionPart.Equals(
+                "Connecting...",
+                StringComparison.OrdinalIgnoreCase))
             {
-                var closeParen = connectionPart.IndexOf(')', openParen);
-                if (closeParen > openParen)
+                return false;
+            }
+
+            // Remove dirty tab marker
+            connectionPart = connectionPart.TrimEnd('*');
+
+            // Remove protocol prefixes
+            connectionPart = connectionPart
+                .Replace("tcp:", "")
+                .Replace("np:", "")
+                .Replace("lpc:", "");
+
+            // Extract login
+            int loginStart = connectionPart.IndexOf(" (");
+
+            if (loginStart > 0)
+            {
+                int loginEnd = connectionPart.IndexOf(')', loginStart);
+
+                if (loginEnd > loginStart)
                 {
                     userName = connectionPart
-                        .Substring(openParen + 1, closeParen - openParen - 1)
+                        .Substring(
+                            loginStart + 2,
+                            loginEnd - loginStart - 2)
                         .Trim();
 
-                    connectionPart = connectionPart.Substring(0, openParen).Trim();
+                    connectionPart =
+                        connectionPart.Substring(0, loginStart)
+                                      .Trim();
                 }
             }
 
-            // server.database
-            var dotIndex = connectionPart.IndexOf('.');
-            if (dotIndex > 0)
-            {
-                server = connectionPart.Substring(0, dotIndex);
-                database = connectionPart.Substring(dotIndex + 1);
-                return true;
-            }
+            // Parse SERVER.DATABASE
+            int dotIndex = connectionPart.LastIndexOf('.');
 
-            // server only
-            server = connectionPart;
-            database = "master";
-            return true;
+            if (dotIndex <= 0)
+                return false;
+
+            server =
+                connectionPart.Substring(0, dotIndex).Trim();
+
+            database =
+                connectionPart.Substring(dotIndex + 1).Trim();
+
+            return
+                !string.IsNullOrWhiteSpace(server) &&
+                !string.IsNullOrWhiteSpace(database);
         }
 
+        //private bool TryParseConnectionFromCaption(string caption, out string server, out string database, out string userName)
+        //{
+        //    server = null;
+        //    database = null;
+        //    userName = null;
 
+        //    if (string.IsNullOrWhiteSpace(caption) || !caption.Contains(" - "))
+        //        return false;
+
+        //    var parts = caption.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
+        //    if (parts.Length < 2)
+        //        return false;
+
+        //    var connectionPart = parts[1].Trim();
+
+        //    if (connectionPart.Equals("Connecting...", StringComparison.OrdinalIgnoreCase))
+        //        return false;
+
+        //    // Extract username if present: (user)
+        //    var openParen = connectionPart.IndexOf('(');
+        //    if (openParen > 0)
+        //    {
+        //        var closeParen = connectionPart.IndexOf(')', openParen);
+        //        if (closeParen > openParen)
+        //        {
+        //            userName = connectionPart
+        //                .Substring(openParen + 1, closeParen - openParen - 1)
+        //                .Trim();
+
+        //            connectionPart = connectionPart.Substring(0, openParen).Trim();
+        //        }
+        //    }
+
+        //    // server.database
+        //    var dotIndex = connectionPart.IndexOf('.');
+        //    if (dotIndex > 0)
+        //    {
+        //        server = connectionPart.Substring(0, dotIndex);
+        //        database = connectionPart.Substring(dotIndex + 1);
+        //        return true;
+        //    }
+
+        //    // server only
+        //    server = connectionPart;
+        //    database = "master";
+        //    return true;
+        //}
 
 
 

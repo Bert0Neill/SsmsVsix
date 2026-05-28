@@ -20,56 +20,6 @@ namespace SSMS_20_SqlAdjust
             _package = package ?? throw new ArgumentNullException(nameof(package));
         }
 
-        public void HookSelectionChanged(string eventName, Action<string, string> callback)
-        {
-            _callback = callback;
-
-            try
-            {
-                var objectExplorer = GetObjectExplorer();
-                if (objectExplorer == null)
-                    return;
-
-                var objectExplorerType = objectExplorer.GetType();
-
-                var piContainer = objectExplorerType.GetProperty("Container");
-                var container = piContainer?.GetValue(objectExplorer);
-
-                var piComponents = container?.GetType().GetProperty("Components");
-                var components = piComponents?.GetValue(container) as ComponentCollection;
-
-                object contextService = null;
-
-                foreach (Component component in components)
-                {
-                    if (component.GetType().FullName.Contains("ContextService"))
-                    {
-                        contextService = component;
-                        break;
-                    }
-                }
-
-                if (contextService == null)
-                    return;
-
-                var piContext = contextService.GetType().GetProperty("ObjectExplorerContext");
-                var context = piContext?.GetValue(contextService);
-
-                if (context == null)
-                    return;
-
-                var evt = context.GetType().GetEvent("CurrentContextChanged");
-                if (evt == null)
-                    return;
-
-                evt.AddEventHandler(context, new EventHandler(OnContextChanged));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Hooking Error");
-            }
-        }
-
         public void HookSelectionChanged(string methodName)
         {
             try
