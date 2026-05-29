@@ -120,6 +120,7 @@
     <None Include="File\AI_Buddy_SSMS_Settings.json" />
     <None Include="File\AI_Buddy_SSMS_Settings_Reset.json" />
     <None Include="File\Prompts.json" />
+    <None Include="Misc\Docs\User Guide - SSMS AI Buddy.docx" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

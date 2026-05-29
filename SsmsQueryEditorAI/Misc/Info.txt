@@ -1,4 +1,5 @@
-﻿deepseek-r1:1.5b
+﻿// Ollama
+deepseek-r1:1.5b
 qwen2-math:1.5b
 qwen2.5-coder:1.5b
 http://localhost:11434/api/generate
