@@ -5,7 +5,6 @@ namespace SSMS_AI_Buddy.Models
 {
     public class AIProperties
     {
-        //[Browsable(false)]
         [Category("AI Provider")]
         [DisplayName("AI Hoster")]
         [Description("Select the hoster you wish to call with your prompt.")]
@@ -18,7 +17,7 @@ namespace SSMS_AI_Buddy.Models
         public string AIPromptURL { get; set; } = "https://integrate.api.nvidia.com/v1/chat/completions"; // Nvidia remote | "http://localhost:11434/api/generate"; // Ollama local default
 
         [Category("AI Provider")]
-        [DisplayName("API Key")]
+        [DisplayName("API Key (NVidia Only)")]
         [Description("The key may not be required for internal server prompts.")]
         public string AIPromptKey { get; set; } = "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"; // Bert's own NVidia key!
 
