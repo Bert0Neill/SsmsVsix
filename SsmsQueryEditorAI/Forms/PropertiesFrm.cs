@@ -2,6 +2,7 @@
 using SSMS_AI_Buddy.Services;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace SSMS_AI_Buddy.Forms
@@ -17,6 +18,22 @@ namespace SSMS_AI_Buddy.Forms
 
             _fileService = new FileService();
             _aiProperties = new AIProperties();
+        }
+
+        private void SetPropertyGridSplitter(PropertyGrid propertyGrid, int width)
+        {
+            var gridViewField = typeof(PropertyGrid)
+                .GetField("gridView", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (gridViewField == null)
+                return;
+
+            var gridView = gridViewField.GetValue(propertyGrid);
+
+            var moveSplitterMethod = gridView.GetType()
+                .GetMethod("MoveSplitterTo", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            moveSplitterMethod?.Invoke(gridView, new object[] { width });
         }
 
         private void PropertiesFrm_Load(object sender, EventArgs e)
@@ -40,6 +57,7 @@ namespace SSMS_AI_Buddy.Forms
             }
 
             this.propertiesAIPrompt.SelectedObject = _aiProperties;
+            SetPropertyGridSplitter(propertiesAIPrompt, 150);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
