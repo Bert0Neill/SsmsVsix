@@ -196,12 +196,10 @@
     <ProjectReference Include="..\Editor\SSMS_21_SqlAdjust\SSMS_SqlAdjust.21.csproj">
       <Project>{cf35b71a-8441-48d9-92a5-dfbed33aab65}</Project>
       <Name>SSMS_SqlAdjust.21</Name>
-      <Aliases>ssms21</Aliases>
     </ProjectReference>
     <ProjectReference Include="..\Editor\SSMS_22_SqlAdjust\SSMS_SqlAdjust.22.csproj">
       <Project>{d683b503-995f-463b-b75e-2c83caa30dff}</Project>
       <Name>SSMS_SqlAdjust.22</Name>
-      <Aliases>ssms22</Aliases>
     </ProjectReference>
     <ProjectReference Include="..\Editor\SSMS_SqlAdjust_Interfaces\SSMS_SqlAdjust_Interfaces.csproj">
       <Project>{64b5fbbb-a832-46ba-bb61-bdfaf4a15286}</Project>

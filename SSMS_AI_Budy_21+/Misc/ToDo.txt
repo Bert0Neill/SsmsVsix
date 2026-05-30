@@ -1,0 +1,272 @@
+﻿*) Popup dialog not sending prompt - bad request (most likely to Ollama)
+*) Suggest Having, change the table and suggest Having again -> throws an error
+*) Test with complex queries
+
+
+*) Test in 19+ SSMS
+*) Write Markdown document & Word docvument & Medium Blog
+
+
+// **** Complex Query To test With **** //
+------------------------------------------
+SELECT
+    c.CustomerID,
+    c.CompanyName,
+    CONCAT(c.FirstName, ' ', c.LastName) AS CustomerName,
+    c.EmailAddress,
+
+    a.City,
+    a.CountryRegion,
+
+    soh.SalesOrderID,
+    soh.OrderDate,
+    soh.TotalDue,
+
+    p.Name AS ProductName,
+    pc.Name AS CategoryName,
+
+    sod.OrderQty,
+    sod.LineTotal,
+
+    totals.CustomerLifetimeSpend,
+
+    CASE
+        WHEN totals.CustomerLifetimeSpend > 50000 THEN 'Platinum'
+        WHEN totals.CustomerLifetimeSpend > 20000 THEN 'Gold'
+        WHEN totals.CustomerLifetimeSpend > 5000 THEN 'Silver'
+        ELSE 'Bronze'
+    END AS CustomerTier,
+
+    ROW_NUMBER() OVER
+    (
+        PARTITION BY c.CustomerID
+        ORDER BY soh.OrderDate DESC
+    ) AS OrderSequence
+
+FROM SalesLT.Customer c
+
+JOIN SalesLT.SalesOrderHeader soh
+    ON c.CustomerID = soh.CustomerID
+
+JOIN SalesLT.SalesOrderDetail sod
+    ON soh.SalesOrderID = sod.SalesOrderID
+
+JOIN SalesLT.Product p
+    ON sod.ProductID = p.ProductID
+
+LEFT JOIN SalesLT.ProductCategory pc
+    ON p.ProductCategoryID = pc.ProductCategoryID
+
+LEFT JOIN SalesLT.CustomerAddress ca
+    ON c.CustomerID = ca.CustomerID
+
+LEFT JOIN SalesLT.Address a
+    ON ca.AddressID = a.AddressID
+
+JOIN
+(
+    SELECT
+        soh.CustomerID,
+        SUM(sod.LineTotal) AS CustomerLifetimeSpend
+    FROM SalesLT.SalesOrderHeader soh
+    JOIN SalesLT.SalesOrderDetail sod
+        ON soh.SalesOrderID = sod.SalesOrderID
+    GROUP BY soh.CustomerID
+) totals
+    ON c.CustomerID = totals.CustomerID
+
+WHERE
+    soh.Status = 5
+    AND sod.LineTotal > 100
+
+ORDER BY
+    totals.CustomerLifetimeSpend DESC,
+    soh.OrderDate DESC;
+
+-----------------
+SELECT
+    c.CustomerID,
+    c.CompanyName,
+    c.FirstName + ' ' + c.LastName AS CustomerName,
+    c.EmailAddress,
+
+    a.City,
+    a.StateProvince,
+    a.CountryRegion,
+
+    soh.SalesOrderID,
+    soh.OrderDate,
+    soh.TotalDue,
+
+    p.ProductID,
+    p.Name AS ProductName,
+    pc.Name AS CategoryName,
+
+    sod.OrderQty,
+    sod.UnitPrice,
+    sod.LineTotal,
+
+    custTotals.CustomerLifetimeSpend,
+    categoryStats.AvgCategoryRevenue,
+    orderStats.TotalOrders,
+    orderStats.AvgOrderValue,
+
+    ---------------------------------------------------
+    -- Ranking (safe usage)
+    ---------------------------------------------------
+
+    DENSE_RANK() OVER
+    (
+        ORDER BY custTotals.CustomerLifetimeSpend DESC
+    ) AS RevenueRank,
+
+    ROW_NUMBER() OVER
+    (
+        PARTITION BY c.CustomerID
+        ORDER BY soh.OrderDate DESC
+    ) AS CustomerOrderSequence,
+
+    ---------------------------------------------------
+    -- Business Logic
+    ---------------------------------------------------
+
+    CASE
+        WHEN custTotals.CustomerLifetimeSpend > 50000 THEN 'Platinum'
+        WHEN custTotals.CustomerLifetimeSpend > 20000 THEN 'Gold'
+        WHEN custTotals.CustomerLifetimeSpend > 5000 THEN 'Silver'
+        ELSE 'Bronze'
+    END AS CustomerTier,
+
+    CASE
+        WHEN p.Color IS NULL THEN 'No Color'
+        ELSE p.Color
+    END AS ProductColor,
+
+    latestOrder.LastOrderDate,
+    latestOrder.LastOrderTotal,
+
+    topCategory.TopCategoryPurchased,
+
+    ---------------------------------------------------
+    -- Correlated JSON
+    ---------------------------------------------------
+
+    (
+        SELECT TOP 3
+            p2.Name AS ProductName,
+            SUM(sod2.LineTotal) AS Revenue
+        FROM SalesLT.SalesOrderDetail sod2
+        INNER JOIN SalesLT.Product p2
+            ON sod2.ProductID = p2.ProductID
+        WHERE sod2.ProductID = p.ProductID
+        GROUP BY p2.Name
+        ORDER BY Revenue DESC
+        FOR JSON PATH
+    ) AS ProductRevenueJson
+
+FROM SalesLT.Customer c
+
+INNER JOIN SalesLT.SalesOrderHeader soh
+    ON c.CustomerID = soh.CustomerID
+
+INNER JOIN SalesLT.SalesOrderDetail sod
+    ON soh.SalesOrderID = sod.SalesOrderID
+
+INNER JOIN SalesLT.Product p
+    ON sod.ProductID = p.ProductID
+
+LEFT JOIN SalesLT.ProductCategory pc
+    ON p.ProductCategoryID = pc.ProductCategoryID
+
+LEFT JOIN SalesLT.CustomerAddress ca
+    ON c.CustomerID = ca.CustomerID
+
+LEFT JOIN SalesLT.Address a
+    ON ca.AddressID = a.AddressID
+
+---------------------------------------------------
+-- Customer Lifetime Totals
+---------------------------------------------------
+
+INNER JOIN
+(
+    SELECT
+        soh2.CustomerID,
+        SUM(sod2.LineTotal) AS CustomerLifetimeSpend
+    FROM SalesLT.SalesOrderHeader soh2
+    INNER JOIN SalesLT.SalesOrderDetail sod2
+        ON soh2.SalesOrderID = sod2.SalesOrderID
+    GROUP BY soh2.CustomerID
+) custTotals
+    ON c.CustomerID = custTotals.CustomerID
+
+---------------------------------------------------
+-- Category Revenue Stats
+---------------------------------------------------
+
+INNER JOIN
+(
+    SELECT
+        p3.ProductCategoryID,
+        AVG(sod3.LineTotal) AS AvgCategoryRevenue
+    FROM SalesLT.SalesOrderDetail sod3
+    INNER JOIN SalesLT.Product p3
+        ON sod3.ProductID = p3.ProductID
+    GROUP BY p3.ProductCategoryID
+) categoryStats
+    ON p.ProductCategoryID = categoryStats.ProductCategoryID
+
+---------------------------------------------------
+-- APPLY: Latest Order
+---------------------------------------------------
+
+OUTER APPLY
+(
+    SELECT TOP 1
+        soh4.OrderDate AS LastOrderDate,
+        soh4.TotalDue AS LastOrderTotal
+    FROM SalesLT.SalesOrderHeader soh4
+    WHERE soh4.CustomerID = c.CustomerID
+    ORDER BY soh4.OrderDate DESC
+) latestOrder
+
+---------------------------------------------------
+-- APPLY: Order Statistics
+---------------------------------------------------
+
+OUTER APPLY
+(
+    SELECT
+        COUNT(*) AS TotalOrders,
+        AVG(TotalDue) AS AvgOrderValue
+    FROM SalesLT.SalesOrderHeader soh5
+    WHERE soh5.CustomerID = c.CustomerID
+) orderStats
+
+---------------------------------------------------
+-- APPLY: Top Category
+---------------------------------------------------
+
+OUTER APPLY
+(
+    SELECT TOP 1
+        pc2.Name AS TopCategoryPurchased
+    FROM SalesLT.SalesOrderHeader soh6
+    INNER JOIN SalesLT.SalesOrderDetail sod6
+        ON soh6.SalesOrderID = sod6.SalesOrderID
+    INNER JOIN SalesLT.Product p6
+        ON sod6.ProductID = p6.ProductID
+    INNER JOIN SalesLT.ProductCategory pc2
+        ON p6.ProductCategoryID = pc2.ProductCategoryID
+    WHERE soh6.CustomerID = c.CustomerID
+    GROUP BY pc2.Name
+    ORDER BY SUM(sod6.LineTotal) DESC
+) topCategory
+
+WHERE
+    soh.Status = 5
+    AND sod.LineTotal > 100
+
+ORDER BY
+    custTotals.CustomerLifetimeSpend DESC,
+    soh.OrderDate DESC;

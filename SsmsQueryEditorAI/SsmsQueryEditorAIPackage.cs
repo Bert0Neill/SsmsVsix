@@ -49,8 +49,8 @@
 extern alias ssms18;
 extern alias ssms19;
 extern alias ssms20;
-extern alias ssms21;
-extern alias ssms22;
+//extern alias ssms21;
+//extern alias ssms22;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
@@ -278,12 +278,12 @@ namespace SSMS_AI_Buddy
                 case "SSMS 20":
                     _smoObjectExplorer = new ssms20::SSMS_20_SqlAdjust.SmoObjectExplorer(this);
                     break;
-                case "SSMS 21":
-                    _smoObjectExplorer = new ssms21::SSMS_21_SqlAdjust.SmoObjectExplorer(this);
-                    break;
-                case "SSMS 22":
-                    _smoObjectExplorer = new ssms22::SSMS_22_SqlAdjust.SmoObjectExplorer(this);
-                    break;
+                //case "SSMS 21":
+                //    _smoObjectExplorer = new ssms21::SSMS_21_SqlAdjust.SmoObjectExplorer(this);
+                //    break;
+                //case "SSMS 22":
+                //    _smoObjectExplorer = new ssms22::SSMS_22_SqlAdjust.SmoObjectExplorer(this);
+                //    break;
                 default:
                     // default to SSMS 20 - currently most common version
                     _smoObjectExplorer = new ssms20::SSMS_20_SqlAdjust.SmoObjectExplorer(this);
