@@ -15,7 +15,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SSMS_AI_Buddy</RootNamespace>
-    <AssemblyName>SSMS_AI_Buddy</AssemblyName>
+    <AssemblyName>SSMS_18_20_AI_Buddy</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <UseWPF>true</UseWPF>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
@@ -39,7 +39,7 @@
     <WarningLevel>4</WarningLevel>
     <CopyVsixExtensionFiles>True</CopyVsixExtensionFiles>
     <!-- SSMS 21+ is 64-bit under Program Files (not x86). Adjust if your install path differs. -->
-    <CopyVsixExtensionLocation>D:\Program Files %28x86%29\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions\SsmsAIBuddy</CopyVsixExtensionLocation>
+    <CopyVsixExtensionLocation>C:\Program Files %28x86%29\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions\SsmsAIBuddy</CopyVsixExtensionLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
