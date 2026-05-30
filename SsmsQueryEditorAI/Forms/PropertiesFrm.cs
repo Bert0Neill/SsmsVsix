@@ -2,7 +2,6 @@
 using SSMS_AI_Buddy.Services;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace SSMS_AI_Buddy.Forms
@@ -11,6 +10,7 @@ namespace SSMS_AI_Buddy.Forms
     {
         AIProperties _aiProperties;
         FileService _fileService;
+        bool _suppressProviderChange;
 
         public PropertiesFrm()
         {
@@ -20,21 +20,52 @@ namespace SSMS_AI_Buddy.Forms
             _aiProperties = new AIProperties();
         }
 
-        private void SetPropertyGridSplitter(PropertyGrid propertyGrid, int width)
+        private void BindAIProviderDropdown()
         {
-            var gridViewField = typeof(PropertyGrid)
-                .GetField("gridView", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            if (gridViewField == null)
-                return;
-
-            var gridView = gridViewField.GetValue(propertyGrid);
-
-            var moveSplitterMethod = gridView.GetType()
-                .GetMethod("MoveSplitterTo", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            moveSplitterMethod?.Invoke(gridView, new object[] { width });
+            _suppressProviderChange = true;
+            try
+            {
+                string provider = _aiProperties.AIProvider;
+                int index = Array.IndexOf(AIProviderOptions.All, provider);
+                cboAIProvider.SelectedIndex = index >= 0 ? index : 1;
+            }
+            finally
+            {
+                _suppressProviderChange = false;
+            }
         }
+
+        //private void ApplyProviderSelectionToProperties()
+        //{
+        //    if (cboAIProvider.SelectedItem == null)
+        //        return;
+
+        //    _aiProperties.AIProvider = cboAIProvider.SelectedItem.ToString();
+        //    ApplyProviderDefaults(_aiProperties.AIProvider);
+        //    propertiesAIPrompt.Refresh();
+        //}
+
+        //private void ApplyProviderDefaults(string provider)
+        //{
+        //    if (provider == AIProviderOptions.NvidiaRemote)
+        //    {
+        //        _aiProperties.AIPromptURL = "https://integrate.api.nvidia.com/v1/chat/completions";
+        //        _aiProperties.PromptLLMName = "deepseek-ai/deepseek-r1";
+        //    }
+        //    else if (provider == AIProviderOptions.OllamaLocal)
+        //    {
+        //        _aiProperties.AIPromptURL = "http://localhost:11434/api/generate";
+        //        _aiProperties.PromptLLMName = "deepseek-r1:1.5b";
+        //    }
+        //}
+
+        //private void cboAIProvider_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (_suppressProviderChange)
+        //        return;
+
+        //    ApplyProviderSelectionToProperties();
+        //}
 
         private void PropertiesFrm_Load(object sender, EventArgs e)
         {
@@ -56,8 +87,8 @@ namespace SSMS_AI_Buddy.Forms
                 _fileService.SaveToJson(_aiProperties, resetFilePath);
             }
 
+            BindAIProviderDropdown();
             this.propertiesAIPrompt.SelectedObject = _aiProperties;
-            SetPropertyGridSplitter(propertiesAIPrompt, 150);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -67,6 +98,7 @@ namespace SSMS_AI_Buddy.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            //ApplyProviderSelectionToProperties();
             _aiProperties.DateLastModified = DateTime.Now;
 
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
@@ -137,6 +169,7 @@ namespace SSMS_AI_Buddy.Forms
                     _aiProperties = _fileService.LoadFromJson<AIProperties>(settingsFilePath);
                 }
 
+                BindAIProviderDropdown();
                 this.propertiesAIPrompt.SelectedObject = _aiProperties;
                 this.btnReset.Enabled = File.Exists(resetFilePath); // enable reset based on file existing to reset to
 

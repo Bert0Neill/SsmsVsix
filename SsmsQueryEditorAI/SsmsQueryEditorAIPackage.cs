@@ -119,10 +119,22 @@ namespace SSMS_AI_Buddy
             _helperService = new SsmsHelper();
             await LoadSsmsStatusBarReference(); // allow ext to update SSMS statusbar
 
-            InitializeSmoObjectExplorer(); // register the correct SSMS version to its Obj. Explorer 
+            var ssmsVersion = _helperService.RetrieveSsmsVersion();
+            Debug.WriteLine($"SSMS AI Buddy: detected host version '{ssmsVersion}'.");
+
+            try
+            {
+                InitializeSmoObjectExplorer(ssmsVersion); // register the correct SSMS version to its Obj. Explorer
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"SSMS AI Buddy: Object Explorer hook failed: {ex}");
+                LoggerService.Error($"Object Explorer hook failed: {ex}");
+            }
+
             await MonitorEditorWindow(); // capture events when user types into SQL editor
 
-            StatusBarService.UpdateStatusBarText($"AI Buddy Integrated Into SSMS"); // update SSMS statusbar with log file path
+            StatusBarService.UpdateStatusBarText($"AI Buddy integrated into {ssmsVersion}"); // update SSMS statusbar with log file path
         }
 
         private async Task MonitorEditorWindow()
@@ -253,9 +265,9 @@ namespace SSMS_AI_Buddy
             ((AIEditorService)_textViewFilter)._nextFilter = next;
         }
 
-        private void InitializeSmoObjectExplorer()
+        private void InitializeSmoObjectExplorer(string ssmsVersion)
         {
-            switch (_helperService.RetrieveSsmsVersion())
+            switch (ssmsVersion)
             {
                 case "SSMS 18":
                     _smoObjectExplorer = new ssms18::SSMS_18_SqlAdjust.SmoObjectExplorer(this);
