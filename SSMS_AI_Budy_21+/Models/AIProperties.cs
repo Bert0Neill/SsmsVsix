@@ -13,7 +13,7 @@ namespace SSMS_AI_Buddy.Models
 
         [Category("AI Provider")]
         [DisplayName("Prompt API URL")]
-        [Description("The Prompt URL that will get called with your prompt.")]
+        [Description("The Prompt URL that will get called with your prompt.For e.g. NVidia 'https://integrate.api.nvidia.com/v1/chat/completions' or Ollama (local) 'http://localhost:11434/api/generate'")]
         public string AIPromptURL { get; set; } = "https://integrate.api.nvidia.com/v1/chat/completions"; // Nvidia remote | "http://localhost:11434/api/generate"; // Ollama local default
 
         [Category("AI Provider")]
