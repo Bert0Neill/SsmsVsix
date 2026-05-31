@@ -23,8 +23,8 @@ namespace SSMS_AI_Buddy.Models
 
         [Category("AI Provider")]
         [DisplayName("LLM Name")]
-        [Description("For your reference, what LLM model your Hoster is using (for e.g deepseek-r1:5b)")]
-        public string PromptLLMName { get; set; } = "deepseek-r1:1.5b"; //qwen/qwen3-coder-480b-a35b-instruct NVidia
+        [Description("For your reference, what LLM model your Hoster is using (for e.g qwen/qwen3-coder-480b-a35b-instruct)")]
+        public string PromptLLMName { get; set; } = "openai/gpt-oss-120b"; //NVIDIA - qwen/qwen3-coder-480b-a35b-instruct NVidia
 
         [Browsable(false)]
         [Category("AI Provider")]
