@@ -1,6 +1,5 @@
 ﻿using EnvDTE;
 using EnvDTE80;
-using Microsoft.Identity.Client;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Shell;
