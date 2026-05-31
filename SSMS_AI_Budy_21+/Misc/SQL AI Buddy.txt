@@ -1,0 +1,1041 @@
+Prompt AI with josn synatx:
+
+You are a SQL assistant. You have the following information:
+
+1. **Database schema in JSON format**:
+
+{
+  "database": "AdventureWorksLT2019",
+  "tables": [
+    {
+      "name": "Address",
+      "schema": "SalesLT",
+      "columns": [
+        {
+          "name": "AddressID",
+          "type": "int",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "name": "AddressLine1",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "AddressLine2",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "City",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "StateProvince",
+          "type": "Name",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "CountryRegion",
+          "type": "Name",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "PostalCode",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "rowguid",
+          "type": "uniqueidentifier",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ModifiedDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "name": "Customer",
+      "schema": "SalesLT",
+      "columns": [
+        {
+          "name": "CustomerID",
+          "type": "int",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "name": "NameStyle",
+          "type": "NameStyle",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "Title",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "FirstName",
+          "type": "Name",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "MiddleName",
+          "type": "Name",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "LastName",
+          "type": "Name",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "Suffix",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "CompanyName",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "SalesPerson",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "EmailAddress",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "Phone",
+          "type": "Phone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "PasswordHash",
+          "type": "varchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "PasswordSalt",
+          "type": "varchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "rowguid",
+          "type": "uniqueidentifier",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ModifiedDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "name": "CustomerAddress",
+      "schema": "SalesLT",
+      "columns": [
+        {
+          "name": "CustomerID",
+          "type": "int",
+          "pk": true,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "Customer",
+            "column": "CustomerID"
+          }
+        },
+        {
+          "name": "AddressID",
+          "type": "int",
+          "pk": true,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "Address",
+            "column": "AddressID"
+          }
+        },
+        {
+          "name": "AddressType",
+          "type": "Name",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "rowguid",
+          "type": "uniqueidentifier",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ModifiedDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "name": "SalesOrderDetail",
+      "schema": "SalesLT",
+      "columns": [
+        {
+          "name": "SalesOrderID",
+          "type": "int",
+          "pk": true,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "SalesOrderHeader",
+            "column": "SalesOrderID"
+          }
+        },
+        {
+          "name": "SalesOrderDetailID",
+          "type": "int",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "name": "OrderQty",
+          "type": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ProductID",
+          "type": "int",
+          "pk": false,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "Product",
+            "column": "ProductID"
+          }
+        },
+        {
+          "name": "UnitPrice",
+          "type": "money",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "UnitPriceDiscount",
+          "type": "money",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "LineTotal",
+          "type": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "rowguid",
+          "type": "uniqueidentifier",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ModifiedDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "name": "SalesOrderHeader",
+      "schema": "SalesLT",
+      "columns": [
+        {
+          "name": "SalesOrderID",
+          "type": "int",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "name": "RevisionNumber",
+          "type": "tinyint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "OrderDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "DueDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ShipDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "Status",
+          "type": "tinyint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "OnlineOrderFlag",
+          "type": "Flag",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "SalesOrderNumber",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "PurchaseOrderNumber",
+          "type": "OrderNumber",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "AccountNumber",
+          "type": "AccountNumber",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "CustomerID",
+          "type": "int",
+          "pk": false,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "Customer",
+            "column": "CustomerID"
+          }
+        },
+        {
+          "name": "ShipToAddressID",
+          "type": "int",
+          "pk": false,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "Address",
+            "column": "AddressID"
+          }
+        },
+        {
+          "name": "BillToAddressID",
+          "type": "int",
+          "pk": false,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "Address",
+            "column": "AddressID"
+          }
+        },
+        {
+          "name": "ShipMethod",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "CreditCardApprovalCode",
+          "type": "varchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "SubTotal",
+          "type": "money",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "TaxAmt",
+          "type": "money",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "Freight",
+          "type": "money",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "TotalDue",
+          "type": "money",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "Comment",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "rowguid",
+          "type": "uniqueidentifier",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ModifiedDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    }
+  ]
+}
+
+2. **Current SQL query being typed**:
+
+select * from SalesLT.Address 
+
+Your task is to suggest **valid next SQL tokens or snippets** that the user can type next. Focus on:
+
+**Only suggest the following SQL commands based on where the SQL statement is currently at**
+- JOINs (INNER, LEFT, RIGHT) with correct tables and columns
+- WHERE clauses using columns in the tables already in the FROM/JOIN
+- GROUP BY / HAVING using existing columns
+- ORDER BY using columns from selected tables
+- Aliases should match the aliases in the schema
+- Only suggest columns that exist in the included tables
+- Include schema names when necessary
+
+Output the suggestions as a **JSON array**, each item having:
+
+- `type`: "join", "where", "having", "groupby", "orderby"
+- `suggestion`: the SQL snippet to insert
+- `description`: optional explanation
+
+**Do NOT suggest non-existing columns or tables.**
+
+Example output:
+
+[
+  {
+    "type": "join",
+    "suggestion": "LEFT JOIN SalesLT.ProductCategory pc ON p.ProductCategoryID = pc.ProductCategoryID",
+    "description": "Join the ProductCategory table using ProductCategoryID"
+  },
+  {
+    "type": "where",
+    "suggestion": "WHERE p.ListPrice > 100",
+    "description": "Filter products with ListPrice greater than 100"
+  }
+]
+-------------------------------------------------------------------------------
+[
+  {
+    "type": "join",
+    "suggestion": "INNER JOIN SalesLT.CustomerAddress ca ON SalesLT.Address.AddressID = ca.AddressID",
+    "description": "Join Address to CustomerAddress using AddressID"
+  },
+  {
+    "type": "join",
+    "suggestion": "LEFT JOIN SalesLT.SalesOrderHeader soh ON SalesLT.Address.AddressID = soh.ShipToAddressID",
+    "description": "Join Address to SalesOrderHeader using ShipToAddressID"
+  },
+  {
+    "type": "join",
+    "suggestion": "LEFT JOIN SalesLT.SalesOrderHeader soh ON SalesLT.Address.AddressID = soh.BillToAddressID",
+    "description": "Join Address to SalesOrderHeader using BillToAddressID"
+  },
+  {
+    "type": "where",
+    "suggestion": "WHERE SalesLT.Address.City = 'London'",
+    "description": "Filter addresses by city"
+  },
+  {
+    "type": "where",
+    "suggestion": "WHERE SalesLT.Address.CountryRegion = 'United States'",
+    "description": "Filter addresses by country or region"
+  },
+  {
+    "type": "where",
+    "suggestion": "WHERE SalesLT.Address.PostalCode = '98052'",
+    "description": "Filter addresses by postal code"
+  },
+  {
+    "type": "groupby",
+    "suggestion": "GROUP BY SalesLT.Address.City",
+    "description": "Group addresses by city"
+  },
+  {
+    "type": "groupby",
+    "suggestion": "GROUP BY SalesLT.Address.CountryRegion, SalesLT.Address.StateProvince",
+    "description": "Group addresses by country and state/province"
+  },
+  {
+    "type": "having",
+    "suggestion": "HAVING COUNT(SalesLT.Address.AddressID) > 1",
+    "description": "Return only groups with more than one address"
+  },
+  {
+    "type": "orderby",
+    "suggestion": "ORDER BY SalesLT.Address.City",
+    "description": "Sort results by city"
+  },
+  {
+    "type": "orderby",
+    "suggestion": "ORDER BY SalesLT.Address.ModifiedDate DESC",
+    "description": "Sort results by most recently modified addresses"
+  }
+]
+
+---------------------------------------------------------------------------------
+Prompt AI with josn synatx:
+
+You are a SQL assistant. You have the following information:
+
+1. **Database schema in JSON format**:
+
+<insert JSON schema here>
+
+2. **Current SQL query being typed**:
+
+<insert partial SQL query here>
+
+Your task is to suggest **valid next SQL tokens or snippets** that the user can type next. Focus on:
+
+- JOINs (INNER, LEFT, RIGHT) with correct tables and columns
+- WHERE clauses using columns in the tables already in the FROM/JOIN
+- GROUP BY / HAVING using existing columns
+- ORDER BY using columns from selected tables
+- Aliases should match the aliases in the schema
+- Only suggest columns that exist in the included tables
+- Include schema names when necessary
+
+Output the suggestions as a **JSON array**, each item having:
+
+- `type`: "join", "where", "having", "groupby", "orderby"
+- `suggestion`: the SQL snippet to insert
+- `description`: optional explanation
+
+**Do NOT suggest non-existing columns or tables.**
+
+Example output:
+
+[
+  {
+    "type": "join",
+    "suggestion": "LEFT JOIN SalesLT.ProductCategory pc ON p.ProductCategoryID = pc.ProductCategoryID",
+    "description": "Join the ProductCategory table using ProductCategoryID"
+  },
+  {
+    "type": "where",
+    "suggestion": "WHERE p.ListPrice > 100",
+    "description": "Filter products with ListPrice greater than 100"
+  }
+]
+
+-------------------------------------------
+You are a SQL assistant. You have the following information:
+
+1. Database schema in JSON format:
+
+{
+  "database": "AdventureWorksLT2019",
+  "tables": [
+    {
+      "name": "Address",
+      "schema": "SalesLT",
+      "columns": [
+        {
+          "name": "AddressID",
+          "type": "int",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "name": "AddressLine1",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "AddressLine2",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "City",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "StateProvince",
+          "type": "Name",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "CountryRegion",
+          "type": "Name",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "PostalCode",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "rowguid",
+          "type": "uniqueidentifier",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ModifiedDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "name": "Customer",
+      "schema": "SalesLT",
+      "columns": [
+        {
+          "name": "CustomerID",
+          "type": "int",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "name": "NameStyle",
+          "type": "NameStyle",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "Title",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "FirstName",
+          "type": "Name",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "MiddleName",
+          "type": "Name",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "LastName",
+          "type": "Name",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "Suffix",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "CompanyName",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "SalesPerson",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "EmailAddress",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "Phone",
+          "type": "Phone",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "PasswordHash",
+          "type": "varchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "PasswordSalt",
+          "type": "varchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "rowguid",
+          "type": "uniqueidentifier",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ModifiedDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "name": "CustomerAddress",
+      "schema": "SalesLT",
+      "columns": [
+        {
+          "name": "CustomerID",
+          "type": "int",
+          "pk": true,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "Customer",
+            "column": "CustomerID"
+          }
+        },
+        {
+          "name": "AddressID",
+          "type": "int",
+          "pk": true,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "Address",
+            "column": "AddressID"
+          }
+        },
+        {
+          "name": "AddressType",
+          "type": "Name",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "rowguid",
+          "type": "uniqueidentifier",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ModifiedDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "name": "SalesOrderDetail",
+      "schema": "SalesLT",
+      "columns": [
+        {
+          "name": "SalesOrderID",
+          "type": "int",
+          "pk": true,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "SalesOrderHeader",
+            "column": "SalesOrderID"
+          }
+        },
+        {
+          "name": "SalesOrderDetailID",
+          "type": "int",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "name": "OrderQty",
+          "type": "smallint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ProductID",
+          "type": "int",
+          "pk": false,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "Product",
+            "column": "ProductID"
+          }
+        },
+        {
+          "name": "UnitPrice",
+          "type": "money",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "UnitPriceDiscount",
+          "type": "money",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "LineTotal",
+          "type": "numeric",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "rowguid",
+          "type": "uniqueidentifier",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ModifiedDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    },
+    {
+      "name": "SalesOrderHeader",
+      "schema": "SalesLT",
+      "columns": [
+        {
+          "name": "SalesOrderID",
+          "type": "int",
+          "pk": true,
+          "fk": null
+        },
+        {
+          "name": "RevisionNumber",
+          "type": "tinyint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "OrderDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "DueDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ShipDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "Status",
+          "type": "tinyint",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "OnlineOrderFlag",
+          "type": "Flag",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "SalesOrderNumber",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "PurchaseOrderNumber",
+          "type": "OrderNumber",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "AccountNumber",
+          "type": "AccountNumber",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "CustomerID",
+          "type": "int",
+          "pk": false,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "Customer",
+            "column": "CustomerID"
+          }
+        },
+        {
+          "name": "ShipToAddressID",
+          "type": "int",
+          "pk": false,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "Address",
+            "column": "AddressID"
+          }
+        },
+        {
+          "name": "BillToAddressID",
+          "type": "int",
+          "pk": false,
+          "fk": {
+            "schema": "SalesLT",
+            "table": "Address",
+            "column": "AddressID"
+          }
+        },
+        {
+          "name": "ShipMethod",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "CreditCardApprovalCode",
+          "type": "varchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "SubTotal",
+          "type": "money",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "TaxAmt",
+          "type": "money",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "Freight",
+          "type": "money",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "TotalDue",
+          "type": "money",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "Comment",
+          "type": "nvarchar",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "rowguid",
+          "type": "uniqueidentifier",
+          "pk": false,
+          "fk": null
+        },
+        {
+          "name": "ModifiedDate",
+          "type": "datetime",
+          "pk": false,
+          "fk": null
+        }
+      ]
+    }
+  ]
+}
+
+2. Current SQL query being typed:
+
+select * from SalesLT.Address 
+
+Your task is to suggest valid next SQL tokens or snippets that the user can type next. Follow these rules:
+
+- Only suggest the following SQL commands based on the selected tables:
+  - JOINs (INNER, LEFT, RIGHT) with correct tables and columns
+  - WHERE clauses using columns in the tables already in the FROM/JOIN
+
+- Only suggest the following SQL commands if specific fields in the select statement:
+  - GROUP BY / HAVING using existing columns
+  - ORDER BY using columns from selected tables
+
+- Aliases should match the aliases in the schema.
+- Only suggest columns that exist in the included tables.
+- Include schema names when necessary.
+- Do NOT suggest non-existing columns or tables.
+
+Output the suggestions as a JSON array. Each item must include:
+
+- `type`: "join", "where", "having", "groupby", "orderby"
+- `suggestion`: the SQL snippet to insert
+- `description`: optional explanation of the snippet
+
+Example output:
+
+[
+  {
+    "type": "join",
+    "suggestion": "LEFT JOIN SalesLT.ProductCategory pc ON p.ProductCategoryID = pc.ProductCategoryID",
+    "description": "Join the ProductCategory table using ProductCategoryID"
+  },
+  {
+    "type": "where",
+    "suggestion": "WHERE p.ListPrice > 100",
+    "description": "Filter products with ListPrice greater than 100"
+  }
+]
+--------------------------

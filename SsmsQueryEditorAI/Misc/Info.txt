@@ -12,7 +12,7 @@ minimaxai/minimax-m2.7
 openai/gpt-oss-120b
 
 SSMS 22
-C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions\SsmsAIBuddy
+C:\Program Files (x86)\Microsoft SQL Server Management Studio 22\Common7\IDE\Extensions\SsmsAIBuddy
 
 SSMS 20
-D:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions\SsmsAIBuddy
+C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions\SsmsAIBuddy

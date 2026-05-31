@@ -1,0 +1,436 @@
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.Editor;
+using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.TextManager.Interop;
+using Newtonsoft.Json;
+using SSMS_AI_Buddy.Models;
+using SSMS_AI_Buddy.Services.AI;
+using SSMS_AI_Buddy.Services.Connection;
+using SSMS_AI_Buddy.Services.SSMS;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using static SSMS_AI_Buddy.Models.AppEnums;
+
+namespace SSMS_AI_Buddy.Services
+{
+    internal class AIEditorService : IOleCommandTarget, IVsTextViewFilter
+    {
+        #region Class Variables
+        private readonly SsmsQueryEditorAIPackage _package;
+        private readonly IVsTextView _textView;
+        public IOleCommandTarget _nextFilter { get; set; }
+        private IWpfTextView _wpfTextView;
+        private MonitorDbConnectionService _activeMonitor;
+        private static string _connectionString;
+        private string _serverName;
+        private string _databaseName;
+        private static string _connectionKey;
+
+        internal static readonly HashSet<string> SystemDatabases = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "master",
+            "model",
+            "msdb",
+            "tempdb"
+        };
+
+        public static AIEditorService ActiveService { get; private set; }
+        #endregion
+
+        public AIEditorService(SsmsQueryEditorAIPackage package, IVsTextView textView)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            _package = package;
+            _textView = textView;
+
+            ActiveService = this;
+
+            var componentModel = ServiceProvider.GlobalProvider
+                .GetService(typeof(SComponentModel)) as IComponentModel;
+
+            if (componentModel == null)
+                return;
+
+            var editorFactory =
+                componentModel.GetService<IVsEditorAdaptersFactoryService>();
+
+            if (editorFactory == null)
+                return;
+
+            _wpfTextView = editorFactory.GetWpfTextView(textView);
+
+            if (_wpfTextView == null)
+                return;
+
+            EditorHelper.ActiveView = _wpfTextView; // ✔ always valid
+
+            // hook into editor events
+            _wpfTextView.GotAggregateFocus += OnEditorActivated;
+            _wpfTextView.LostAggregateFocus += OnEditorDeactivated;
+            _wpfTextView.Closed += OnTextViewClosed;
+        }
+
+        /// <summary>
+        /// This method is called by Visual Studio for every command sent to the editor:
+        /// Keystrokes (letters, numbers)
+        /// Special keys(Tab, Enter, Backspace)
+        /// Paste, Cut, Undo, Redo
+        /// Menu commands
+        /// IntelliSense triggers
+        /// </summary>
+        /// <param name="pguidCmdGroup"></param>
+        /// <param name="nCmdID"></param>
+        /// <param name="nCmdexecopt"></param>
+        /// <param name="pvaIn"></param>
+        /// <param name="pvaOut"></param>
+        /// <returns></returns>
+        public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
+        {
+            // 🔥 HANDLE POPUP KEYS FIRST
+            if (SqlSuggestionPopup.IsOpen && pguidCmdGroup == VSConstants.VSStd2K)
+            {
+                switch ((VSConstants.VSStd2KCmdID)nCmdID)
+                {
+                    case VSConstants.VSStd2KCmdID.TAB:
+                    case VSConstants.VSStd2KCmdID.RETURN:
+                        SqlSuggestionPopup.AcceptSelection();
+                        return VSConstants.S_OK;   // swallow
+
+                    case VSConstants.VSStd2KCmdID.UP:
+                        SqlSuggestionPopup.SelectPrevious();
+                        return VSConstants.S_OK;
+
+                    case VSConstants.VSStd2KCmdID.DOWN:
+                        SqlSuggestionPopup.SelectNext();
+                        return VSConstants.S_OK;
+
+                    case VSConstants.VSStd2KCmdID.CANCEL: // ESC
+                        SqlSuggestionPopup.Close();
+                        return VSConstants.S_OK;
+                }
+            }
+
+            return _nextFilter.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
+        }
+
+        public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
+        {
+            return _nextFilter.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText); // Pass the query to the next filter in the chain
+        }
+
+        #region Event Handlers
+        /// <summary>
+        /// Create a new monitor for this active sql editor
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnEditorActivated(object sender, EventArgs e)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var view = sender as IWpfTextView;
+            if (view == null) return;
+
+            try
+            {
+                // Stop previous monitor if any
+                if (_activeMonitor != null)
+                {
+                    _activeMonitor.StopMonitoring();
+                    _activeMonitor = null;
+                }
+
+                // Create and initialize new monitor
+                _activeMonitor = new MonitorDbConnectionService();
+
+                // Subscribe to events
+                _activeMonitor.ConnectionChanged += OnActiveConnectionChanged;
+
+                // Initialize
+                _activeMonitor.InitializeForView(view);
+
+                // Get initial state
+                var connection = _activeMonitor.GetCurrentConnection();
+                Debug.WriteLine($"Initial connection: {connection}");
+
+                // Get editor text
+                ITextSnapshot snapshot = view.TextSnapshot;
+                string fullText = snapshot.GetText();
+                Debug.WriteLine($"Editor text length: {fullText.Length}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in OnEditorActivated: {ex.Message}");
+            }
+        }
+
+        private void OnEditorDeactivated(object sender, EventArgs e)
+        {
+            // switching away from this editor (OnActive will pick up new connection string if different)
+        }
+
+        private void OnTextViewClosed(object sender, EventArgs e)
+        {
+            _wpfTextView.GotAggregateFocus -= OnEditorActivated;
+            _wpfTextView.LostAggregateFocus -= OnEditorDeactivated;
+            _wpfTextView.Closed -= OnTextViewClosed;
+        }
+
+        private void OnActiveConnectionChanged(string server, string database)
+        {
+            Debug.WriteLine($"Active connection changed: {server}.{database}");
+
+            // If system DB, do NOT apply it
+            if (SystemDatabases.Contains(database))
+            {
+                Debug.WriteLine($"Ignored system database: {database}");
+                return;
+            }
+
+            _serverName = server;
+            _databaseName = database;
+
+            _connectionString = $"Server={server};Database={database};Trusted_Connection=True;";
+            _connectionKey = $"{server}|{database}";
+
+            Debug.WriteLine($"SQL AI: Connectionstring : {_connectionString}");
+
+            SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+        }
+        #endregion
+
+        #region Interface IVsTextViewFilter Members
+        public int GetDataTipText(TextSpan[] pSpan, out string pbstrText)
+        {
+            var nextTextViewFilter = _nextFilter as IVsTextViewFilter;
+            if (nextTextViewFilter != null)
+            {
+                return nextTextViewFilter.GetDataTipText(pSpan, out pbstrText);
+            }
+            pbstrText = null;
+            return VSConstants.E_NOTIMPL;
+        }
+        public int GetPairExtents(int iLine, int iIndex, TextSpan[] pSpan)
+        {
+            var nextTextViewFilter = _nextFilter as IVsTextViewFilter;
+            if (nextTextViewFilter != null)
+            {
+                return nextTextViewFilter.GetPairExtents(iLine, iIndex, pSpan);
+            }
+            return VSConstants.E_NOTIMPL;
+        }
+        public int GetWordExtent(int iLine, int iIndex, uint dwFlags, TextSpan[] pSpan)
+        {
+            var nextTextViewFilter = _nextFilter as IVsTextViewFilter;
+            if (nextTextViewFilter != null)
+            {
+                return nextTextViewFilter.GetWordExtent(iLine, iIndex, dwFlags, pSpan);
+            }
+            return VSConstants.E_NOTIMPL;
+        }
+        #endregion
+
+        private void ShowSqlSuggestions(IWpfTextView view, IList<SqlSuggestion> suggestions)
+        {
+            if (view == null || suggestions == null || suggestions.Count == 0)
+                return;
+
+            var caret = view.Caret.Position.BufferPosition;
+            var line = view.GetTextViewLineContainingBufferPosition(caret);
+            if (line == null) return;
+
+            var bounds = line.GetCharacterBounds(caret);
+            var location = new Point(bounds.Left, bounds.Bottom + 2);
+
+            SqlSuggestionPopup.Show(view.VisualElement, location, suggestions, selected =>
+            {
+                var buffer = view.TextBuffer;
+                var selectionEnd = view.Selection.StreamSelectionSpan.End.Position;
+
+                using (var edit = buffer.CreateEdit())
+                {
+                    edit.Insert(selectionEnd, " " + selected.Suggestion);
+                    edit.Apply();
+                }
+            });
+        }
+
+        public void TriggerSqlSuggestions(string sql, AIActionType aIActionType)
+        {
+            try
+            {
+                // Show hourglass / wait cursor
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                if (string.IsNullOrEmpty(_connectionString?.Trim()))
+                {
+                    MessageBox.Show($@"You are currently connected to a system database.
+Please connect to a user database.
+Select from the dropdown above the 'SQL Management Object' panel or run the SQL statement 'Use <Database>', and try again.", "Warning - System DB", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                List<SqlSuggestion> suggestions = new List<SqlSuggestion>();
+
+                if (_wpfTextView == null || string.IsNullOrWhiteSpace(sql))
+                    return;
+
+                // verify that user isn't connected to a system database
+                if (SchemaReader.IsSystemDatabase(_connectionString))
+                {
+                    MessageBox.Show($@"You are connected to a system database ({_databaseName}).
+Please connect to a user database.
+Select from the dropdown above SMO or run the SQL 'Use <Database>' statement, and try again.", "Warning - System DB", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                ThreadHelper.JoinableTaskFactory.Run(async () =>
+                {
+                    var schema = SchemaCache.GetOrAdd(_connectionKey, () => SchemaReader.LoadSchemaFromDatabase(_connectionString));
+                    var tables = SqlAnalyzer.ExtractTables(sql, schema.Tables);
+                    var graph = JoinGraphBuilder.BuildGraph(schema.ForeignKeys);
+                    var expanded = JoinGraphBuilder.Expand(tables, graph);
+                    var schemaJson = OllamaSchemaBuilder.BuildSlimSchemaRelationship(_databaseName, schema, expanded);
+
+                    if (aIActionType == AIActionType.RealTimeJoins)
+                    {
+                        suggestions = RealtimeJoinSuggestionService.BuildRealTimeJoinSuggestions(schemaJson, sql) ?? new List<SqlSuggestion>();
+                    }
+                    else if (aIActionType == AIActionType.AIWhere)
+                    {
+                        // filter to only the tables in sql statement
+                        var filteredSchema = FilterTables(schema, tables);
+                        string json = JsonConvert.SerializeObject(filteredSchema, Formatting.Indented); // only pass table(s) schema
+                        suggestions = await AIHosterSqlSuggestionService.RetrieveAIResponseAsync(json, sql, aIActionType) ?? new List<SqlSuggestion>();
+                    }
+                    else
+                    {
+                        suggestions = await AIHosterSqlSuggestionService.RetrieveAIResponseAsync(schemaJson, sql, aIActionType) ?? new List<SqlSuggestion>();
+                    }
+
+                    //var suggestions = MockAIResponse();
+
+                    var view = _wpfTextView;
+                    view.VisualElement.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        ShowSqlSuggestions(view, suggestions);
+                    }));
+                });
+
+            }
+            finally
+            {
+                // Restore normal cursor
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Mouse.OverrideCursor = null;
+                });
+            }
+        }
+
+        public static CachedSchema FilterTables(CachedSchema schema, HashSet<string> allowedTables)
+        {
+            return new CachedSchema
+            {
+                Tables = schema.Tables
+                    .Where(t => allowedTables.Contains($"{t.Schema}.{t.Name}"))
+                    .ToList(),
+
+                Columns = schema.Columns
+                    .Where(c => allowedTables.Contains($"{c.Schema}.{c.TableName}"))
+                    .ToList(),
+
+                PrimaryKeys = schema.PrimaryKeys
+                    .Where(pk => allowedTables.Contains($"{pk.Schema}.{pk.Table}"))
+                    .ToList(),
+
+                ForeignKeys = schema.ForeignKeys
+                    .Where(fk =>
+                        allowedTables.Contains($"{fk.Schema}.{fk.Table}") &&
+                        allowedTables.Contains($"{fk.ReferencedSchema}.{fk.ReferencedTable}"))
+                    .ToList(),
+
+                Indexes = schema.Indexes
+                    .Where(i => allowedTables.Contains($"{i.Schema}.{i.Table}"))
+                    .ToList()
+            };
+        }
+
+        private List<SqlSuggestion> MockAIResponse()
+        {
+            string json = @"[
+              {
+                ""type"": ""join"",
+                ""suggestion"": ""INNER JOIN SalesLT.CustomerAddress ca ON SalesLT.Address.AddressID = ca.AddressID"",
+                ""description"": ""Join Address to CustomerAddress using AddressID""
+              },
+              {
+                ""type"": ""join"",
+                ""suggestion"": ""LEFT JOIN SalesLT.SalesOrderHeader soh ON SalesLT.Address.AddressID = soh.ShipToAddressID"",
+                ""description"": ""Join Address to SalesOrderHeader using ShipToAddressID""
+              },
+              {
+                ""type"": ""join"",
+                ""suggestion"": ""LEFT JOIN SalesLT.SalesOrderHeader soh ON SalesLT.Address.AddressID = soh.BillToAddressID"",
+                ""description"": ""Join Address to SalesOrderHeader using BillToAddressID""
+              },
+              {
+                ""type"": ""where"",
+                ""suggestion"": ""WHERE SalesLT.Address.City = 'London'"",
+                ""description"": ""Filter addresses by city""
+              },
+              {
+                ""type"": ""where"",
+                ""suggestion"": ""WHERE SalesLT.Address.CountryRegion = 'United States'"",
+                ""description"": ""Filter addresses by country or region""
+              },
+              {
+                ""type"": ""where"",
+                ""suggestion"": ""WHERE SalesLT.Address.PostalCode = '98052'"",
+                ""description"": ""Filter addresses by postal code""
+              },
+              {
+                ""type"": ""groupby"",
+                ""suggestion"": ""GROUP BY SalesLT.Address.City"",
+                ""description"": ""Group addresses by city""
+              },
+              {
+                ""type"": ""groupby"",
+                ""suggestion"": ""GROUP BY SalesLT.Address.CountryRegion, SalesLT.Address.StateProvince"",
+                ""description"": ""Group addresses by country and state/province""
+              },
+              {
+                ""type"": ""having"",
+                ""suggestion"": ""HAVING COUNT(SalesLT.Address.AddressID) > 1"",
+                ""description"": ""Return only groups with more than one address""
+              },
+              {
+                ""type"": ""orderby"",
+                ""suggestion"": ""ORDER BY SalesLT.Address.City"",
+                ""description"": ""Sort results by city""
+              },
+              {
+                ""type"": ""orderby"",
+                ""suggestion"": ""ORDER BY SalesLT.Address.ModifiedDate DESC"",
+                ""description"": ""Sort results by most recently modified addresses""
+              }
+            ]";
+
+            List<SqlSuggestion> suggestions =
+                JsonConvert.DeserializeObject<List<SqlSuggestion>>(json);
+            return suggestions;
+        }
+
+    }
+}
+
+

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<Extern href="stdidcmd.h"/>
+	<Extern href="vsshlids.h"/>
+
+	<Commands package="guidSsmsQueryEditorAIPackage">
+
+		<!-- ================= GROUPS ================= -->
+		<Groups>
+
+			<!-- Tools menu -->
+			<Group guid="guidSsmsQueryEditorAIPackageCmdSet" id="MyMenuGroup" priority="0x0600">
+				<Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
+			</Group>
+
+			<!-- Context menu root -->
+			<Group guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddyEditorGroup" priority="0x0201">
+				<Parent guid="queryWindowContextCommandSet" id="queryWindowContextMenus"/>
+			</Group>
+
+			<!-- Submenu group 1 -->
+			<Group guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" priority="0x0100">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenu"/>
+			</Group>
+
+			<!-- ✅ Submenu group 2 (creates separator) -->
+			<Group guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup2" priority="0x0101">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenu"/>
+			</Group>
+
+		</Groups>
+
+		<!-- ================= MENUS ================= -->
+		<Menus>
+			<Menu guid="guidSsmsQueryEditorAIPackageCmdSet"
+				  id="AIBuddySubMenu"
+				  priority="0x0100"
+				  type="Menu">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet"
+						id="AIBuddyEditorGroup"/>
+				<Strings>
+					<ButtonText>SQL AI Buddy</ButtonText>
+				</Strings>
+			</Menu>
+		</Menus>
+
+		<!-- ================= BUTTONS ================= -->
+		<Buttons>
+
+			<!-- Tools menu button -->
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="ConfigureAI_CmdId" type="Button" priority="0x0100">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="MyMenuGroup"/>
+				<Icon guid="guidImagesSettings" id="bmpPicSettings" />
+				<Strings>
+					<ButtonText>Configure SQL AI Buddy</ButtonText>
+				</Strings>
+			</Button>
+
+			<!-- ===== SUBMENU ITEMS ===== -->
+
+			<!-- FIRST ITEM (group 1) -->
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SqlContinuationRulesCmdId" type="Button" priority="0x0101">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup" />
+				<Icon guid="guidImagesJoins" id="bmpPicTest"/>
+				<Strings>
+					<ButtonText>Suggest SQL JOINs - RealTime</ButtonText>
+				</Strings>
+			</Button>
+
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SqlContinuationAiCmdId" type="Button" priority="0x0102">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup2" />
+				<Icon guid="guidImagesJoinsAI" id="bmpPicJoinsAI"/>
+				<Strings>
+					<ButtonText>Suggest SQL JOINs - AI</ButtonText>
+				</Strings>
+			</Button>
+
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="CorrectSqlErrorsCmdId" type="Button" priority="0x0103">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup2" />
+				<Icon guid="guidImagesImprove" id="bmpPicImprove"/>
+				<Strings>
+					<ButtonText>Suggest SQL WHERE clause - AI</ButtonText>
+				</Strings>
+			</Button>
+
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SuggestGroupHavingCmdId" type="Button" priority="0x0104">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup2" />
+				<Icon guid="guidImagesCodeGen" id="bmpPicCodeGen"/>
+				<Strings>
+					<ButtonText>Suggest SQL GROUP\HAVING clause - AI</ButtonText>
+				</Strings>
+			</Button>
+
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="SuggestSqlContinuationCmdId" type="Button" priority="0x0105">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup2" />
+				<Icon guid="guidAIImages" id="bmpPicAIPrompt"/>
+				<Strings>
+					<ButtonText>Suggest SQL Improvements- AI</ButtonText>
+				</Strings>
+			</Button>
+
+			<Button guid="guidSsmsQueryEditorAIPackageCmdSet" id="DisplayPromptCmdId" type="Button" priority="0x0106">
+				<Parent guid="guidSsmsQueryEditorAIPackageCmdSet" id="AIBuddySubMenuGroup2" />
+				<Icon guid="guidImagesPrompt" id="bmpPicPrompt"/>
+				<Strings>
+					<ButtonText>Display prompt for highlighted SQL - AI</ButtonText>
+				</Strings>
+			</Button>
+
+		</Buttons>
+
+		<!-- ================= BITMAPS ================= -->
+		<Bitmaps>
+			<Bitmap guid="guidImagesSettings" href="Resources\Images\16\project.png" usedList="bmpPicSettings" />
+			<Bitmap guid="guidImagesJoins" href="Resources\Images\16\intersection.png" usedList="bmpPicTest" />
+			<Bitmap guid="guidImagesJoinsAI" href="Resources\Images\16\effects.png" usedList="bmpPicJoinsAI" />
+			<Bitmap guid="guidImagesImprove" href="Resources\Images\16\filter.png" usedList="bmpPicImprove" />
+			<Bitmap guid="guidImagesCodeGen" href="Resources\Images\16\setting.png" usedList="bmpPicCodeGen" />
+			<Bitmap guid="guidImagesPrompt" href="Resources\Images\16\chat.png" usedList="bmpPicPrompt" />
+			<Bitmap guid="guidAIImages" href="Resources\Images\16\signpost.png" usedList="bmpPicAIPrompt" />
+		</Bitmaps>
+
+	</Commands>
+
+	<!-- ================= SYMBOLS ================= -->
+	<Symbols>
+
+		<GuidSymbol name="guidSsmsQueryEditorAIPackage" value="{f79b07ee-abe6-4e30-bb4f-c6808f451d62}" />
+
+		<GuidSymbol name="guidSsmsQueryEditorAIPackageCmdSet" value="{d5cfa9e8-a7de-4eb4-b34f-0ab39f9e31a3}">
+			<IDSymbol name="MyMenuGroup" value="0x1020" />
+			<IDSymbol name="AIBuddyEditorGroup" value="0x1030" />
+			<IDSymbol name="AIBuddySubMenu" value="0x1040" />
+			<IDSymbol name="AIBuddySubMenuGroup" value="0x1041" />
+			<IDSymbol name="AIBuddySubMenuGroup2" value="0x1042" />
+
+			<IDSymbol name="ConfigureAI_CmdId" value="0x0100" />
+			<IDSymbol name="SqlContinuationRulesCmdId" value="0x0101" />
+			<IDSymbol name="SqlContinuationAiCmdId" value="0x0102" />
+			<IDSymbol name="CorrectSqlErrorsCmdId" value="0x0103" />
+			<IDSymbol name="DisplayPromptCmdId" value="0x0106" />
+			<IDSymbol name="SuggestGroupHavingCmdId" value="0x0104" />
+			<IDSymbol name="SuggestSqlContinuationCmdId" value="0x0105" />
+		</GuidSymbol>
+
+		<GuidSymbol name="queryWindowContextCommandSet" value="{33F13AC3-80BB-4ECB-85BC-225435603A5E}">
+			<IDSymbol name="queryWindowContextMenus" value="0x0050" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImagesSettings" value="{91ccd40d-b671-431c-9418-d67968904fb3}">
+			<IDSymbol name="bmpPicSettings" value="1" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImagesJoins" value="{9fd8af83-a0da-41ca-aea1-0479aaa141e7}">
+			<IDSymbol name="bmpPicTest" value="1" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImagesJoinsAI" value="{9fd8af83-a0da-41ca-aea1-0479aaa141e8}">
+			<IDSymbol name="bmpPicJoinsAI" value="1" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImagesImprove" value="{b4e9e6a2-7c9f-4d8e-9e3a-1f8a7d3e5b2c}">
+			<IDSymbol name="bmpPicImprove" value="1" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImagesCodeGen" value="{c5d8e7f3-9a1b-4e6c-8d2a-3f4e5b6c7d8e}">
+			<IDSymbol name="bmpPicCodeGen" value="1" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImagesPrompt" value="{d6e7f8a9-0b1c-4d2e-8f3a-5b6c7d8e9f0a}">
+			<IDSymbol name="bmpPicPrompt" value="1" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidAIImages" value="{cccfebe1-cea8-4ad4-880f-e87580db2bee}">
+			<IDSymbol name="bmpPicAIPrompt" value="1" />
+		</GuidSymbol>
+
+	</Symbols>
+
+</CommandTable>

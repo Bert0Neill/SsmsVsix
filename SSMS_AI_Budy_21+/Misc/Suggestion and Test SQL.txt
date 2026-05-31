@@ -1,0 +1,360 @@
+﻿Try LLm - Hrida-T2SQL-128k
+ollama pull HridaAI/hrida-t2sql-128k
+ollama pull qwen2.5-coder:0.5b
+
+Select * From SalesT.Address
+
+--------------------------------------
+Rule and AI based SQL query generation for the above query:
+
+public class SqlSuggestion
+{
+    public string Type { get; set; }      // "join", "where", "groupby", "having"
+    public string Suggestion { get; set; }
+    public string Description { get; set; }
+    public double Weight { get; set; }    // 0.0 to 1.0 – used for ranking
+}
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+public class RuleBasedSqlSuggester
+{
+    private readonly List<TableInfo> _tables = new List<TableInfo>();
+    private readonly List<ForeignKey> _foreignKeys = new List<ForeignKey>();
+
+    public RuleBasedSqlSuggester(string schemaDdl)
+    {
+        ParseSchema(schemaDdl);
+    }
+
+    public List<SqlSuggestion> GetSuggestions(string currentSql)
+    {
+        var suggestions = new List<SqlSuggestion>();
+
+        // Determine which table is currently being queried (FROM clause)
+        string currentTable = GetCurrentTable(currentSql);
+        if (string.IsNullOrEmpty(currentTable))
+            return suggestions;
+
+        bool hasWhere = Regex.IsMatch(currentSql, @"\bWHERE\b", RegexOptions.IgnoreCase);
+        bool hasGroupBy = Regex.IsMatch(currentSql, @"\bGROUP\s+BY\b", RegexOptions.IgnoreCase);
+        bool hasHaving = Regex.IsMatch(currentSql, @"\bHAVING\b", RegexOptions.IgnoreCase);
+        bool hasJoin = Regex.IsMatch(currentSql, @"\bJOIN\b", RegexOptions.IgnoreCase);
+        bool isEndOfStatement = IsAtEndOfStatement(currentSql);
+
+        // Find foreign keys related to the current table
+        var fks = _foreignKeys.Where(f => f.FromTable.Equals(currentTable, StringComparison.OrdinalIgnoreCase)
+                                          || f.ToTable.Equals(currentTable, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        // --- Joins ---
+        if (!hasJoin && fks.Any())
+        {
+            foreach (var fk in fks)
+            {
+                bool isFrom = fk.FromTable.Equals(currentTable, StringComparison.OrdinalIgnoreCase);
+                string joinTable = isFrom ? fk.ToTable : fk.FromTable;
+                string joinColumn = isFrom ? fk.FromColumn : fk.ToColumn;
+                string referencedColumn = isFrom ? fk.ToColumn : fk.FromColumn;
+
+                string suggestion = $"INNER JOIN {joinTable} ON {currentTable}.{joinColumn} = {joinTable}.{referencedColumn}";
+                string description = $"Join {currentTable} with {joinTable} on {joinColumn} = {referencedColumn}";
+
+                suggestions.Add(new SqlSuggestion { Type = "join", Suggestion = suggestion, Description = description, Weight = 0.8 });
+            }
+        }
+
+        // --- WHERE clauses ---
+        if (!hasWhere)
+        {
+            var table = _tables.FirstOrDefault(t => t.Name.Equals(currentTable, StringComparison.OrdinalIgnoreCase));
+            if (table != null)
+            {
+                var sampleColumn = table.Columns.FirstOrDefault(c => !c.IsPrimaryKey);
+                if (sampleColumn != null)
+                {
+                    string suggestion = $"WHERE {currentTable}.{sampleColumn.Name} = @value";
+                    string description = $"Filter rows where {sampleColumn.Name} equals some value";
+                    suggestions.Add(new SqlSuggestion { Type = "where", Suggestion = suggestion, Description = description, Weight = 0.1 });
+                }
+            }
+        }
+
+        // --- GROUP BY / HAVING ---
+        if (!hasGroupBy && !hasHaving)
+        {
+            var table = _tables.FirstOrDefault(t => t.Name.Equals(currentTable, StringComparison.OrdinalIgnoreCase));
+            if (table != null)
+            {
+                var groupableColumn = table.Columns.FirstOrDefault(c => c.DataType != "INT" && c.DataType != "DECIMAL");
+                if (groupableColumn != null)
+                {
+                    string suggestion = $"GROUP BY {currentTable}.{groupableColumn.Name}";
+                    string description = $"Group results by {groupableColumn.Name}";
+                    suggestions.Add(new SqlSuggestion { Type = "groupby", Suggestion = suggestion, Description = description, Weight = 0.05 });
+
+                    // Also a HAVING suggestion
+                    string havingSuggestion = $"GROUP BY {currentTable}.{groupableColumn.Name} HAVING COUNT(*) > 1";
+                    suggestions.Add(new SqlSuggestion { Type = "having", Suggestion = havingSuggestion, Description = "Add HAVING to filter grouped results", Weight = 0.05 });
+                }
+            }
+        }
+
+        // Apply weighting when at end of statement
+        if (isEndOfStatement && suggestions.Any())
+        {
+            var joinSuggestions = suggestions.Where(s => s.Type == "join").ToList();
+            var whereSuggestions = suggestions.Where(s => s.Type == "where").ToList();
+            var groupBySuggestions = suggestions.Where(s => s.Type == "groupby" || s.Type == "having").ToList();
+
+            // Weighted selection: 80% joins, 10% where, 10% groupby/having
+            int joinCount = (int)Math.Ceiling(joinSuggestions.Count * 0.8);
+            int whereCount = (int)Math.Ceiling(whereSuggestions.Count * 0.1);
+            int groupCount = (int)Math.Ceiling(groupBySuggestions.Count * 0.1);
+
+            var weighted = new List<SqlSuggestion>();
+            weighted.AddRange(joinSuggestions.Take(joinCount));
+            weighted.AddRange(whereSuggestions.Take(whereCount));
+            weighted.AddRange(groupBySuggestions.Take(groupCount));
+
+            // If still too few, fill with remaining
+            if (weighted.Count < 5 && suggestions.Count > weighted.Count)
+            {
+                var remaining = suggestions.Except(weighted).ToList();
+                weighted.AddRange(remaining.Take(5 - weighted.Count));
+            }
+
+            return weighted;
+        }
+
+        return suggestions;
+    }
+
+    // --- Parsing and helper methods (identical to previous implementation) ---
+    private void ParseSchema(string schemaDdl) { /* ... as before ... */ }
+    private string GetCurrentTable(string sql) { /* ... */ }
+    private bool IsAtEndOfStatement(string sql) { /* ... */ }
+    private class TableInfo { public string Name { get; set; } public string Schema { get; set; } public List<ColumnInfo> Columns { get; set; } }
+    private class ColumnInfo { public string Name { get; set; } public string DataType { get; set; } public bool IsPrimaryKey { get; set; } }
+    private class ForeignKey { public string FromTable { get; set; } public string FromColumn { get; set; } public string ToTable { get; set; } public string ToColumn { get; set; } }
+}
+
+USage example:
+------------------
+string schema = @"
+CREATE TABLE SalesLT.Customer (
+    CustomerID INT PRIMARY KEY,
+    FirstName VARCHAR,
+    LastName VARCHAR,
+    Email VARCHAR
+);
+
+CREATE TABLE SalesLT.Address (
+    AddressID INT PRIMARY KEY,
+    City VARCHAR,
+    PostalCode VARCHAR
+);
+
+CREATE TABLE SalesLT.CustomerAddress (
+    CustomerID INT,
+    AddressID INT,
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+    FOREIGN KEY (AddressID) REFERENCES Address(AddressID)
+);
+";
+
+var suggester = new SqlSuggester(schema);
+string currentSql = "SELECT * FROM Customer";  // At end of statement
+var suggestions = suggester.GetSuggestions(currentSql);
+
+// Serialize to JSON
+var json = System.Text.Json.JsonSerializer.Serialize(suggestions);
+Console.WriteLine(json);
+
+-------------------
+AI-based suggestion generation (using a hypothetical LLM API):
+
+using System;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+public class OllamaClient
+{
+    private readonly HttpClient _httpClient;
+    private readonly string _baseUrl;
+    private readonly string _model;
+
+    public OllamaClient(string baseUrl = "http://localhost:11434", string model = "HridaAI/hrida-t2sql-128k")
+    {
+        _httpClient = new HttpClient();
+        _baseUrl = baseUrl;
+        _model = model;
+    }
+
+    public async Task<string> GenerateAsync(string prompt)
+    {
+        var request = new
+        {
+            model = _model,
+            prompt = prompt,
+            stream = false
+        };
+
+        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+
+        try
+        {
+            var response = await _httpClient.PostAsync($"{_baseUrl}/api/generate", content);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<OllamaResponse>(json);
+            return result?.Response;
+        }
+        catch (Exception ex)
+        {
+            // Log or handle
+            throw new InvalidOperationException("Failed to get response from Ollama", ex);
+        }
+    }
+
+    private class OllamaResponse
+    {
+        public string Response { get; set; }
+    }
+}
+-------------------------------------------------------
+Hybrid suggester
+--------------------
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+public class HybridSqlSuggester
+{
+    private readonly RuleBasedSqlSuggester _ruleBased;
+    private readonly OllamaClient _ollamaClient;
+    private readonly string _schemaDdl;
+
+    public HybridSqlSuggester(string schemaDdl, string ollamaUrl = "http://localhost:11434", string ollamaModel = "HridaAI/hrida-t2sql-128k")
+    {
+        _schemaDdl = schemaDdl;
+        _ruleBased = new RuleBasedSqlSuggester(schemaDdl);
+        _ollamaClient = new OllamaClient(ollamaUrl, ollamaModel);
+    }
+
+    /// <summary>
+    /// Returns quick, deterministic suggestions (no AI).
+    /// </summary>
+    public List<SqlSuggestion> GetQuickSuggestions(string currentSql)
+    {
+        return _ruleBased.GetSuggestions(currentSql);
+    }
+
+    /// <summary>
+    /// Returns suggestions generated by an LLM (asynchronous).
+    /// </summary>
+    public async Task<List<SqlSuggestion>> GetAISuggestionsAsync(string currentSql)
+    {
+        var prompt = $@"You are a SQL expert. Given this database schema:
+{_schemaDdl}
+
+The user has written the following SQL statement:
+{currentSql}
+
+Based on the statement and the schema, suggest the most logical next clauses (joins, WHERE conditions, GROUP BY, HAVING) that would be helpful. Provide suggestions in JSON format with type, suggestion text, description, and weight (0-1). Only suggest clauses that are not already present in the statement.
+
+Return a JSON array like:
+[
+  {{""type"": ""join"", ""suggestion"": ""INNER JOIN ..."", ""description"": ""..."", ""weight"": 0.8}},
+  {{""type"": ""where"", ""suggestion"": ""WHERE ..."", ""description"": ""..."", ""weight"": 0.1}},
+  ...
+]
+
+Do not include any other text in the response, only the JSON array.";
+
+        string aiResponse = await _ollamaClient.GenerateAsync(prompt);
+
+        try
+        {
+            // Parse the AI response into a list of suggestions
+            var suggestions = JsonSerializer.Deserialize<List<SqlSuggestion>>(aiResponse);
+            return suggestions ?? new List<SqlSuggestion>();
+        }
+        catch (JsonException)
+        {
+            // Fallback: return empty list
+            return new List<SqlSuggestion>();
+        }
+    }
+
+    /// <summary>
+    /// Returns combined suggestions: quick suggestions immediately, and AI suggestions later.
+    /// </summary>
+    public async Task<(List<SqlSuggestion> Quick, List<SqlSuggestion> Ai)> GetAllSuggestionsAsync(string currentSql)
+    {
+        var quick = GetQuickSuggestions(currentSql);
+        var ai = await GetAISuggestionsAsync(currentSql);
+        return (quick, ai);
+    }
+}
+
+-----------------------------
+Example usage of HybridSuggester:
+---------------
+using System;
+using System.Threading.Tasks;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        string schema = @"
+CREATE TABLE SalesLT.Customer (
+    CustomerID INT PRIMARY KEY,
+    FirstName VARCHAR,
+    LastName VARCHAR,
+    Email VARCHAR
+);
+
+CREATE TABLE SalesLT.Address (
+    AddressID INT PRIMARY KEY,
+    City VARCHAR,
+    PostalCode VARCHAR
+);
+
+CREATE TABLE SalesLT.CustomerAddress (
+    CustomerID INT,
+    AddressID INT,
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+    FOREIGN KEY (AddressID) REFERENCES Address(AddressID)
+);
+";
+
+        string currentSql = "SELECT * FROM Customer";
+
+        var suggester = new HybridSqlSuggester(schema);
+
+        // 1. Get quick suggestions (non‑AI) – instant
+        var quickSuggestions = suggester.GetQuickSuggestions(currentSql);
+        Console.WriteLine("Quick suggestions (rule‑based):");
+        foreach (var s in quickSuggestions)
+        {
+            Console.WriteLine($"- [{s.Type}] {s.Suggestion} – {s.Description}");
+        }
+
+        Console.WriteLine("\nRequesting AI suggestions...");
+
+        // 2. Get AI suggestions – may take a few seconds
+        var aiSuggestions = await suggester.GetAISuggestionsAsync(currentSql);
+
+        Console.WriteLine("AI suggestions:");
+        foreach (var s in aiSuggestions)
+        {
+            Console.WriteLine($"- [{s.Type}] {s.Suggestion} – {s.Description}");
+        }
+    }
+}

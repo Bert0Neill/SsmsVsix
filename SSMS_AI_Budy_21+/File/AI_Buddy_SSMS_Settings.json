@@ -1,0 +1,15 @@
+{
+  "AIProvider": "DeepSeek",
+  "AIPromptURL": "http://localhost:11434/api/generate",
+  "AIPromptKey": null,
+  "PromptLLMName": "deepseek-r1:1.8b",
+  "IsPromptResponseStreaming": false,
+  "SsmsVersion": "SSMS 19+",
+  "SqlVersion": "TSQL",
+  "DateLastModified": "2026-04-04T02:18:48.3884483+01:00",
+  "LastPrompt": null,
+  "SettingsFilename": "AI_Buddy_SSMS_Settings.json",
+  "WherePrompt": "AI_Buddy_SSMS_Settings.json",
+  "ResetFilename": "AI_Buddy_SSMS_Settings_Reset.json",
+  "IsRealTime": false
+}
