@@ -1,9 +1,11 @@
 ﻿using SSMS_AI_Buddy.Forms;
+using SSMS_AI_Buddy.Services;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.ComponentModel.Design;
 using System.Globalization;
+using System.Windows.Forms;
 using System.Threading;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
@@ -90,10 +92,66 @@ namespace SSMS_AI_Buddy.Commands
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+            try
+            {
+                using (var propertiesForm = new PropertiesFrm())
+                {
+                    if (TryGetDialogOwner(out var owner))
+                    {
+                        propertiesForm.ShowDialog(owner);
+                    }
+                    else
+                    {
+                        propertiesForm.ShowDialog();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerService.Error($"ConfigureAICommand.Execute failed: {ex}");
+                VsShellUtilities.ShowMessageBox(
+                    this.package,
+                    $"Could not open AI settings.\n\n{ex.Message}",
+                    "AI Settings Error",
+                    OLEMSGICON.OLEMSGICON_CRITICAL,
+                    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            }
+        }
 
-            // Show WinForms form with selected text
-            var propertiesForm = new PropertiesFrm();
-            propertiesForm.ShowDialog();
+        private bool TryGetDialogOwner(out IWin32Window owner)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            owner = null;
+
+            var uiShell = ServiceProvider.GetServiceAsync(typeof(SVsUIShell))
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult() as IVsUIShell;
+
+            if (uiShell == null)
+            {
+                return false;
+            }
+
+            uiShell.GetDialogOwnerHwnd(out var hwnd);
+            if (hwnd == IntPtr.Zero)
+            {
+                return false;
+            }
+
+            owner = new Win32WindowWrapper(hwnd);
+            return true;
+        }
+
+        private sealed class Win32WindowWrapper : IWin32Window
+        {
+            public Win32WindowWrapper(IntPtr handle)
+            {
+                Handle = handle;
+            }
+
+            public IntPtr Handle { get; }
         }
     }
 }
