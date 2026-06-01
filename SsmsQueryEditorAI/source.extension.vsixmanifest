@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
-  <Metadata>
-    <Identity Id="SsmsQueryEditorAI.662a8cda-e7a8-4788-a94c-70c865eab234" Version="1.0" Language="en-US" Publisher="Bert O'Neill" />
-    <DisplayName>SsmsQueryEditorAI</DisplayName>
-    <Description>SSMS AI query editor extension.</Description>
-  </Metadata>
-  <Installation>
-    <!-- SSMS 18–20 (legacy 32-bit shell) -->
-    <InstallationTarget Id="Microsoft.SqlServer.Management.SqlStudio" Version="[18.0,21.0)">
-      <ProductArchitecture>x86</ProductArchitecture>
-    </InstallationTarget>
-    <!-- SSMS 21+ (64-bit VS shell) -->
-    <InstallationTarget Id="Microsoft.VisualStudio.Ssms" Version="[21.0,)">
-      <ProductArchitecture>amd64</ProductArchitecture>
-    </InstallationTarget>
-  </Installation>
-  <Dependencies>
-    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.7.2,)" />
-  </Dependencies>
-  <Prerequisites>
-    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,)" DisplayName="Visual Studio core editor" />
-  </Prerequisites>
-  <Assets>
-    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
-  </Assets>
+    <Metadata>
+        <Identity Id="SsmsQueryEditorAI.662a8cda-e7a8-4788-a94c-70c865eab234" Version="1.0" Language="en-US" Publisher="Bert O'Neill" />
+        <DisplayName>SsmsAIBuddy</DisplayName>
+        <Description xml:space="preserve">SSMS AI Buddy extension. Targeting SSMS 19 &amp; 20 </Description>
+    </Metadata>
+    <Installation>
+        <!-- SSMS 18–20 (legacy 32-bit shell) -->
+        <InstallationTarget Id="Microsoft.VisualStudio.Ssms" Version="[19.0,21.0)">
+            <ProductArchitecture>x86</ProductArchitecture>
+        </InstallationTarget>
+        <!-- SSMS 21+ (64-bit VS shell) -->
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.7.2,)" />
+    </Dependencies>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,)" DisplayName="Visual Studio core editor" />
+    </Prerequisites>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+    </Assets>
 </PackageManifest>
