@@ -46,7 +46,7 @@
 //
 // ==============================================
 
-extern alias ssms18;
+//extern alias ssms18;
 extern alias ssms19;
 extern alias ssms20;
 //extern alias ssms21;
@@ -269,9 +269,9 @@ namespace SSMS_AI_Buddy
         {
             switch (ssmsVersion)
             {
-                case "SSMS 18":
-                    _smoObjectExplorer = new ssms18::SSMS_18_SqlAdjust.SmoObjectExplorer(this);
-                    break;
+                //case "SSMS 18":
+                //    _smoObjectExplorer = new ssms18::SSMS_18_SqlAdjust.SmoObjectExplorer(this);
+                //    break;
                 case "SSMS 19":
                     _smoObjectExplorer = new ssms19::SSMS_19_SqlAdjust.SmoObjectExplorer(this);
                     break;

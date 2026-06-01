@@ -15,7 +15,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SSMS_AI_Buddy</RootNamespace>
-    <AssemblyName>SSMS_18_20_AI_Buddy</AssemblyName>
+    <AssemblyName>SSMS_19_20_AI_Buddy</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <UseWPF>true</UseWPF>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
@@ -39,7 +39,7 @@
     <WarningLevel>4</WarningLevel>
     <CopyVsixExtensionFiles>True</CopyVsixExtensionFiles>
     <!-- SSMS 21+ is 64-bit under Program Files (not x86). Adjust if your install path differs. -->
-    <CopyVsixExtensionLocation>C:\Program Files %28x86%29\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions\SsmsAIBuddy</CopyVsixExtensionLocation>
+    <CopyVsixExtensionLocation>C:\Program Files %28x86%29\Microsoft SQL Server Management Studio 19\Common7\IDE\SsmsAIBuddy</CopyVsixExtensionLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -178,11 +178,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Editor\SSMS_18_SqlAdjust\SSMS_SqlAdjust.18.csproj">
-      <Project>{cfba4630-a3db-46ff-9e90-53aa42e8a9d8}</Project>
-      <Name>SSMS_SqlAdjust.18</Name>
-      <Aliases>ssms18</Aliases>
-    </ProjectReference>
     <ProjectReference Include="..\Editor\SSMS_19_SqlAdjust\SSMS_SqlAdjust.19.csproj">
       <Project>{921cbe81-c659-4909-b6f5-6b3fa5349473}</Project>
       <Name>SSMS_SqlAdjust.19</Name>

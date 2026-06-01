@@ -12,6 +12,12 @@ minimaxai/minimax-m2.7
 openai/gpt-oss-120b
 API Key - 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
 
+ssms 18
+C:\Program Files (x86)\Microsoft SQL Server Management Studio 18\Common7\IDE\Ssms.exe
+
+ssms 19
+C:\Program Files (x86)\Microsoft SQL Server Management Studio 19\Common7\IDE\Ssms.exe
+
 SSMS 22
 C:\Program Files (x86)\Microsoft SQL Server Management Studio 22\Common7\IDE\Extensions\SsmsAIBuddy
 
