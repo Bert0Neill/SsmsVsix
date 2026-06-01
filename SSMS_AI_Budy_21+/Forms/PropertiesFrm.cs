@@ -2,6 +2,7 @@
 using SSMS_AI_Buddy.Services;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace SSMS_AI_Buddy.Forms
@@ -18,21 +19,6 @@ namespace SSMS_AI_Buddy.Forms
 
             _fileService = new FileService();
             _aiProperties = new AIProperties();
-        }
-
-        private void BindAIProviderDropdown()
-        {
-            _suppressProviderChange = true;
-            try
-            {
-                string provider = _aiProperties.AIProvider;
-                int index = Array.IndexOf(AIProviderOptions.All, provider);
-                cboAIProvider.SelectedIndex = index >= 0 ? index : 1;
-            }
-            finally
-            {
-                _suppressProviderChange = false;
-            }
         }
 
         //private void ApplyProviderSelectionToProperties()
@@ -87,8 +73,8 @@ namespace SSMS_AI_Buddy.Forms
                 _fileService.SaveToJson(_aiProperties, resetFilePath);
             }
 
-            BindAIProviderDropdown();
             this.propertiesAIPrompt.SelectedObject = _aiProperties;
+            SetPropertyGridLabelWidth(propertiesAIPrompt, 200);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -169,7 +155,6 @@ namespace SSMS_AI_Buddy.Forms
                     _aiProperties = _fileService.LoadFromJson<AIProperties>(settingsFilePath);
                 }
 
-                BindAIProviderDropdown();
                 this.propertiesAIPrompt.SelectedObject = _aiProperties;
                 this.btnReset.Enabled = File.Exists(resetFilePath); // enable reset based on file existing to reset to
 
@@ -185,6 +170,13 @@ namespace SSMS_AI_Buddy.Forms
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+        }
+
+        private static void SetPropertyGridLabelWidth(PropertyGrid propertyGrid, int width)
+        {
+            var gridView = propertyGrid.Controls[2];
+            var moveSplitterMethod = gridView.GetType().GetMethod("MoveSplitterTo", BindingFlags.Instance | BindingFlags.NonPublic);
+            moveSplitterMethod?.Invoke(gridView, new object[] { width });
         }
     }
 }
