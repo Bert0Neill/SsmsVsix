@@ -106,7 +106,7 @@ namespace SSMS_AI_Buddy.Services.AI
 
             try
             {
-                var outer = JsonConvert.DeserializeObject<NVidiaModelResponse>(httpBody);
+                var outer = JsonConvert.DeserializeObject<NvidiaModelResponse>(httpBody);
 
                 var content = outer?
                     .Choices?

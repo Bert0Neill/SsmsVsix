@@ -296,7 +296,7 @@ namespace SSMS_AI_Buddy.Components
                                 else if (_aiProperties.AIProvider == AIProviderOptions.NvidiaRemote)
                                 {
                                     // NVidia
-                                    var jsonResponse = JsonConvert.DeserializeObject<NVidiaModelResponse>(line);
+                                    var jsonResponse = JsonConvert.DeserializeObject<NvidiaModelResponse>(line);
                                     var content = jsonResponse?.Choices?.FirstOrDefault()?.Message?.Content;
 
                                     if (!string.IsNullOrWhiteSpace(content))
