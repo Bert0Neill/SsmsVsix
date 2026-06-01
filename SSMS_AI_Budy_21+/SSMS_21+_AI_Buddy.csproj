@@ -111,6 +111,7 @@
     <Compile Include="Services\Converter\StringToVisibilityConverter.cs" />
     <Compile Include="Services\Helper\MarkdownToFlowDocumentParser.cs" />
     <Compile Include="Services\Helper\FileService.cs" />
+    <Compile Include="Services\Helper\SettingsPathService.cs" />
     <Compile Include="Services\Helper\LoggerService.cs" />
     <Compile Include="Services\AI\AIEditorService.cs" />
     <Compile Include="Services\Helper\RichTextBoxParagraphGenerator.cs" />
@@ -127,9 +128,15 @@
     <Compile Include="SsmsQueryEditorAIPackage.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="File\AI_Buddy_SSMS_Settings.json" />
-    <None Include="File\AI_Buddy_SSMS_Settings_Reset.json" />
-    <None Include="File\Prompts.json" />
+    <Content Include="File\AI_Buddy_SSMS_Settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="File\AI_Buddy_SSMS_Settings_Reset.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="File\Prompts.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Misc\Docs\User Guide - SSMS AI Buddy.docx" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>

@@ -55,26 +55,44 @@ namespace SSMS_AI_Buddy.Forms
 
         private void PropertiesFrm_Load(object sender, EventArgs e)
         {
-            _aiProperties.DateLastModified = DateTime.Now;
-
-            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string resetFilePath = Path.Combine(basePath, _aiProperties.ResetFilename);
-            string settingsFilePath = Path.Combine(basePath, _aiProperties.SettingsFilename);
-            this.btnReset.Enabled = File.Exists(resetFilePath); // enable reset based on file existing to reset to
-
-            if (File.Exists(settingsFilePath))
+            try
             {
-                _aiProperties = _fileService.LoadFromJson<AIProperties>(settingsFilePath);
-            }
+                _aiProperties.DateLastModified = DateTime.Now;
 
-            // if no reset file exists, create based on existing props
-            if (!File.Exists(settingsFilePath))
+                string resetFilePath = SettingsPathService.GetSettingsFilePath(_aiProperties.ResetFilename);
+                string settingsFilePath = SettingsPathService.GetSettingsFilePath(_aiProperties.SettingsFilename);
+                this.btnReset.Enabled = File.Exists(resetFilePath);
+
+                if (!File.Exists(settingsFilePath))
+                {
+                    SettingsPathService.TrySeedFromExtension(_aiProperties.SettingsFilename);
+                }
+
+                if (!File.Exists(resetFilePath))
+                {
+                    SettingsPathService.TrySeedFromExtension(_aiProperties.ResetFilename);
+                }
+
+                if (File.Exists(settingsFilePath))
+                {
+                    _aiProperties = _fileService.LoadFromJson<AIProperties>(settingsFilePath);
+                }
+                else
+                {
+                    _fileService.SaveToJson(_aiProperties, settingsFilePath);
+                }
+
+                this.propertiesAIPrompt.SelectedObject = _aiProperties;
+                SetPropertyGridLabelWidth(propertiesAIPrompt, 200);
+            }
+            catch (Exception ex)
             {
-                _fileService.SaveToJson(_aiProperties, resetFilePath);
+                LoggerService.Error($"PropertiesFrm_Load failed: {ex}");
+                MessageBox.Show($"Could not load AI settings: {ex.Message}",
+                    "AI Settings Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
-
-            this.propertiesAIPrompt.SelectedObject = _aiProperties;
-            SetPropertyGridLabelWidth(propertiesAIPrompt, 200);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -87,9 +105,8 @@ namespace SSMS_AI_Buddy.Forms
             //ApplyProviderSelectionToProperties();
             _aiProperties.DateLastModified = DateTime.Now;
 
-            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string resetFilePath = Path.Combine(basePath, _aiProperties.ResetFilename);
-            string settingsFilePath = Path.Combine(basePath, _aiProperties.SettingsFilename);
+            string resetFilePath = SettingsPathService.GetSettingsFilePath(_aiProperties.ResetFilename);
+            string settingsFilePath = SettingsPathService.GetSettingsFilePath(_aiProperties.SettingsFilename);
 
             try
             {
@@ -125,9 +142,8 @@ namespace SSMS_AI_Buddy.Forms
 
         private void btnReset_Click(object sender, EventArgs e)
         {
-            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string resetFilePath = Path.Combine(basePath, _aiProperties.ResetFilename);
-            string settingsFilePath = Path.Combine(basePath, _aiProperties.SettingsFilename);
+            string resetFilePath = SettingsPathService.GetSettingsFilePath(_aiProperties.ResetFilename);
+            string settingsFilePath = SettingsPathService.GetSettingsFilePath(_aiProperties.SettingsFilename);
 
             try
             {

@@ -199,8 +199,12 @@ namespace SSMS_AI_Buddy.Commands
             if (_aiProperties == null)
                 _aiProperties = new AIProperties();   // create defaults first
 
-            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string settingsFilePath = Path.Combine(basePath, _aiProperties.SettingsFilename);
+            string settingsFilePath = SettingsPathService.GetSettingsFilePath(_aiProperties.SettingsFilename);
+
+            if (!File.Exists(settingsFilePath))
+            {
+                SettingsPathService.TrySeedFromExtension(_aiProperties.SettingsFilename);
+            }
 
             if (File.Exists(settingsFilePath))
             {

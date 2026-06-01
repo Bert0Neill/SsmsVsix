@@ -26,3 +26,6 @@ C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Ext
 
 ActivityLog
 %APPDATA%\Microsoft\AppEnv\XX.0\ActivityLog.xml
+
+property file installed to - %AppData%\SsmsAIBuddy\
+AI_Buddy_SSMS_Settings.json
