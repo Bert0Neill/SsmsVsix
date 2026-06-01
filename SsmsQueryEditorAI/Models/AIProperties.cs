@@ -51,7 +51,7 @@ namespace SSMS_AI_Buddy.Models
         [Category("Coding")]
         [DisplayName("SSMS Version")]
         [Description("What version of SSMS are you requesting answers from AI prompt to execute on")]
-        public string SsmsVersion { get; set; } = "SSMS 19+";
+        public string SsmsVersion { get; set; } = "SSMS 18-20";
 
         [Category("Coding")]
         [DisplayName("SQL Language")]

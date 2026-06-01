@@ -24,7 +24,7 @@ namespace SSMS_AI_Buddy.Models
         [Category("AI Provider")]
         [DisplayName("LLM Name")]
         [Description("For your reference, what LLM model your Hoster is using (for e.g qwen/qwen3-coder-480b-a35b-instruct)")]
-        public string PromptLLMName { get; set; } = "openai/gpt-oss-120b"; //NVIDIA - qwen/qwen3-coder-480b-a35b-instruct NVidia
+        public string PromptLLMName { get; set; } = "qwen/qwen3-coder-480b-a35b-instruct"; //NVIDIA - qwen/qwen3-coder-480b-a35b-instruct NVidia | openai/gpt-oss-120b
 
         [Browsable(false)]
         [Category("AI Provider")]
@@ -51,7 +51,7 @@ namespace SSMS_AI_Buddy.Models
         [Category("Coding")]
         [DisplayName("SSMS Version")]
         [Description("What version of SSMS are you requesting answers from AI prompt to execute on")]
-        public string SsmsVersion { get; set; } = "SSMS 19+";
+        public string SsmsVersion { get; set; } = "SSMS 21+";
 
         [Category("Coding")]
         [DisplayName("SQL Language")]
