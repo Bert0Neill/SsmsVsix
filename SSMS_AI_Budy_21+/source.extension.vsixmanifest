@@ -14,7 +14,7 @@ This SSMS AI Extension is an intelligent assistant built directly into SQL Serve
     </Metadata>
     <Installation>
         <!-- SSMS 21+ only: 64-bit Visual Studio shell (do not target legacy 32-bit SqlStudio here). -->
-        <InstallationTarget Id="Microsoft.VisualStudio.Ssms" Version="[21.0,23.0)">
+        <InstallationTarget Version="[17.0,18.0)" Id="Microsoft.VisualStudio.Community">
             <ProductArchitecture>amd64</ProductArchitecture>
         </InstallationTarget>
     </Installation>
