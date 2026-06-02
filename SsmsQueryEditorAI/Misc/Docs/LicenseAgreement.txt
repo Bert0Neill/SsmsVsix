@@ -1,0 +1,50 @@
+SSMS AI Buddy License Agreement
+
+Copyright © 2026 Bert O'Neill.
+All Rights Reserved.
+
+IMPORTANT: READ THIS LICENSE AGREEMENT CAREFULLY BEFORE INSTALLING OR USING THIS SOFTWARE.
+
+1. GRANT OF LICENSE
+
+Subject to the terms of this Agreement, the copyright holder grants you a limited, non-exclusive, non-transferable, revocable license to install and use the software for your personal or internal business use.
+
+2. OWNERSHIP
+
+The software is licensed, not sold. All rights, title, and interest in and to the software, including all intellectual property rights, remain the exclusive property of the copyright holder.
+
+3. RESTRICTIONS
+
+You may not, without prior written permission from the copyright holder:
+
+* Modify, adapt, translate, or create derivative works based on the software.
+* Reverse engineer, decompile, disassemble, or otherwise attempt to derive the source code of the software, except where such restrictions are prohibited by applicable law.
+* Copy, reproduce, redistribute, publish, sell, lease, rent, sublicense, or transfer the software.
+* Remove, alter, or obscure any copyright, trademark, proprietary, or attribution notices.
+* Use the software to develop a competing product.
+
+4. REQUESTS FOR PERMISSION
+
+Any request to modify, redistribute, integrate, sublicense, commercialize, or otherwise use the software beyond the rights granted in this Agreement must be submitted to the copyright holder and approved in writing before such use is permitted.
+
+5. TERMINATION
+
+This license will automatically terminate if you fail to comply with any term of this Agreement. Upon termination, you must immediately cease use of the software and destroy all copies in your possession or control.
+
+6. NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+7. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+8. GOVERNING LAW
+
+This Agreement shall be governed by and construed in accordance with the laws applicable in the jurisdiction of the copyright holder.
+
+9. ENTIRE AGREEMENT
+
+This Agreement constitutes the entire agreement between the parties concerning the software and supersedes all prior agreements and understandings.
+
+By installing, copying, or using this software, you acknowledge that you have read, understood, and agree to be bound by the terms of this Agreement.

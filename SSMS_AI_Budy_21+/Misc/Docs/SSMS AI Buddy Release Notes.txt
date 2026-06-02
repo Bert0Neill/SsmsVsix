@@ -1,0 +1,20 @@
+SSMS AI Buddy Version 1.0.0
+Release Notes
+Initial public release.
+Features:
+* AI-powered assistance for SQL Server Management Studio.
+* Query analysis and optimization suggestions.
+* Database object exploration.
+* Integration with supported SSMS versions.
+Copyright and Licensing
+Copyright © 2026 Bert O’Neill. All Rights Reserved.
+This software, including all source code, binaries, documentation, images, and associated materials, is proprietary and confidential.
+You may install and use this software solely in accordance with the terms provided by the copyright holder.
+Without prior written permission from the copyright holder, you may NOT:
+* Modify, adapt, alter, reverse engineer, decompile, or create derivative works from this software.
+* Redistribute, sublicense, sell, lease, rent, or otherwise transfer this software.
+* Remove or alter any copyright, trademark, or ownership notices.
+* Publish modified versions of this software.
+Any requests for modification rights, redistribution rights, source code access, commercial licensing, or other permissions must be submitted in writing to the copyright holder.
+Unauthorized modification, distribution, or reproduction of this software may result in legal action.
+This software is provided “AS IS” without warranty of any kind, express or implied. The copyright holder shall not be liable for any damages arising from the use of this software.
