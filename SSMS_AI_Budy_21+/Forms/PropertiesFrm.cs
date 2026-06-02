@@ -101,8 +101,7 @@ namespace SSMS_AI_Buddy.Forms
         }
 
         private void btnSave_Click(object sender, EventArgs e)
-        {
-            //ApplyProviderSelectionToProperties();
+        {            
             _aiProperties.DateLastModified = DateTime.Now;
 
             string resetFilePath = SettingsPathService.GetSettingsFilePath(_aiProperties.ResetFilename);

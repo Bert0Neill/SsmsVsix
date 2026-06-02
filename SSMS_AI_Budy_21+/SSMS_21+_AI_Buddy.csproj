@@ -137,7 +137,6 @@
     <Content Include="File\Prompts.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Misc\Docs\User Guide - SSMS AI Buddy.docx" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -339,7 +338,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Misc\Docs\" />
+  </ItemGroup>
   <ItemGroup>
     <Page Include="Components\PromptWindowControl.xaml">
       <Generator>MSBuild:Compile</Generator>
