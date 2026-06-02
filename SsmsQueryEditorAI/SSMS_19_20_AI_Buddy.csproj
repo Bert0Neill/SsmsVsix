@@ -164,7 +164,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <None Include="Misc\Docs\Markdown File 2019.md" />
+    <None Include="Misc\Docs\Markdown File 2022.md" />
     <None Include="Misc\Docs\SSMS AI Buddy Release Notes.docx" />
+    <None Include="Misc\Docs\User Guide - SSMS 19 .docx" />
+    <None Include="Misc\Docs\User Guide - SSMS 22 .docx" />
     <None Include="Misc\Docs\UserGuide.md" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
