@@ -15,10 +15,7 @@
 	<Installation>
 		<!-- SSMS 18–20 (legacy 32-bit shell) -->
 		<InstallationTarget Id="Microsoft.VisualStudio.Ssms" Version="[19.0,21.0)">
-			<ProductArchitecture>amd64</ProductArchitecture>
-		</InstallationTarget>
-		<InstallationTarget Version="[17.0,18.0)" Id="Microsoft.VisualStudio.Community">
-			<ProductArchitecture>amd64</ProductArchitecture>
+			<ProductArchitecture>x86</ProductArchitecture>
 		</InstallationTarget>
 		<!-- SSMS 21+ (64-bit VS shell) -->
 	</Installation>
