@@ -25,11 +25,11 @@ namespace SSMS_AI_Buddy.Models
         [DisplayName("LLM Name")]
         [Description("For your reference, what LLM model your Hoster is using (for e.g qwen/qwen3-coder-480b-a35b-instruct)")]
         public string PromptLLMName { get; set; } = "openai/gpt-oss-120b"; //NVIDIA - qwen/qwen3-coder-480b-a35b-instruct NVidia
-
-        [Browsable(false)]
+        
         [Category("AI Provider")]
         [DisplayName("Streaming Response")]
         [Description("Currently all prompts are returned as a block and not streamed in real-time, so that the user can select the appropiate item from a full list.")]
+        [ReadOnly(true)]
         public bool IsPromptResponseStreaming { get; set; } = false;
 
         [Category("AI Provider")]
@@ -51,11 +51,13 @@ namespace SSMS_AI_Buddy.Models
         [Category("Coding")]
         [DisplayName("SSMS Version")]
         [Description("What version of SSMS are you requesting answers from AI prompt to execute on")]
+        [ReadOnly(true)]
         public string SsmsVersion { get; set; } = "SSMS 18-20";
 
         [Category("Coding")]
         [DisplayName("SQL Language")]
         [Description("What SQL based procedural language are you requesting answers from AI prompt to execute against")]
+        [ReadOnly(true)]
         public string SqlVersion { get; set; } = "TSQL";
 
         [Category("General Info")]

@@ -43,7 +43,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CopyVsixExtensionFiles>true</CopyVsixExtensionFiles>
-    <CopyVsixExtensionLocation>$(SsmsExtensionDeployPath)</CopyVsixExtensionLocation>
+    <CopyVsixExtensionLocation>C:\Program Files %28x86%29\Microsoft SQL Server Management Studio 20\Common7\IDE\Extensions\SSMS_19_20_AI_Buddy</CopyVsixExtensionLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -345,28 +345,21 @@
       <VSIXSourceItem Remove="@(_VsixItemsToDrop)" />
     </ItemGroup>
   </Target>
-  
-  <Target Name="ExcludeSsmsHostAssembliesFromVsix"
-        BeforeTargets="GetVsixSourceItems">
-  <ItemGroup>
-
-    <!-- SSMS host DLLs -->
-    <VSIXSourceItem Remove="$(OutputPath)SqlWorkbench.Interfaces.dll" />
-    <VSIXSourceItem Remove="$(OutputPath)SqlPackageBase.dll" />
-    <VSIXSourceItem Remove="$(OutputPath)ObjectExplorer.dll" />
-
-    <!-- SMO -->
-    <VSIXSourceItem Remove="$(OutputPath)Microsoft.SqlServer.Smo.dll" />
-    <VSIXSourceItem Remove="$(OutputPath)Microsoft.SqlServer.SmoExtended.dll" />
-    <VSIXSourceItem Remove="$(OutputPath)Microsoft.SqlServer.ConnectionInfo.dll" />
-    <VSIXSourceItem Remove="$(OutputPath)Microsoft.SqlServer.Management.Sdk.Sfc.dll" />
-
-    <!-- SQL Parser -->
-    <VSIXSourceItem Remove="$(OutputPath)Microsoft.Data.Tools.Sql.BatchParser.dll" />
-
-  </ItemGroup>
-</Target>
-  
+  <Target Name="ExcludeSsmsHostAssembliesFromVsix" BeforeTargets="GetVsixSourceItems">
+    <ItemGroup>
+      <!-- SSMS host DLLs -->
+      <VSIXSourceItem Remove="$(OutputPath)SqlWorkbench.Interfaces.dll" />
+      <VSIXSourceItem Remove="$(OutputPath)SqlPackageBase.dll" />
+      <VSIXSourceItem Remove="$(OutputPath)ObjectExplorer.dll" />
+      <!-- SMO -->
+      <VSIXSourceItem Remove="$(OutputPath)Microsoft.SqlServer.Smo.dll" />
+      <VSIXSourceItem Remove="$(OutputPath)Microsoft.SqlServer.SmoExtended.dll" />
+      <VSIXSourceItem Remove="$(OutputPath)Microsoft.SqlServer.ConnectionInfo.dll" />
+      <VSIXSourceItem Remove="$(OutputPath)Microsoft.SqlServer.Management.Sdk.Sfc.dll" />
+      <!-- SQL Parser -->
+      <VSIXSourceItem Remove="$(OutputPath)Microsoft.Data.Tools.Sql.BatchParser.dll" />
+    </ItemGroup>
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
