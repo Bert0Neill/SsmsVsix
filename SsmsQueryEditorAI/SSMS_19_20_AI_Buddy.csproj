@@ -138,7 +138,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="Misc\Docs\Iconshock-Real-Vista-Data-Database.16.png" />
+    <Content Include="Misc\Docs\Iconshock-Real-Vista-Data-Database.24.png" />
     <Content Include="Misc\Docs\Iconshock-Real-Vista-Data-Database.256.png" />
+    <Content Include="Misc\Docs\Iconshock-Real-Vista-Data-Database.32.png" />
+    <Content Include="Misc\Docs\Iconshock-Real-Vista-Data-Database.48.png" />
+    <Content Include="Misc\Docs\Iconshock-Real-Vista-Data-Database.64.png" />
+    <Content Include="Misc\Docs\Iconshock-Real-Vista-Data-Database.72.png" />
+    <Content Include="Misc\Docs\Iconshock-Real-Vista-Data-Database.96.png" />
+    <Content Include="Misc\Docs\Iconshock-Real-Vista-Data-Database.ico" />
     <Content Include="Misc\Docs\LicenseAgreement.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -157,6 +165,7 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="Misc\Docs\SSMS AI Buddy Release Notes.docx" />
+    <None Include="Misc\Docs\UserGuide.md" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
