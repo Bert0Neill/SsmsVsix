@@ -151,10 +151,6 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <!-- SSMS 21/22 host assemblies: compile-only, never ship in the VSIX. -->
-    <Reference Include="SqlWorkbench.Interfaces">
-      <HintPath>Misc\22\SqlWorkbench.Interfaces.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
