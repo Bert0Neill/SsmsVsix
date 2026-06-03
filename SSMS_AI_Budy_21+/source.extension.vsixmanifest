@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="SsmsAIBuddy_21Plus.f79b07ee-abe6-4e30-bb4f-c6808f451d62" Version="1.0.3" Language="en-US" Publisher="Bert O'Neill" />
+        <Identity Id="SsmsAIBuddy_21Plus.f79b07ee-abe6-4e30-bb4f-c6808f451d62" Version="1.0.4" Language="en-US" Publisher="Bert O'Neill" />
         <DisplayName>SsmsAIBuddy_21Plus</DisplayName>
         <Description xml:space="preserve">SSMS AI Buddy extension (SSMS 21 and 22, 64-bit).
 This SSMS AI Extension is an intelligent assistant built directly into SQL Server Management Studio, designed to enhance the productivity of database developers, architects, and DBAs. By leveraging advanced AI models, it enables users to interact with their databases using natural language, generate SQL queries and database objects, explain existing code, and receive recommendations for performance tuning and optimization. The extension provides context-aware assistance based on the active database, schema, and selected SQL, helping users understand complex systems and accelerate development tasks. With support for configurable AI models, memory, prompt templates, and conversational interactions, the SSMS AI Extension transforms SSMS into a powerful AI-driven development environment, reducing repetitive work and enabling faster, smarter database solutions.</Description>
@@ -10,7 +10,7 @@ This SSMS AI Extension is an intelligent assistant built directly into SQL Serve
         <ReleaseNotes>Misc\Docs\SSMS AI Buddy Release Notes.txt</ReleaseNotes>
         <Icon>Iconshock-Real-Vista-Data-Database.256.png</Icon>
         <PreviewImage>SSMS_Preview.png</PreviewImage>
-        <Tags>AI;SSMS AI;SSMS;SSMS Extension;Bert O'Neill;</Tags>
+        <Tags>SSMS AI Buddy;AI;SSMS AI;SSMS;SSMS Extension;Bert O'Neill;</Tags>
     </Metadata>
     <Installation>
         <!-- SSMS 21+ only: 64-bit Visual Studio shell (do not target legacy 32-bit SqlStudio here). -->
